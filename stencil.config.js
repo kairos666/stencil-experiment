@@ -5,7 +5,7 @@ exports.config = {
   generateDistribution: true,
   serviceWorker: false,
   plugins: [
-    sass()
+    sass({ includePaths: ['./node_modules/material-design-lite/src'] })
   ]
 };
 
