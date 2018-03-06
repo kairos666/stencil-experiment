@@ -20,30 +20,32 @@ declare global {
 
 
 import {
-  ExpCmpnt1 as ExperimentalCmpnt1
-} from './components/experimental-cmpnt-1/experimental-cmpnt-1';
+  ExperimentalCard as ExperimentalCard
+} from './components/experimental-card/experimental-card';
 
 declare global {
-  interface HTMLExperimentalCmpnt1Element extends ExperimentalCmpnt1, HTMLStencilElement {
+  interface HTMLExperimentalCardElement extends ExperimentalCard, HTMLStencilElement {
   }
-  var HTMLExperimentalCmpnt1Element: {
-    prototype: HTMLExperimentalCmpnt1Element;
-    new (): HTMLExperimentalCmpnt1Element;
+  var HTMLExperimentalCardElement: {
+    prototype: HTMLExperimentalCardElement;
+    new (): HTMLExperimentalCardElement;
   };
   interface HTMLElementTagNameMap {
-    "experimental-cmpnt-1": HTMLExperimentalCmpnt1Element;
+    "experimental-card": HTMLExperimentalCardElement;
   }
   interface ElementTagNameMap {
-    "experimental-cmpnt-1": HTMLExperimentalCmpnt1Element;
+    "experimental-card": HTMLExperimentalCardElement;
   }
   namespace JSX {
     interface IntrinsicElements {
-      "experimental-cmpnt-1": JSXElements.ExperimentalCmpnt1Attributes;
+      "experimental-card": JSXElements.ExperimentalCardAttributes;
     }
   }
   namespace JSXElements {
-    export interface ExperimentalCmpnt1Attributes extends HTMLAttributes {
-      name?: string;
+    export interface ExperimentalCardAttributes extends HTMLAttributes {
+      illustration?: string;
+      supportingText?: string;
+      title?: string;
     }
   }
 }

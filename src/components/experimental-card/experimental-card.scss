@@ -1,0 +1,15 @@
+// Variables and mixins
+@import "variables";
+@import "mixins";
+
+// Resets and dependencies
+@import "resets/resets";
+@import "typography/typography";
+
+// Components
+@import "palette/palette";
+@import "card/card";
+@import "shadow/shadow";
+
+figure { margin:0; }
+.mdl-card__title { color:white; background-color:unquote("rgb(#{$palette-teal-500})"); min-height:200px; }
