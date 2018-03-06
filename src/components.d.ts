@@ -20,6 +20,36 @@ declare global {
 
 
 import {
+  ExpCmpnt1 as ExperimentalCmpnt1
+} from './components/experimental-cmpnt-1/experimental-cmpnt-1';
+
+declare global {
+  interface HTMLExperimentalCmpnt1Element extends ExperimentalCmpnt1, HTMLStencilElement {
+  }
+  var HTMLExperimentalCmpnt1Element: {
+    prototype: HTMLExperimentalCmpnt1Element;
+    new (): HTMLExperimentalCmpnt1Element;
+  };
+  interface HTMLElementTagNameMap {
+    "experimental-cmpnt-1": HTMLExperimentalCmpnt1Element;
+  }
+  interface ElementTagNameMap {
+    "experimental-cmpnt-1": HTMLExperimentalCmpnt1Element;
+  }
+  namespace JSX {
+    interface IntrinsicElements {
+      "experimental-cmpnt-1": JSXElements.ExperimentalCmpnt1Attributes;
+    }
+  }
+  namespace JSXElements {
+    export interface ExperimentalCmpnt1Attributes extends HTMLAttributes {
+      name?: string;
+    }
+  }
+}
+
+
+import {
   MyComponent as MyComponent
 } from './components/my-component/my-component';
 
