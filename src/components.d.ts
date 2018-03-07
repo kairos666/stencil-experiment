@@ -20,6 +20,38 @@ declare global {
 
 
 import {
+  ExperimentalButton as ExperimentalButton
+} from './components/experimental-button/experimental-button';
+
+declare global {
+  interface HTMLExperimentalButtonElement extends ExperimentalButton, HTMLStencilElement {
+  }
+  var HTMLExperimentalButtonElement: {
+    prototype: HTMLExperimentalButtonElement;
+    new (): HTMLExperimentalButtonElement;
+  };
+  interface HTMLElementTagNameMap {
+    "experimental-button": HTMLExperimentalButtonElement;
+  }
+  interface ElementTagNameMap {
+    "experimental-button": HTMLExperimentalButtonElement;
+  }
+  namespace JSX {
+    interface IntrinsicElements {
+      "experimental-button": JSXElements.ExperimentalButtonAttributes;
+    }
+  }
+  namespace JSXElements {
+    export interface ExperimentalButtonAttributes extends HTMLAttributes {
+      colored?: boolean;
+      disabled?: boolean;
+      type?: string;
+    }
+  }
+}
+
+
+import {
   ExperimentalCard as ExperimentalCard
 } from './components/experimental-card/experimental-card';
 
