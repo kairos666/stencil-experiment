@@ -1,0 +1,10 @@
+$slideshowFadeDelay: .75s;
+.vertical-slideshow__backgrounds { position:absolute; left:0; right:0; background-color:black; }
+.vertical-slideshow__backgrounds__inner { list-style:none; padding-left:0; position:sticky; top:0; left:0; right:0; height:100vh;
+  figure { margin:0; position:absolute; left:0; top:0; width:100%; height:100%; background-size:cover; opacity:0.01; transition: opacity $slideshowFadeDelay ease;
+    &.focused { opacity:0.99; }
+  }
+}
+.vertical-slideshow__contents { position:relative; z-index:1; list-style:none; padding-left:0;
+  > li { height: 100vh; display: flex; flex-direction:column; justify-content:center; }
+}

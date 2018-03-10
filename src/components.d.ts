@@ -84,6 +84,36 @@ declare global {
 
 
 import {
+  ExperimentalVerticalSlideshow as ExpVerticalSlideshow
+} from './components/experimental-vertical-slideshow/experimental-vertical-slideshow';
+
+declare global {
+  interface HTMLExpVerticalSlideshowElement extends ExpVerticalSlideshow, HTMLStencilElement {
+  }
+  var HTMLExpVerticalSlideshowElement: {
+    prototype: HTMLExpVerticalSlideshowElement;
+    new (): HTMLExpVerticalSlideshowElement;
+  };
+  interface HTMLElementTagNameMap {
+    "exp-vertical-slideshow": HTMLExpVerticalSlideshowElement;
+  }
+  interface ElementTagNameMap {
+    "exp-vertical-slideshow": HTMLExpVerticalSlideshowElement;
+  }
+  namespace JSX {
+    interface IntrinsicElements {
+      "exp-vertical-slideshow": JSXElements.ExpVerticalSlideshowAttributes;
+    }
+  }
+  namespace JSXElements {
+    export interface ExpVerticalSlideshowAttributes extends HTMLAttributes {
+      
+    }
+  }
+}
+
+
+import {
   MyComponent as MyComponent
 } from './components/my-component/my-component';
 
