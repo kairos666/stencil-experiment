@@ -84,6 +84,39 @@ declare global {
 
 
 import {
+  ExperimentalInput as ExpInput
+} from './components/experimental-input/experimental-input';
+
+declare global {
+  interface HTMLExpInputElement extends ExpInput, HTMLStencilElement {
+  }
+  var HTMLExpInputElement: {
+    prototype: HTMLExpInputElement;
+    new (): HTMLExpInputElement;
+  };
+  interface HTMLElementTagNameMap {
+    "exp-input": HTMLExpInputElement;
+  }
+  interface ElementTagNameMap {
+    "exp-input": HTMLExpInputElement;
+  }
+  namespace JSX {
+    interface IntrinsicElements {
+      "exp-input": JSXElements.ExpInputAttributes;
+    }
+  }
+  namespace JSXElements {
+    export interface ExpInputAttributes extends HTMLAttributes {
+      fieldError?: string;
+      fieldId?: string;
+      fieldLabel?: string;
+      type?: string;
+    }
+  }
+}
+
+
+import {
   ExperimentalVerticalSlideshow as ExpVerticalSlideshow
 } from './components/experimental-vertical-slideshow/experimental-vertical-slideshow';
 
@@ -108,37 +141,6 @@ declare global {
   namespace JSXElements {
     export interface ExpVerticalSlideshowAttributes extends HTMLAttributes {
       
-    }
-  }
-}
-
-
-import {
-  MyComponent as MyComponent
-} from './components/my-component/my-component';
-
-declare global {
-  interface HTMLMyComponentElement extends MyComponent, HTMLStencilElement {
-  }
-  var HTMLMyComponentElement: {
-    prototype: HTMLMyComponentElement;
-    new (): HTMLMyComponentElement;
-  };
-  interface HTMLElementTagNameMap {
-    "my-component": HTMLMyComponentElement;
-  }
-  interface ElementTagNameMap {
-    "my-component": HTMLMyComponentElement;
-  }
-  namespace JSX {
-    interface IntrinsicElements {
-      "my-component": JSXElements.MyComponentAttributes;
-    }
-  }
-  namespace JSXElements {
-    export interface MyComponentAttributes extends HTMLAttributes {
-      first?: string;
-      last?: string;
     }
   }
 }
