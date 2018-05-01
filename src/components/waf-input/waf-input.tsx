@@ -1,4 +1,4 @@
-import { Component, Prop, Element } from '@stencil/core';
+import { Component, Prop, Element, State } from '@stencil/core';
 
 @Component({
   tag: 'waf-input',
@@ -6,17 +6,23 @@ import { Component, Prop, Element } from '@stencil/core';
 })
 export class WafInput {
     @Prop() label:string = 'error - label required';
+    @Prop() float:boolean;
+    @Prop() alignRight:boolean;
+    @Prop() fullWidth:boolean;
+    @State() inputAttrs:any = { id: '' };
+    @State() isFocused:boolean = false;
+    @State() isDirty:boolean = false;
+    @State() isInvalid:boolean = false;
 
     @Element() textfieldElt:HTMLElement;
     private inputEl:HTMLInputElement;
-    private inputAttrs:any;
     private labelEl:HTMLElement;
     private errorEl:HTMLElement;
 
     render() {
         return (
-            <div class="waf-textfield">
-                <label class="waf-textfield__label" htmlFor="inputId">{this.label}</label>
+            <div class={this.cmpntStyleClasses()}>
+                <label class="waf-textfield__label" htmlFor={this.inputAttrs.id}>{this.label}</label>
                 <slot></slot>
                 <span class="waf-textfield__error">errorText</span>
             </div>
@@ -33,17 +39,38 @@ export class WafInput {
         if (!this.inputEl && !this.labelEl && !this.errorEl) console.log('found nothing');
 
         // build textfield according to data from input tag and own attributes
-        if (this.inputEl && this.inputAttrs) this.init();
+        if (this.inputEl && this.inputAttrs.id) this.init();
     }
 
     // main builder function
     private init() {
-        console.log('i am ok to init');
+        // apply float | align right | fullwidth (component driven)
+        // this.applyCmpntStyle();
+    }
+
+    private cmpntStyleClasses() {
+        let result = 'waf-textfield';
+
+        // external prop
+        if (this.float) result += ' waf-textfield--floating-label';
+        if (this.alignRight) result += ' waf-textfield--align-right';
+        if (this.fullWidth) result += ' waf-textfield--full-width';
+
+        // input attributes
+        if (this.inputAttrs.placeholder) result += ' has-placeholder';
+        if (this.inputAttrs.disabled !== undefined) result += ' is-disabled'; // ! empty string is considered false
+
+        // internal state
+        if (this.isDirty) result += ' is-dirty';
+        if (this.isFocused) result += ' is-focused';
+        if (this.isInvalid) result += ' is-invalid';
+
+        return result;
     }
 
     // check if input tag is here and has all required features (id, type)
     private inputTagChecker():any {
-        let result = { element: null, elementAttrObj: null };
+        let result = { element: null, elementAttrObj: { id: '' } };
         let error;
         const inputNodeList:NodeList = this.textfieldElt.querySelectorAll('*:not(.waf-textfield):not(label):not(.waf-textfield__error)');
         const inputEl:HTMLInputElement = this.textfieldElt.querySelector('input');
