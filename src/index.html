@@ -6,10 +6,66 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=5.0">
     <title>Stencil Component Starter</title>
     <script src="/build/waf.js"></script>
+    <style>
+        main {
+            margin: 2rem;
+        }
+    </style>
 </head>
 
 <body>
-    <waf-input type="text" field-id="test-input" field-label="Your age" field-error="That doesn't seem right"></waf-input>
+    <main>
+        <h1>StencilJS - playground</h1>
+        <waf-input-sample type="text" field-id="test-input" field-label="Your age" field-error="That doesn't seem right"></waf-input-sample>
+        <waf-input></waf-input>
+
+        <h2>all waf-input cases</h2>
+        <waf-input label="label Z">
+            <input id="sample1" name="age" type="number" min="0" step="1" />
+        </waf-input>
+        <waf-input label="label A" float errors='{ 
+          "badInput": "donnée incorrecte",
+          "patternMismatch": "donnée enfreignant les règles",
+          "rangeOverflow": "supérieur au maximum autorisé",
+          "rangeUnderflow": "inférieur au minimum autorisé",
+          "stepMismatch": "valeur non autorisée",
+          "tooLong": "trop de charactères",
+          "tooShort": "trop peu de charactères",
+          "typeMismatch": "format incorrect",
+          "valueMissing": "champs requis"
+        }'>
+            <input id="sample2" name="age" type="text" pattern="-?[0-9]*(\.[0-9]+)?" required />
+        </waf-input>
+        <waf-input label="label B" align-right>
+            <input id="sample3" name="age" type="number" min="0" step="1" />
+        </waf-input>
+        <waf-input label="label C" full-width>
+            <input id="sample4" name="age" type="number" min="0" step="1" />
+        </waf-input>
+        <waf-input label="label D" float align-right full-width>
+            <input id="sample5" name="age" type="number" min="0" step="1" />
+        </waf-input>
+        <waf-input label="label E" float>
+            <input id="sample6" name="age" type="number" min="0" step="1" disabled />
+        </waf-input>
+        <waf-input label="label F" float>
+            <input id="sample7" name="age" type="number" min="0" step="1" placeholder="36" />
+        </waf-input>
+        <waf-input label="label G" float>
+            <input id="sample8" name="age" type="number" min="0" step="1" value="36" />
+        </waf-input>
+        <waf-input label="no id input" float>
+            <input name="age" type="number" min="0" step="1" value="36" />
+        </waf-input>
+        <waf-input label="no input"></waf-input>
+        <waf-input label="no id input" float>
+            <input name="age" type="number" min="0" step="1" value="36" />
+            <input name="age" type="number" min="0" step="1" value="36" />
+        </waf-input>
+        <waf-input label="no id input" float>
+            <p>I'm not an input tag</p>
+        </waf-input>
+    </main>
 </body>
 
 </html>
