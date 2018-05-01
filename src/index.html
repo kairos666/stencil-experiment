@@ -1,15 +1,88 @@
 <!DOCTYPE html>
 <html dir="ltr" lang="en">
+
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=5.0">
-  <title>Stencil Component Starter</title>
-  <script src="/build/mycomponent.js"></script>
-
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=5.0">
+    <title>Stencil Component Starter</title>
+    <script src="/build/waf.js"></script>
+    <style>
+        main {
+            margin: 2rem;
+        }
+    </style>
 </head>
+
 <body>
-
-  <my-component first="Stencil" last="'Don't call me a framework' JS"></my-component>
-
+    <main>
+        <h1>StencilJS - playground</h1>
+        former implementation (enclosed component)
+        <waf-input-sample type="text" field-id="test-input" field-label="Your age" field-error="That doesn't seem right"></waf-input-sample>
+        <h2>all waf-input cases</h2>
+        <waf-input label="label Z">
+            <input id="sample1" name="age" type="number" min="0" step="1" />
+        </waf-input>
+        <waf-input label="default errors" float>
+            <input id="sample2" name="age" type="text" pattern="-?[0-9]*(\.[0-9]+)?" required />
+        </waf-input>
+        <waf-input label="custom errors (pure HTML)" float errors='{ "badInput": "bad input", "patternMismatch": "against the rules", "rangeOverflow": "too big", "rangeUnderflow": "too small", "stepMismatch": "illegal value", "tooLong": "too long", "tooShort": "too short", "typeMismatch": "wrong format", "valueMissing": "mandatory" }'>
+            <input id="sample2bis" name="age" type="text" pattern="-?[0-9]*(\.[0-9]+)?" required />
+        </waf-input>
+        <waf-input id="waf-input-custom-errors" label="custom errors (via JS)" float>
+            <input id="sample2ter" name="age" type="text" pattern="-?[0-9]*(\.[0-9]+)?" required />
+        </waf-input>
+        <waf-input label="label B" align-right>
+            <input id="sample3" name="age" type="number" min="0" step="1" />
+        </waf-input>
+        <waf-input label="label C" full-width>
+            <input id="sample4" name="age" type="number" min="0" step="1" />
+        </waf-input>
+        <waf-input label="label D" float align-right full-width>
+            <input id="sample5" name="age" type="number" min="0" step="1" />
+        </waf-input>
+        <waf-input label="label E" float>
+            <input id="sample6" name="age" type="number" min="0" step="1" disabled />
+        </waf-input>
+        <waf-input label="label F" float>
+            <input id="sample7" name="age" type="number" min="0" step="1" placeholder="36" />
+        </waf-input>
+        <waf-input label="label G" float>
+            <input id="sample8" name="age" type="number" min="0" step="1" value="36" />
+        </waf-input>
+        <h2>invalid use of component</h2>
+        <waf-input label="no id input" float>
+            <input name="age" type="number" min="0" step="1" value="36" />
+        </waf-input>
+        <waf-input label="no input"></waf-input>
+        <waf-input label="no id input" float>
+            <input name="age" type="number" min="0" step="1" value="36" />
+            <input name="age" type="number" min="0" step="1" value="36" />
+        </waf-input>
+        <waf-input label="no id input" float>
+            <p>I'm not an input tag</p>
+        </waf-input>
+        <waf-input float>
+            <input id="sample9" name="age" type="number" min="0" step="1" value="36" />
+        </waf-input>
+        <h2>not a component (demonstrate style scope without shadow DOM)</h2>
+        <div class="waf-textfield waf-textfield--floating-label is-disabled"><label class="waf-textfield__label" for="sample6">label E</label>
+            <input id="sample6" name="age" type="number" min="0" step="1" />
+            <span class="waf-textfield__error">errorText</span>
+        </div>
+    </main>
+    <script>
+        document.querySelector('#waf-input-custom-errors').errors = {
+            badInput: 'error passed by JS',
+            patternMismatch: 'error passed by JS',
+            rangeOverflow: 'error passed by JS',
+            rangeUnderflow: 'error passed by JS',
+            stepMismatch: 'error passed by JS',
+            tooLong: 'error passed by JS',
+            tooShort: 'error passed by JS',
+            typeMismatch: 'error passed by JS',
+            valueMissing: 'error passed by JS'
+        };
+    </script>
 </body>
+
 </html>
