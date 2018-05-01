@@ -77,19 +77,19 @@ waf-input {
             -webkit-appearance: none;
             margin: 0;
         }
-        .waf-textfield.is-focused & {
-            outline: none;
-        }
-        .waf-textfield.is-invalid & {
-            border-color: $input-text-error-color;
-            box-shadow: none;
-        }
-        fieldset[disabled] .waf-textfield &,
-        .waf-textfield.is-disabled & {
-            background-color: transparent;
-            border-bottom: 1px dotted $input-text-disabled-color;
-            color: $input-text-disabled-text-color;
-        }
+    }
+    .waf-textfield.is-focused input {
+        outline: none;
+    }
+    .waf-textfield.is-invalid input {
+        border-color: $input-text-error-color;
+        box-shadow: none;
+    }
+    fieldset[disabled] .waf-textfield input,
+    .waf-textfield.is-disabled input {
+        background-color: transparent;
+        border-bottom: 1px dotted $input-text-disabled-color;
+        color: $input-text-disabled-text-color;
     }
     // Styling for the label / floating label.
     .waf-textfield__label {
@@ -107,33 +107,6 @@ waf-input {
         overflow: hidden;
         white-space: nowrap;
         text-align: left;
-        .waf-textfield.is-dirty &,
-        .waf-textfield.has-placeholder & {
-            visibility: hidden;
-        }
-        // Floating Label
-        .waf-textfield--floating-label & {
-            @include material-animation-default();
-        }
-        .waf-textfield--floating-label.has-placeholder & {
-            transition: none;
-        }
-        fieldset[disabled] .waf-textfield &,
-        .waf-textfield.is-disabled.is-disabled & {
-            color: $input-text-disabled-text-color;
-        }
-        .waf-textfield--floating-label.is-focused &,
-        .waf-textfield--floating-label.is-dirty &,
-        .waf-textfield--floating-label.has-placeholder & {
-            color: $input-text-highlight-color;
-            font-size: $input-text-floating-label-fontsize;
-            top: $input-text-vertical-spacing - ($input-text-floating-label-fontsize + $input-text-padding);
-            visibility: visible;
-        }
-        .waf-textfield--floating-label.is-invalid & {
-            color: $input-text-error-color;
-            font-size: $input-text-floating-label-fontsize;
-        }
         // The after label is the colored underline for the TextField.
         &:after {
             background-color: $input-text-highlight-color;
@@ -146,14 +119,41 @@ waf-input {
             visibility: hidden;
             width: 10px;
         }
-        .waf-textfield.is-focused &:after {
-            left: 0;
-            visibility: visible;
-            width: 100%;
-        }
-        .waf-textfield.is-invalid &:after {
-            background-color: $input-text-error-color;
-        }
+    }
+    .waf-textfield.is-dirty .waf-textfield__label,
+    .waf-textfield.has-placeholder .waf-textfield__label {
+        visibility: hidden;
+    }
+    // Floating Label
+    .waf-textfield--floating-label .waf-textfield__label {
+        @include material-animation-default();
+    }
+    .waf-textfield--floating-label.has-placeholder .waf-textfield__label {
+        transition: none;
+    }
+    fieldset[disabled] .waf-textfield .waf-textfield__label,
+    .waf-textfield.is-disabled.is-disabled .waf-textfield__label {
+        color: $input-text-disabled-text-color;
+    }
+    .waf-textfield--floating-label.is-focused .waf-textfield__label,
+    .waf-textfield--floating-label.is-dirty .waf-textfield__label,
+    .waf-textfield--floating-label.has-placeholder .waf-textfield__label {
+        color: $input-text-highlight-color;
+        font-size: $input-text-floating-label-fontsize;
+        top: $input-text-vertical-spacing - ($input-text-floating-label-fontsize + $input-text-padding);
+        visibility: visible;
+    }
+    .waf-textfield--floating-label.is-invalid .waf-textfield__label {
+        color: $input-text-error-color;
+        font-size: $input-text-floating-label-fontsize;
+    }
+    .waf-textfield.is-focused .waf-textfield__label:after {
+        left: 0;
+        visibility: visible;
+        width: 100%;
+    }
+    .waf-textfield.is-invalid .waf-textfield__label:after {
+        background-color: $input-text-error-color;
     }
     // TextField Error.
     .waf-textfield__error {
@@ -164,8 +164,8 @@ waf-input {
         margin-top: 3px;
         visibility: hidden;
         display: block;
-        .waf-textfield.is-invalid & {
-            visibility: visible;
-        }
+    }
+    .waf-textfield.is-invalid .waf-textfield__error {
+        visibility: visible;
     }
 }
