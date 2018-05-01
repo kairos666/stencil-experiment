@@ -16,9 +16,8 @@
 <body>
     <main>
         <h1>StencilJS - playground</h1>
+        former implementation (enclosed component)
         <waf-input-sample type="text" field-id="test-input" field-label="Your age" field-error="That doesn't seem right"></waf-input-sample>
-        <waf-input></waf-input>
-
         <h2>all waf-input cases</h2>
         <waf-input label="label Z">
             <input id="sample1" name="age" type="number" min="0" step="1" />
@@ -65,6 +64,11 @@
         <waf-input label="no id input" float>
             <p>I'm not an input tag</p>
         </waf-input>
+        <h2>not a component (demonstrate style scope without shadow DOM)</h2>
+        <div class="waf-textfield waf-textfield--floating-label is-disabled"><label class="waf-textfield__label" for="sample6">label E</label>
+            <input id="sample6" name="age" type="number" min="0" step="1" />
+            <span class="waf-textfield__error">errorText</span>
+        </div>
     </main>
 </body>
 
