@@ -16,8 +16,6 @@ export class WafInput {
 
     @Element() textfieldElt:HTMLElement;
     private inputEl:HTMLInputElement;
-    private labelEl:HTMLElement;
-    private errorEl:HTMLElement;
 
     render() {
         return (
@@ -34,9 +32,6 @@ export class WafInput {
         const inputData = this.inputTagChecker();
         this.inputEl = inputData.element;
         this.inputAttrs = inputData.elementAttrObj;
-        this.labelEl = this.textfieldElt.querySelector('label');
-        this.errorEl = this.textfieldElt.querySelector('.waf-textfield__error');
-        if (!this.inputEl && !this.labelEl && !this.errorEl) console.log('found nothing');
 
         // build textfield according to data from input tag and own attributes
         if (this.inputEl && this.inputAttrs.id) this.init();
@@ -44,8 +39,20 @@ export class WafInput {
 
     // main builder function
     private init() {
-        // apply float | align right | fullwidth (component driven)
-        // this.applyCmpntStyle();
+        // setup focus behavior
+        this.inputEl.addEventListener('focus', () => { this.isFocused = true });
+        this.inputEl.addEventListener('blur', () => { this.isFocused = false });
+
+        // setup input change behavior
+        this.inputEl.addEventListener('change', this.onValueUpdate.bind(this));
+        this.inputEl.addEventListener('keyup', this.onValueUpdate.bind(this));
+    }
+
+    private onValueUpdate(evt) {
+        this.isDirty = (this.inputEl.value !== '');
+
+        // // process validity calculations
+        console.log(evt);
     }
 
     private cmpntStyleClasses() {
