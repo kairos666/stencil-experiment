@@ -22,18 +22,14 @@
         <waf-input label="label Z">
             <input id="sample1" name="age" type="number" min="0" step="1" />
         </waf-input>
-        <waf-input label="label A" float errors='{ 
-          "badInput": "donnée incorrecte",
-          "patternMismatch": "donnée enfreignant les règles",
-          "rangeOverflow": "supérieur au maximum autorisé",
-          "rangeUnderflow": "inférieur au minimum autorisé",
-          "stepMismatch": "valeur non autorisée",
-          "tooLong": "trop de charactères",
-          "tooShort": "trop peu de charactères",
-          "typeMismatch": "format incorrect",
-          "valueMissing": "champs requis"
-        }'>
+        <waf-input label="default errors" float>
             <input id="sample2" name="age" type="text" pattern="-?[0-9]*(\.[0-9]+)?" required />
+        </waf-input>
+        <waf-input label="custom errors (pure HTML)" float errors='{ "badInput": "bad input", "patternMismatch": "against the rules", "rangeOverflow": "too big", "rangeUnderflow": "too small", "stepMismatch": "illegal value", "tooLong": "too long", "tooShort": "too short", "typeMismatch": "wrong format", "valueMissing": "mandatory" }'>
+            <input id="sample2bis" name="age" type="text" pattern="-?[0-9]*(\.[0-9]+)?" required />
+        </waf-input>
+        <waf-input id="waf-input-custom-errors" label="custom errors (via JS)" float>
+            <input id="sample2ter" name="age" type="text" pattern="-?[0-9]*(\.[0-9]+)?" required />
         </waf-input>
         <waf-input label="label B" align-right>
             <input id="sample3" name="age" type="number" min="0" step="1" />
@@ -65,12 +61,28 @@
         <waf-input label="no id input" float>
             <p>I'm not an input tag</p>
         </waf-input>
+        <waf-input float>
+            <input id="sample9" name="age" type="number" min="0" step="1" value="36" />
+        </waf-input>
         <h2>not a component (demonstrate style scope without shadow DOM)</h2>
         <div class="waf-textfield waf-textfield--floating-label is-disabled"><label class="waf-textfield__label" for="sample6">label E</label>
             <input id="sample6" name="age" type="number" min="0" step="1" />
             <span class="waf-textfield__error">errorText</span>
         </div>
     </main>
+    <script>
+        document.querySelector('#waf-input-custom-errors').errors = {
+            badInput: 'error passed by JS',
+            patternMismatch: 'error passed by JS',
+            rangeOverflow: 'error passed by JS',
+            rangeUnderflow: 'error passed by JS',
+            stepMismatch: 'error passed by JS',
+            tooLong: 'error passed by JS',
+            tooShort: 'error passed by JS',
+            typeMismatch: 'error passed by JS',
+            valueMissing: 'error passed by JS'
+        };
+    </script>
 </body>
 
 </html>

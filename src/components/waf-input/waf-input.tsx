@@ -5,7 +5,18 @@ import { Component, Prop, Element, State } from '@stencil/core';
   styleUrl: 'waf-input.scss'
 })
 export class WafInput {
-    @Prop() label:string = 'error - label required';
+    @Prop({ reflectToAttr: true }) label:string = 'error - label required'; // reflect auto generated attribute on component
+    @Prop() errors:Object = { 
+        badInput: 'donnée incorrecte',
+        patternMismatch: 'donnée enfreignant les règles',
+        rangeOverflow: 'supérieur au maximum autorisé',
+        rangeUnderflow: 'inférieur au minimum autorisé',
+        stepMismatch: 'valeur non autorisée',
+        tooLong: 'trop de charactères',
+        tooShort: 'trop peu de charactères',
+        typeMismatch: 'format incorrect',
+        valueMissing: 'champs requis'
+    };
     @Prop() float:boolean;
     @Prop() alignRight:boolean;
     @Prop() fullWidth:boolean;
@@ -13,16 +24,17 @@ export class WafInput {
     @State() isFocused:boolean = false;
     @State() isDirty:boolean = false;
     @State() isInvalid:boolean = false;
+    @State() errorText:string = '';
 
     @Element() textfieldElt:HTMLElement;
-    private inputEl:HTMLInputElement;
+    private inputEl:HTMLInputElement; // dynamically defined <slot>
 
     render() {
         return (
             <div class={this.cmpntStyleClasses()}>
                 <label class="waf-textfield__label" htmlFor={this.inputAttrs.id}>{this.label}</label>
                 <slot></slot>
-                <span class="waf-textfield__error">errorText</span>
+                <span class="waf-textfield__error">{this.errorText}</span>
             </div>
         );
     }
@@ -46,13 +58,31 @@ export class WafInput {
         // setup input change behavior
         this.inputEl.addEventListener('change', this.onValueUpdate.bind(this));
         this.inputEl.addEventListener('keyup', this.onValueUpdate.bind(this));
+
+        // initial situation assessment
+        this.onValueUpdate(false);
     }
 
     private onValueUpdate(evt) {
         this.isDirty = (this.inputEl.value !== '');
 
-        // // process validity calculations
-        console.log(evt);
+        // validity (either dirty & wrong or required & empty)
+        if (evt) {
+            // default case full check
+            this.isInvalid = ((this.isDirty && !this.inputEl.checkValidity()) || this.inputEl.validity.valueMissing);
+        } else {
+            // initial check - check is simpler initially for required elements to pass through
+            this.isInvalid = (this.isDirty && !this.inputEl.checkValidity());
+        }
+
+        // process error text to display
+        const validityStates = this.inputEl.validity;
+        const errorMsgs = [];
+
+        Object.keys(this.errors).forEach(errorType => {
+            if (validityStates[errorType]) errorMsgs.push(this.errors[errorType]);
+        });
+        this.errorText = (errorMsgs.length === 0) ? '' : errorMsgs.join(' | ');
     }
 
     private cmpntStyleClasses() {
