@@ -67,6 +67,12 @@
             <input id="sample6" name="age" type="number" min="0" step="1" />
             <span class="waf-textfield__error">errorText</span>
         </div>
+        <h2>image async loader</h2>
+        <waf-img src="https://picsum.photos/300/200/?random" alt="youpi"></waf-img>
+        <waf-img src="https://picsum.photos/300/200/?random" width="200" height="200" alt="youpi"></waf-img>
+        <waf-img src="https://brokenimg" alt="youpi"></waf-img>
+        <waf-img src="https://brokenimg" width="200" height="200" alt="youpi"></waf-img>
+        <waf-img width="200" height="200" alt="youpi"></waf-img>
     </main>
     <script>
         document.querySelector('#waf-input-custom-errors').errors = {
