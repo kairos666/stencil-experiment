@@ -28,7 +28,7 @@ export class WafTabs {
                 <nav class="waf-tabs__nav">
                     <ol role="tablist">
                         {this.model.map((tabInfo, index) =>
-                            <li {...this.spreadAttributesTab(tabInfo)} role="tab" tabindex="0" onClick={() => { this.onTabSelected(index) }}></li>
+                            <li {...this.spreadAttributesTab(tabInfo)} role="tab" tabindex="0" onClick={() => { this.onTabSelected(index) }} onKeyDown={evt => { this.onTabSelected(index, evt) }}></li>
                         )}
                     </ol>
                 </nav>
@@ -48,7 +48,25 @@ export class WafTabs {
     spreadAttributesTab(tabInfo:SingleTabModel) { return { 'id': tabInfo.tabID, 'aria-controls': tabInfo.tabPaneID, 'aria-selected': tabInfo.isSelected, 'innerHTML': tabInfo.tabContent } }
     spreadAttributesTabPane(tabInfo:SingleTabModel) { return { 'id': tabInfo.tabPaneID, 'aria-labelledby': tabInfo.tabID, 'aria-hidden': !tabInfo.isSelected, 'innerHTML': tabInfo.tabPaneContent } }
 
-    onTabSelected(tabIndexSelected:number) {
+    onTabSelected(tabIndexSelected:number, evt?:KeyboardEvent) {
+        // is it keyboard driven event and continue on return (13), left arrow (37), right arrow (39) TODO make it work with focus changes http://accessibility.athena-ict.com/aria/examples/tabpanel2.shtml
+        if (evt) {
+            switch (evt.which) {
+                case 13: /* do nothing - let pass through */ break;
+                case 37:
+                    const updatedLesserIndex = tabIndexSelected - 1;
+                    tabIndexSelected = Math.max(updatedLesserIndex, 0);
+                break;
+                case 38:
+                    const updatedHigherIndex = tabIndexSelected + 1;
+                    const tabCount = this.model.length - 1;
+                    tabIndexSelected = Math.min(updatedHigherIndex, tabCount);
+                break;
+                default:
+                    return;
+            }
+        }
+
         // operate update
         const currentlySelectedIndex = this.model.findIndex(tab => tab.isSelected);
         if (tabIndexSelected !== currentlySelectedIndex) {
