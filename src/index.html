@@ -7,8 +7,24 @@
     <title>Stencil Component Starter</title>
     <script src="/build/waf.js"></script>
     <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+        
         main {
             margin: 2rem;
+        }
+        
+        h1 {
+            margin-bottom: 5rem;
+        }
+        
+        h2 {
+            margin-top: 4rem;
+        }
+        
+        h3 {
+            margin-top: 1rem;
         }
     </style>
 </head>
@@ -16,7 +32,8 @@
 <body>
     <main>
         <h1>StencilJS - playground</h1>
-        <h2>all waf-input cases</h2>
+        <h2>WAF-INPUT - textfield</h2>
+        <h3>all waf-input cases</h3>
         <waf-input label="simple textfield">
             <input id="sample1" type="text" />
         </waf-input>
@@ -47,7 +64,7 @@
         <waf-input label="label G" float>
             <input id="sample8" name="age" type="number" min="0" step="1" value="36" />
         </waf-input>
-        <h2>invalid use of component</h2>
+        <h3>invalid use of component</h3>
         <waf-input label="no id input" float>
             <input name="age" type="number" min="0" step="1" value="36" />
         </waf-input>
@@ -62,16 +79,17 @@
         <waf-input float>
             <input id="sample9" name="age" type="number" min="0" step="1" value="36" />
         </waf-input>
-        <h2>not a component (demonstrate style scope without shadow DOM)</h2>
+        <h3>not a component (demonstrate style scope without shadow DOM)</h3>
         <div class="waf-textfield waf-textfield--floating-label is-disabled"><label class="waf-textfield__label" for="sample6">label E</label>
             <input id="sample6" name="age" type="number" min="0" step="1" />
             <span class="waf-textfield__error">errorText</span>
         </div>
-        <h2>image async loader</h2>
+        <h2>WAF-IMG - image async loading</h2>
         <waf-img src="https://picsum.photos/300/200/?random" alt="basic image"></waf-img>
         <waf-img src="https://picsum.photos/200/200/?image=500" width="200" height="200" alt="image with dimensions"></waf-img>
         <waf-img src="https://picsum.photos/200/200/?image=500" width="200" height="200" alt="cached image"></waf-img>
         <waf-img src="https://picsum.photos/g/200/200/?random" width="300" srcset="https://picsum.photos/g/200/200/?random 1x, https://picsum.photos/g/600/600/?random 2x, https://picsum.photos/g/1200/1200/?random 3x" alt="image with srcset"></waf-img>
+        <h3>invalid use of component</h3>
         <waf-img src="https://brokenimg" alt="404 url"></waf-img>
         <waf-img src="https://brokenimg" width="200" height="200" alt="404 url with dimensions"></waf-img>
         <waf-img width="200" height="200" alt="missing src attribute"></waf-img>
