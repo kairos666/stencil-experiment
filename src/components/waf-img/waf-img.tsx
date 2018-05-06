@@ -25,7 +25,7 @@ export class WafImg {
             </span>
         ) : (
             <span class="waf-img__loading" style={this.infoDynamicStyles()}>
-                <span>loading image</span>
+                <span class="lds-ellipsis"><span></span><span></span><span></span><span></span></span>
                 <span>{this.alt}</span>
             </span>
         )
@@ -62,11 +62,11 @@ export class WafImg {
     @Watch('src')
     srcSwapHandler(newValue:string) {
         // first fetch the image (browser put it in cache)
-        fetch(this.src)
+        fetch(newValue)
             .then(() => {
                 // then add src set that will use that cache directly
                 this.isBroken = false;
-                this.innerSrc = newValue;
+                this.innerSrc = this.src;
             })
             .catch(() => {
                 // if image can't be fetched

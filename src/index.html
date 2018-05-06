@@ -68,11 +68,13 @@
             <span class="waf-textfield__error">errorText</span>
         </div>
         <h2>image async loader</h2>
-        <waf-img src="https://picsum.photos/300/200/?random" alt="youpi"></waf-img>
-        <waf-img src="https://picsum.photos/300/200/?random" width="200" height="200" alt="youpi"></waf-img>
-        <waf-img src="https://brokenimg" alt="youpi"></waf-img>
-        <waf-img src="https://brokenimg" width="200" height="200" alt="youpi"></waf-img>
-        <waf-img width="200" height="200" alt="youpi"></waf-img>
+        <waf-img src="https://picsum.photos/300/200/?random" alt="basic image"></waf-img>
+        <waf-img src="https://picsum.photos/200/200/?image=500" width="200" height="200" alt="image with dimensions"></waf-img>
+        <waf-img src="https://picsum.photos/200/200/?image=500" width="200" height="200" alt="cached image"></waf-img>
+        <waf-img src="https://picsum.photos/g/200/200/?random" width="300" srcset="https://picsum.photos/g/200/200/?random 1x, https://picsum.photos/g/600/600/?random 2x, https://picsum.photos/g/1200/1200/?random 3x" alt="image with srcset"></waf-img>
+        <waf-img src="https://brokenimg" alt="404 url"></waf-img>
+        <waf-img src="https://brokenimg" width="200" height="200" alt="404 url with dimensions"></waf-img>
+        <waf-img width="200" height="200" alt="missing src attribute"></waf-img>
     </main>
     <script>
         document.querySelector('#waf-input-custom-errors').errors = {
