@@ -1,4 +1,4 @@
-import { Component, Prop, Element, State } from '@stencil/core';
+import { Component, Prop, Element, State, Watch } from '@stencil/core';
 
 @Component({
   tag: 'waf-input',
@@ -6,7 +6,15 @@ import { Component, Prop, Element, State } from '@stencil/core';
 })
 export class WafInput {
     @Prop({ reflectToAttr: true }) label:string = 'error - label required'; // reflect auto generated attribute on component
-    @Prop() errors:Object = { 
+    @Prop() errors:Object | string;
+    @Prop() float:boolean;
+    @Prop() alignRight:boolean;
+    @Prop() fullWidth:boolean;
+    @State() inputAttrs:any = { id: '' };
+    @State() isFocused:boolean = false;
+    @State() isDirty:boolean = false;
+    @State() isInvalid:boolean = false;
+    @State() innerErrors:Object = { 
         badInput: 'donnée incorrecte',
         patternMismatch: 'donnée enfreignant les règles',
         rangeOverflow: 'supérieur au maximum autorisé',
@@ -17,17 +25,24 @@ export class WafInput {
         typeMismatch: 'format incorrect',
         valueMissing: 'champs requis'
     };
-    @Prop() float:boolean;
-    @Prop() alignRight:boolean;
-    @Prop() fullWidth:boolean;
-    @State() inputAttrs:any = { id: '' };
-    @State() isFocused:boolean = false;
-    @State() isDirty:boolean = false;
-    @State() isInvalid:boolean = false;
     @State() errorText:string = '';
 
     @Element() textfieldElt:HTMLElement;
     private inputEl:HTMLInputElement; // dynamically defined <slot>
+
+    @Watch('errors')
+    errorsWatchHandler(newValue:Object | string) {
+        if (typeof newValue === 'object') {
+            // received an object so pass through
+            this.innerErrors = Object.assign(this.innerErrors, newValue);
+        } else if (typeof newValue === 'string') {
+            try {
+                this.innerErrors = Object.assign(this.innerErrors, JSON.parse(newValue));
+            } catch (error) {
+                console.warn('waf-input | invalid errors object passed', error);
+            }
+        }
+    }
 
     render() {
         return (
@@ -44,6 +59,9 @@ export class WafInput {
         const inputData = this.inputTagChecker();
         this.inputEl = inputData.element;
         this.inputAttrs = inputData.elementAttrObj;
+
+        // process initial errors setting
+        this.errorsWatchHandler(this.errors);
 
         // build textfield according to data from input tag and own attributes
         if (this.inputEl && this.inputAttrs.id) this.init();
@@ -79,8 +97,8 @@ export class WafInput {
         const validityStates = this.inputEl.validity;
         const errorMsgs = [];
 
-        Object.keys(this.errors).forEach(errorType => {
-            if (validityStates[errorType]) errorMsgs.push(this.errors[errorType]);
+        Object.keys(this.innerErrors).forEach(errorType => {
+            if (validityStates[errorType]) errorMsgs.push(this.innerErrors[errorType]);
         });
         this.errorText = (errorMsgs.length === 0) ? '' : errorMsgs.join(' | ');
     }
