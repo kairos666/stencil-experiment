@@ -49,15 +49,30 @@ export class WafTabs {
     spreadAttributesTabPane(tabInfo:SingleTabModel) { return { 'id': tabInfo.tabPaneID, 'aria-labelledby': tabInfo.tabID, 'aria-hidden': !tabInfo.isSelected, 'innerHTML': tabInfo.tabPaneContent } }
 
     onTabSelected(tabIndexSelected:number, evt?:KeyboardEvent) {
+        // utility function that switch focus if possible and return true|false depending on action feasability
+        const shiftFocus = function(target:Element, shiftDirection:'previous'|'next'):boolean {
+            const newTarget = target[shiftDirection + 'ElementSibling'];
+            if (newTarget) {
+                // bring focus to new target
+                (newTarget as HTMLElement).focus();
+                return true;
+            } else {
+                // exit (no previous tab)
+                return false;
+            }
+        }
+
         // is it keyboard driven event and continue on return (13), left arrow (37), right arrow (39) TODO make it work with focus changes http://accessibility.athena-ict.com/aria/examples/tabpanel2.shtml
         if (evt) {
             switch (evt.which) {
                 case 13: /* do nothing - let pass through */ break;
                 case 37:
+                    if (!shiftFocus((evt.target as Element), 'previous')) return;
                     const updatedLesserIndex = tabIndexSelected - 1;
                     tabIndexSelected = Math.max(updatedLesserIndex, 0);
                 break;
-                case 38:
+                case 39:
+                    if (!shiftFocus((evt.target as Element), 'next')) return;
                     const updatedHigherIndex = tabIndexSelected + 1;
                     const tabCount = this.model.length - 1;
                     tabIndexSelected = Math.min(updatedHigherIndex, tabCount);
