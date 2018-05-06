@@ -19,9 +19,15 @@ export class WafImg {
         const renderedEl = (this.innerSrc) ? (
             <img src={this.innerSrc} alt={this.alt} width={this.width} height={this.height} sizes={this.sizes} srcset={this.srcset} decoding={this.decoding} />
         ) : (this.isBroken) ? (
-            <span class="waf-img__broken" style={this.infoDynamicStyles()}>i'm broken</span>
+            <span class="waf-img__broken" style={this.infoDynamicStyles()}>
+                <span>broken image</span>
+                <span>{this.alt}</span>
+            </span>
         ) : (
-            <span class="waf-img__loading" style={this.infoDynamicStyles()}>i'm loading</span>
+            <span class="waf-img__loading" style={this.infoDynamicStyles()}>
+                <span>loading image</span>
+                <span>{this.alt}</span>
+            </span>
         )
         return renderedEl;
     }
@@ -48,7 +54,6 @@ export class WafImg {
 
     infoDynamicStyles() {
         return (this.width && this.height) ? {
-            display: 'inline-block',
             width: `${this.width}px`,
             height: `${this.height}px`
         } : {}

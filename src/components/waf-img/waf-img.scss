@@ -1,1 +1,20 @@
-waf-img {}
+waf-img {
+    display: inline-block;
+    vertical-align: middle;
+    overflow: hidden;
+    img {
+        max-width: 100%;
+    }
+    .waf-img__broken,
+    .waf-img__loading {
+        color: #fff;
+        display: inline-flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        max-width: 100%;
+        background-color: rgba(0, 0, 0, 0.75);
+        box-sizing: border-box;
+        padding: 0.5rem;
+    }
+}
