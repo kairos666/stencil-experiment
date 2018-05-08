@@ -34,13 +34,10 @@
         <h1>StencilJS - playground</h1>
         <waf-tabs>
             <waf-tab selected tab-header="Intro">
-                <ul>
-                    <li>
-                        <h2>WAF-INPUT</h2>
-                        <p>Un champs texte qui englobe un tag input et le style à la Material design. Le champs input reste complètement fonctionnel, il est simplement "décoré" avec un label et un style approprié. Les erreurs natives sont également gérées
-                            (type="email", pattern, placeholder, value, disabled, required, ...).</p>
-                    </li>
-                </ul>
+                <p><a href="https://github.com/kairos666/stencil-experiment/issues" target="_blank">IE missing features</a></p>
+                <p>
+                    To support IE11 at least - disable waf-img visible-async-loading behavior - refactor waf-tabs to avoid findIndex & Array.from()
+                </p>
             </waf-tab>
             <waf-tab tab-header="WAF-INPUT">
                 <h2>WAF-INPUT - textfield</h2>
@@ -170,6 +167,7 @@
                 <h3>waf-img edge cases - src is broken</h3>
                 <waf-img src="https://brokenimg" alt="404 url"></waf-img>
                 <waf-img src="https://brokenimg" width="200" height="200" alt="404 url with dimensions"></waf-img>
+                <waf-img src="https://brokenimg" width="200" height="200" alt="404 url with visible async loading" visible-async-loading></waf-img>
                 <hr>
                 <h3>waf-img cases - invalid use of component (no "src" attribute)</h3>
                 <waf-img width="200" height="200" alt="missing src attribute"></waf-img>
@@ -247,7 +245,7 @@
             valueMissing: 'error passed by JS'
         };
 
-        setTimeout(() => {
+        setTimeout(function() {
             console.info('JS errors object updated');
             document.querySelector('#waf-input-custom-errors').errors = {
                 badInput: 'error passed by JS 2',

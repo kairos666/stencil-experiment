@@ -30,14 +30,14 @@
     },
     "repository": {
         "type": "git",
-        "url": "git+https://github.com/ionic-team/stencil-component-starter.git"
+        "url": "git+https://github.com:kairos666/stencil-experiment.git"
     },
-    "author": "Ionic Team",
+    "author": "Ionic Team - David Maggi",
     "license": "MIT",
     "bugs": {
-        "url": "https://github.com/ionic-team/stencil"
+        "url": "https://github.com/kairos666/stencil-experiment/issues"
     },
-    "homepage": "https://github.com/ionic-team/stencil",
+    "homepage": "https://github.com/kairos666/stencil-experiment/",
     "jest": {
         "transform": {
             "^.+\\.(ts|tsx)$": "<rootDir>/node_modules/@stencil/core/testing/jest.preprocessor.js"
