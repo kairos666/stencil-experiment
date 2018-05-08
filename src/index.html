@@ -32,69 +32,84 @@
 <body>
     <main>
         <h1>StencilJS - playground</h1>
-        <h2>WAF-INPUT - textfield</h2>
-        <h3>all waf-input cases</h3>
-        <waf-input label="simple textfield">
-            <input id="sample1" type="text" />
-        </waf-input>
-        <waf-input label="default errors" float>
-            <input id="sample2" name="age" type="text" pattern="-?[0-9]*(\.[0-9]+)?" required />
-        </waf-input>
-        <waf-input id="waf-input-custom-html-errors" label="custom errors (pure HTML)" float errors='{ "badInput": "bad input", "patternMismatch": "against the rules", "rangeOverflow": "too big", "rangeUnderflow": "too small", "stepMismatch": "illegal value", "tooLong": "too long", "tooShort": "too short", "typeMismatch": "wrong format", "valueMissing": "mandatory" }'>
-            <input id="sample2bis" name="age" type="text" pattern="-?[0-9]*(\.[0-9]+)?" required />
-        </waf-input>
-        <waf-input id="waf-input-custom-errors" label="custom errors (via JS)" float>
-            <input id="sample2ter" name="age" type="text" pattern="-?[0-9]*(\.[0-9]+)?" required />
-        </waf-input>
-        <waf-input label="label B" align-right>
-            <input id="sample3" name="age" type="number" min="0" step="1" />
-        </waf-input>
-        <waf-input label="label C" full-width>
-            <input id="sample4" name="age" type="number" min="0" step="1" />
-        </waf-input>
-        <waf-input label="label D" float align-right full-width>
-            <input id="sample5" name="age" type="number" min="0" step="1" />
-        </waf-input>
-        <waf-input label="label E" float>
-            <input id="sample6" name="age" type="number" min="0" step="1" disabled />
-        </waf-input>
-        <waf-input label="label F" float>
-            <input id="sample7" name="age" type="number" min="0" step="1" placeholder="36" />
-        </waf-input>
-        <waf-input label="label G" float>
-            <input id="sample8" name="age" type="number" min="0" step="1" value="36" />
-        </waf-input>
-        <h3>invalid use of component</h3>
-        <waf-input label="no id input" float>
-            <input name="age" type="number" min="0" step="1" value="36" />
-        </waf-input>
-        <waf-input label="no input"></waf-input>
-        <waf-input label="no id input" float>
-            <input name="age" type="number" min="0" step="1" value="36" />
-            <input name="age" type="number" min="0" step="1" value="36" />
-        </waf-input>
-        <waf-input label="no id input" float>
-            <p>I'm not an input tag</p>
-        </waf-input>
-        <waf-input float>
-            <input id="sample9" name="age" type="number" min="0" step="1" value="36" />
-        </waf-input>
-        <h3>not a component (demonstrate style scope without shadow DOM)</h3>
-        <div class="waf-textfield waf-textfield--floating-label is-disabled"><label class="waf-textfield__label" for="sample6">label E</label>
-            <input id="sample6" name="age" type="number" min="0" step="1" />
-            <span class="waf-textfield__error">errorText</span>
-        </div>
-        <h2>WAF-IMG - image async loading</h2>
-        <waf-img src="https://picsum.photos/300/200/?random" alt="basic image"></waf-img>
-        <waf-img src="https://picsum.photos/200/200/?image=500" width="200" height="200" alt="image with dimensions"></waf-img>
-        <waf-img src="https://picsum.photos/200/200/?image=500" width="200" height="200" alt="cached image"></waf-img>
-        <waf-img src="https://picsum.photos/g/200/200/?random" width="300" srcset="https://picsum.photos/g/200/200/?random 1x, https://picsum.photos/g/600/600/?random 2x, https://picsum.photos/g/1200/1200/?random 3x" alt="image with srcset"></waf-img>
-        <h3>invalid use of component</h3>
-        <waf-img src="https://brokenimg" alt="404 url"></waf-img>
-        <waf-img src="https://brokenimg" width="200" height="200" alt="404 url with dimensions"></waf-img>
-        <waf-img width="200" height="200" alt="missing src attribute"></waf-img>
-        <h2>WAF-TABS - tab system</h2>
         <waf-tabs>
+            <waf-tab selected tab-header="Intro">
+                <h2>WAF-IMG - image async loading</h2>
+                <p>Tu vois, là on voit qu'on a beaucoup à travailler sur nous-mêmes car il faut toute la splendeur du aware car l'aboutissement de l'instinct, c'est l'amour ! Et là, vraiment, j'essaie de tout coeur de donner la plus belle réponse de la terre
+                    !
+                </p>
+                <p>Je ne voudrais pas rentrer dans des choses trop dimensionnelles, mais, si vraiment tu veux te rappeler des souvenirs de ton perroquet, on vit dans une réalité qu'on a créée et que j'appelle illusion parce que spirituellement, on est tous
+                    ensemble, ok ? C'est cette année que j'ai eu la révélation !</p>
+            </waf-tab>
+            <waf-tab tab-header="WAF-INPUT">
+                <h2>WAF-INPUT - textfield</h2>
+                <h3>all waf-input cases</h3>
+                <waf-input label="simple textfield">
+                    <input id="sample1" type="text" />
+                </waf-input>
+                <waf-input label="default errors" float>
+                    <input id="sample2" name="age" type="text" pattern="-?[0-9]*(\.[0-9]+)?" required />
+                </waf-input>
+                <waf-input id="waf-input-custom-html-errors" label="custom errors (pure HTML)" float errors='{ "badInput": "bad input", "patternMismatch": "against the rules", "rangeOverflow": "too big", "rangeUnderflow": "too small", "stepMismatch": "illegal value", "tooLong": "too long", "tooShort": "too short", "typeMismatch": "wrong format", "valueMissing": "mandatory" }'>
+                    <input id="sample2bis" name="age" type="text" pattern="-?[0-9]*(\.[0-9]+)?" required />
+                </waf-input>
+                <waf-input id="waf-input-custom-errors" label="custom errors (via JS)" float>
+                    <input id="sample2ter" name="age" type="text" pattern="-?[0-9]*(\.[0-9]+)?" required />
+                </waf-input>
+                <waf-input label="label B" align-right>
+                    <input id="sample3" name="age" type="number" min="0" step="1" />
+                </waf-input>
+                <waf-input label="label C" full-width>
+                    <input id="sample4" name="age" type="number" min="0" step="1" />
+                </waf-input>
+                <waf-input label="label D" float align-right full-width>
+                    <input id="sample5" name="age" type="number" min="0" step="1" />
+                </waf-input>
+                <waf-input label="label E" float>
+                    <input id="sample6" name="age" type="number" min="0" step="1" disabled />
+                </waf-input>
+                <waf-input label="label F" float>
+                    <input id="sample7" name="age" type="number" min="0" step="1" placeholder="36" />
+                </waf-input>
+                <waf-input label="label G" float>
+                    <input id="sample8" name="age" type="number" min="0" step="1" value="36" />
+                </waf-input>
+                <h3>invalid use of component</h3>
+                <waf-input label="no id input" float>
+                    <input name="age" type="number" min="0" step="1" value="36" />
+                </waf-input>
+                <waf-input label="no input"></waf-input>
+                <waf-input label="no id input" float>
+                    <input name="age" type="number" min="0" step="1" value="36" />
+                    <input name="age" type="number" min="0" step="1" value="36" />
+                </waf-input>
+                <waf-input label="no id input" float>
+                    <p>I'm not an input tag</p>
+                </waf-input>
+                <waf-input float>
+                    <input id="sample9" name="age" type="number" min="0" step="1" value="36" />
+                </waf-input>
+                <h3>not a component (demonstrate style scope without shadow DOM)</h3>
+                <div class="waf-textfield waf-textfield--floating-label is-disabled"><label class="waf-textfield__label" for="sample6">label E</label>
+                    <input id="sample6" name="age" type="number" min="0" step="1" />
+                    <span class="waf-textfield__error">errorText</span>
+                </div>
+            </waf-tab>
+            <waf-tab tab-header="WAF-IMG">
+                <h2>WAF-IMG - image async loading</h2>
+                <waf-img src="https://picsum.photos/300/200/?random" alt="basic image"></waf-img>
+                <waf-img src="https://picsum.photos/200/200/?image=500" width="200" height="200" alt="image with dimensions"></waf-img>
+                <waf-img src="https://picsum.photos/200/200/?image=500" width="200" height="200" alt="cached image"></waf-img>
+                <waf-img src="https://picsum.photos/g/200/200/?random" width="300" srcset="https://picsum.photos/g/200/200/?random 1x, https://picsum.photos/g/600/600/?random 2x, https://picsum.photos/g/1200/1200/?random 3x" alt="image with srcset"></waf-img>
+                <h3>invalid use of component</h3>
+                <waf-img src="https://brokenimg" alt="404 url"></waf-img>
+                <waf-img src="https://brokenimg" width="200" height="200" alt="404 url with dimensions"></waf-img>
+                <waf-img width="200" height="200" alt="missing src attribute"></waf-img>
+            </waf-tab>
+        </waf-tabs>
+
+        <h2>WAF-TABS - tab system</h2>
+        <!-- <waf-tabs>
             <waf-tab>
                 <div slot="tab">Tab 1</div>
                 <div slot="tabpane">
@@ -106,8 +121,8 @@
             <waf-tab selected>
                 <div slot="tab">Tab 2</div>
                 <div slot="tabpane">
-                    <p></p>Je ne voudrais pas rentrer dans des choses trop dimensionnelles, mais, si vraiment tu veux te rappeler des souvenirs de ton perroquet, on vit dans une réalité qu'on a créée et que j'appelle illusion parce que spirituellement, on
-                    est tous ensemble, ok ? C'est cette année que j'ai eu la révélation !</p>
+                    <p>Je ne voudrais pas rentrer dans des choses trop dimensionnelles, mais, si vraiment tu veux te rappeler des souvenirs de ton perroquet, on vit dans une réalité qu'on a créée et que j'appelle illusion parce que spirituellement, on est
+                        tous ensemble, ok ? C'est cette année que j'ai eu la révélation !</p>
                 </div>
             </waf-tab>
             <waf-tab>
@@ -161,7 +176,7 @@
                     <p>036 bytes lôrem ïpsum des caractères</p>
                 </div>
             </waf-tab>
-        </waf-tabs>
+        </waf-tabs> -->
     </main>
     <script>
         document.querySelector('#waf-input-custom-errors').errors = {

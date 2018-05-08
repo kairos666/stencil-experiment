@@ -1,12 +1,9 @@
 waf-tabs {
     // core styles
-    .waf-tabs__tabpanel {
+    waf-tab {
         &[aria-hidden='true'] {
             display: none;
         }
-    }
-    .waf-tabs__slot {
-        display: none;
     }
     // theme styles
     $color-black: "0,0,0" !default;

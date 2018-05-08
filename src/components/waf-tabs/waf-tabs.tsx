@@ -4,7 +4,6 @@ interface SingleTabModel {
     tabID:string,
     tabContent:string,
     tabPaneID:string,
-    tabPaneContent:string,
     isSelected:boolean
 };
 interface TabModel extends Array<SingleTabModel> {};
@@ -15,20 +14,14 @@ interface TabModel extends Array<SingleTabModel> {};
 })
 export class WafTabs {
     private uniqueId:number = Date.now();
+    private slottedElt:Element;
     private slotHTMLLiveHTMLCollection:HTMLCollection;
     private slotMutationObserver:MutationObserver;
+    private observerConfig:MutationObserverInit = { childList: true };
     @Element() wafTabsElt:HTMLElement;
     @State() model:TabModel = [];
 
     render() {
-        const slotRenderer = () => {
-            return (
-                <div class="waf-tabs__slot" aria-hidden="true">
-                    <slot />
-                </div>
-            )
-        }
-
         const tabsRenderer = () => {
             return (
                 <nav class="waf-tabs__nav">
@@ -41,25 +34,19 @@ export class WafTabs {
             );
         }
 
-        const tabPanesRenderer = () => {
-            return this.model.map(tabInfo =>
-                <section class="waf-tabs__tabpanel" {...this.spreadAttributesTabPane(tabInfo)} role="tabpanel"></section>
-            )
-        }
-
-        return [tabsRenderer(), ...tabPanesRenderer(), slotRenderer()];
+        return [tabsRenderer(), <div class="waf-tabs__tabpanel-container"><slot /></div>];
     }
 
     componentDidLoad() {
         // slot
-        const slotElt = this.wafTabsElt.querySelector('.waf-tabs__slot');
+        this.slottedElt = this.wafTabsElt.querySelector('.waf-tabs__tabpanel-container');
 
         // is live up-to-date
-        this.slotHTMLLiveHTMLCollection = slotElt.children;
+        this.slotHTMLLiveHTMLCollection = this.slottedElt.children;
 
         // mutation observer to detect changes
         this.slotMutationObserver = new MutationObserver(this.mutationsHandler.bind(this));
-        this.slotMutationObserver.observe(slotElt, { attributes: true, childList: true, characterData: true, subtree: true });
+        this.slotMutationObserver.observe(this.slottedElt, this.observerConfig);
 
         // initial model creation
         this.mutationsHandler();
@@ -72,7 +59,7 @@ export class WafTabs {
 
     idGenerator(type:'tab'|'tabpane', index) { return `${type}-${this.uniqueId}-${index}` }
     spreadAttributesTab(tabInfo:SingleTabModel) { return { 'id': tabInfo.tabID, 'aria-controls': tabInfo.tabPaneID, 'aria-selected': tabInfo.isSelected, 'innerHTML': tabInfo.tabContent } }
-    spreadAttributesTabPane(tabInfo:SingleTabModel) { return { 'id': tabInfo.tabPaneID, 'aria-labelledby': tabInfo.tabID, 'aria-hidden': !tabInfo.isSelected, 'innerHTML': tabInfo.tabPaneContent } }
+    spreadAttributesTabPane(tabInfo:SingleTabModel) { return { 'id': tabInfo.tabPaneID, 'aria-labelledby': tabInfo.tabID, 'aria-hidden': String(!tabInfo.isSelected), 'selected': String(tabInfo.isSelected) } }
 
     onTabSelected(tabIndexSelected:number, evt?:KeyboardEvent) {
         // utility function that switch focus if possible and return true|false depending on action feasability
@@ -116,6 +103,13 @@ export class WafTabs {
                 item.isSelected = (tabIndexSelected === index);
                 return item;
             });
+
+            // update in slotted elements (out of VDOM)
+            const wafTabs:Element[] = Array.from(this.slotHTMLLiveHTMLCollection);
+            wafTabs.forEach((elt, index) => {
+                elt.setAttribute('aria-hidden', (index === tabIndexSelected) ? 'false' : 'true');
+                elt.setAttribute('selected', (index === tabIndexSelected).toString());
+            });
         }
     }
 
@@ -123,9 +117,15 @@ export class WafTabs {
         const newModel:TabModel = [];
         const wafTabs:Element[] = Array.from(this.slotHTMLLiveHTMLCollection);
         wafTabs.forEach((elt, index) => {
+            // check if valid waf-tab tag
+            if (elt.nodeName !== 'WAF-TAB') {
+                console.warn('waf-tabs | this tag should only contain "waf-tab" tags', elt.nodeName);
+                return;
+            }
+
+            // get tab pane data
             const humanReadableIndex = index + 1;
-            const tabContentTxt = elt.querySelector('[slot="tab"]').innerHTML;
-            const tabPaneContentTxt = elt.querySelector('[slot="tabpane"]').innerHTML;
+            const tabContentTxt = elt.getAttribute('tab-header');
             const isSelectedAtr = elt.getAttribute('selected');
 
             // build entry
@@ -133,16 +133,18 @@ export class WafTabs {
                 tabID: this.idGenerator('tab', humanReadableIndex),
                 tabContent: (tabContentTxt) ? tabContentTxt : '',
                 tabPaneID: this.idGenerator('tabpane', humanReadableIndex),
-                tabPaneContent: (tabPaneContentTxt) ? tabPaneContentTxt : '',
-                isSelected: (isSelectedAtr === '') // boolean attribute
+                isSelected: (isSelectedAtr === '' || isSelectedAtr === 'true') // boolean attribute
             }
+
+            // update tab panes (out of VDOM)
+            const tabPaneAttributes = this.spreadAttributesTabPane(modelEntry);
+            Object.keys(tabPaneAttributes).forEach(attributeName => {
+                elt.setAttribute(attributeName, tabPaneAttributes[attributeName]);
+            });
 
             // push to state
             newModel.push(modelEntry);
-        });
-
-        // if no tab was selected, by default select the first one
-        if (newModel.length >= 1 && !newModel.find(tabModel => tabModel.isSelected)) newModel[0].isSelected = true;
+        });       
 
         // apply to component state
         this.model = newModel;
