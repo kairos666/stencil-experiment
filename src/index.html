@@ -131,7 +131,8 @@
             <waf-tab tab-header="WAF-IMG">
                 <h2>WAF-IMG - image async loading</h2>
                 <p>remplacement for <a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Element/img" title="go to MDN reference" target="_blank">&lt;img&gt; tag</a>. Accepts all attributes that a regular img tag would accept (ignoring deprecated ones).
-                    Only add custom loading enhancement. Add max-width:100% on images by default to avoid breaking layout in RWD.</p>
+                    Only add custom loading enhancement for loading images asynchroneously thus improving performance of the page first paint.</p>
+                <p>Add max-width:100% on images by default to avoid breaking layout in RWD.</p>
                 <h3>&lt;waf-img&gt; API - <em>minimal requirement</em></h3>
                 <ul>
                     <li>"src" attribute must be provided on waf-img tag</li>
@@ -151,7 +152,7 @@
                     <li>not optimal for srcset settings because the browser act as a black box and we don't know which image source will be applied beforehand.</li>
                 </ul>
                 <hr>
-                <h3>waf-img cases - regular cases</h3>
+                <h3>waf-img cases - regular cases (as soon as the page is ready)</h3>
                 <span>only "src", "alt" are provided</span>
                 <waf-img src="https://picsum.photos/300/200/?random" alt="basic image"></waf-img>
                 <span>"src", "alt", "width", "height" are provided (both loading the same image using the browser cache, one network request only)</span>
@@ -159,6 +160,10 @@
                 <waf-img src="https://picsum.photos/200/200/?image=500" width="200" height="200" alt="cached image"></waf-img>
                 <span>"src", "alt", "width", "height", "srcset" are provided</span>
                 <waf-img src="https://picsum.photos/g/200/200/?random" width="300" srcset="https://picsum.photos/g/200/200/?random 1x, https://picsum.photos/g/600/600/?random 2x, https://picsum.photos/g/1200/1200/?random 3x" alt="image with srcset"></waf-img>
+                <hr>
+                <h3>waf-img cases - regular cases (as soon as the tag is visible)</h3>
+                <waf-img src="https://picsum.photos/400/200/?random" alt="basic image" visible-async-loading></waf-img>
+                <waf-img src="https://picsum.photos/1200/600/?random" width="400" height="200" alt="image with dimensions" visible-async-loading></waf-img>
                 <hr>
                 <h3>waf-img edge cases - src is broken</h3>
                 <waf-img src="https://brokenimg" alt="404 url"></waf-img>
