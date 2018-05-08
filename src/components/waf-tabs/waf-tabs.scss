@@ -5,6 +5,9 @@ waf-tabs {
             display: none;
         }
     }
+    .waf-tabs__slot {
+        display: none;
+    }
     // theme styles
     $color-black: "0,0,0" !default;
     $color-primary: "63,81,181" !default;

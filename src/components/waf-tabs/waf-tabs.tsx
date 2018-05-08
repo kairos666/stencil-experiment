@@ -1,6 +1,5 @@
-import { Component, State } from '@stencil/core';
+import { Component, State, Element } from '@stencil/core';
 
-// declare model interface
 interface SingleTabModel {
     tabID:string,
     tabContent:string,
@@ -16,13 +15,20 @@ interface TabModel extends Array<SingleTabModel> {};
 })
 export class WafTabs {
     private uniqueId:number = Date.now();
-    @State() model:TabModel = [
-        { tabID: this.idGenerator('tab', 1), tabContent: 'Tab A', tabPaneID: this.idGenerator('tabpane', 1), isSelected: true, tabPaneContent: `<p>Tu vois, là on voit qu'on a beaucoup à travailler sur nous-mêmes car il faut toute la splendeur du aware car l'aboutissement de l'instinct, c'est l'amour ! Et là, vraiment, j'essaie de tout coeur de donner la plus belle réponse de la terre !</p>` },
-        { tabID: this.idGenerator('tab', 2), tabContent: 'Tab B', tabPaneID: this.idGenerator('tabpane', 2), isSelected: false, tabPaneContent: `<p>Je ne voudrais pas rentrer dans des choses trop dimensionnelles, mais, si vraiment tu veux te rappeler des souvenirs de ton perroquet, on vit dans une réalité qu'on a créée et que j'appelle illusion parce que spirituellement, on est tous ensemble, ok ? C'est cette année que j'ai eu la révélation !</p>` },
-        { tabID: this.idGenerator('tab', 3), tabContent: 'Tab C', tabPaneID: this.idGenerator('tabpane', 3), isSelected: false, tabPaneContent: `<p>Si je t'emmerde, tu me le dis, je sais que, grâce à ma propre vérité le cycle du cosmos dans la vie... c'est une grande roue car l'aboutissement de l'instinct, c'est l'amour ! C'est cette année que j'ai eu la révélation !</p>` }
-    ];
+    private slotHTMLLiveHTMLCollection:HTMLCollection;
+    private slotMutationObserver:MutationObserver;
+    @Element() wafTabsElt:HTMLElement;
+    @State() model:TabModel = [];
 
     render() {
+        const slotRenderer = () => {
+            return (
+                <div class="waf-tabs__slot" aria-hidden="true">
+                    <slot />
+                </div>
+            )
+        }
+
         const tabsRenderer = () => {
             return (
                 <nav class="waf-tabs__nav">
@@ -41,7 +47,27 @@ export class WafTabs {
             )
         }
 
-        return [tabsRenderer(), ...tabPanesRenderer()];
+        return [tabsRenderer(), ...tabPanesRenderer(), slotRenderer()];
+    }
+
+    componentDidLoad() {
+        // slot
+        const slotElt = this.wafTabsElt.querySelector('.waf-tabs__slot');
+
+        // is live up-to-date
+        this.slotHTMLLiveHTMLCollection = slotElt.children;
+
+        // mutation observer to detect changes
+        this.slotMutationObserver = new MutationObserver(this.mutationsHandler.bind(this));
+        this.slotMutationObserver.observe(slotElt, { attributes: true, childList: true, characterData: true, subtree: true });
+
+        // initial model creation
+        this.mutationsHandler();
+    }
+
+    componentDidUnload() {
+        // disconnect mutation observer
+        this.slotMutationObserver.disconnect();
     }
 
     idGenerator(type:'tab'|'tabpane', index) { return `${type}-${this.uniqueId}-${index}` }
@@ -91,5 +117,31 @@ export class WafTabs {
                 return item;
             });
         }
+    }
+
+    mutationsHandler() {
+        const newModel:TabModel = [];
+        const wafTabs:Element[] = Array.from(this.slotHTMLLiveHTMLCollection);
+        wafTabs.forEach((elt, index) => {
+            const humanReadableIndex = index + 1;
+            const tabContentTxt = elt.querySelector('[slot="tab"]').innerHTML;
+            const tabPaneContentTxt = elt.querySelector('[slot="tabpane"]').innerHTML;
+            const isSelectedAtr = elt.getAttribute('selected');
+
+            // build entry
+            const modelEntry:SingleTabModel = {
+                tabID: this.idGenerator('tab', humanReadableIndex),
+                tabContent: (tabContentTxt) ? tabContentTxt : '',
+                tabPaneID: this.idGenerator('tabpane', humanReadableIndex),
+                tabPaneContent: (tabPaneContentTxt) ? tabPaneContentTxt : '',
+                isSelected: (isSelectedAtr === '') // boolean attribute
+            }
+
+            // push to state
+            newModel.push(modelEntry);
+        });
+
+        // apply to component state
+        this.model = newModel;
     }
 }
