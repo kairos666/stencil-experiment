@@ -141,6 +141,9 @@ export class WafTabs {
             newModel.push(modelEntry);
         });
 
+        // if no tab was selected, by default select the first one
+        if (newModel.length >= 1 && !newModel.find(tabModel => tabModel.isSelected)) newModel[0].isSelected = true;
+
         // apply to component state
         this.model = newModel;
     }
