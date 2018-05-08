@@ -125,7 +125,7 @@ export class WafTabs {
 
             // get tab pane data
             const humanReadableIndex = index + 1;
-            const tabContentTxt = elt.getAttribute('tab-header');
+            const tabContentTxt = this.cleanEscapedCharacters(elt.getAttribute('tab-header'));
             const isSelectedAtr = elt.getAttribute('selected');
 
             // build entry
@@ -148,5 +148,9 @@ export class WafTabs {
 
         // apply to component state
         this.model = newModel;
+    }
+
+    cleanEscapedCharacters(inString:string):string {
+        return inString.replace('&amp;', '&').replace('&lt;', '<').replace('&gt;', '>').replace('&quot;', '"');
     }
 }
