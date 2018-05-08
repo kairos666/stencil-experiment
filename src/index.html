@@ -137,19 +137,21 @@
                 <ul>
                     <li>"src" attribute must be provided on waf-img tag</li>
                 </ul>
-                <h3>&lt;waf-input&gt; tag API - <em>optional requirement</em></h3>
+                <h3>&lt;waf-img&gt; tag API - <em>optional requirement</em></h3>
                 <ul>
                     <li><em>alt</em> attribute for textual alternative to image (optional because accessibility requires to not have them in case of a purely decorational visual)</li>
+                    <li><em>visible-async-loading</em> boolean attribute that change behavior to async load the image if both the document is ready AND the waf-img is visible in the browser</li>
                     <li><em>srcset</em> regular &lt;img&gt; attribute</li>
                     <li><em>decoding</em> regular &lt;img&gt; attribute</li>
                     <li><em>width</em> regular &lt;img&gt; attribute. Loading placeholder apply also the specified width.</li>
                     <li><em>height</em> regular &lt;img&gt; attribute. Loading placeholder apply also the specified height.</li>
                     <li><em>sizes</em> regular &lt;img&gt; attribute</li>
                 </ul>
-                <h3>&lt;waf-input&gt; tag API - <em>limitations</em></h3>
+                <h3>&lt;waf-img&gt; tag API - <em>limitations</em></h3>
                 <ul>
                     <li>can't specify custom HTML for loading and broken placeholders. You can still style them though.</li>
                     <li>not optimal for srcset settings because the browser act as a black box and we don't know which image source will be applied beforehand.</li>
+                    <li>&lt;waf-img&gt; can't be self closing tag like &lt;img&gt; because it is not allowed by CustomElements specs</li>
                 </ul>
                 <hr>
                 <h3>waf-img cases - regular cases (as soon as the page is ready)</h3>
