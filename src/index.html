@@ -34,16 +34,40 @@
         <h1>StencilJS - playground</h1>
         <waf-tabs>
             <waf-tab selected tab-header="Intro">
-                <h2>WAF-IMG - image async loading</h2>
-                <p>Tu vois, là on voit qu'on a beaucoup à travailler sur nous-mêmes car il faut toute la splendeur du aware car l'aboutissement de l'instinct, c'est l'amour ! Et là, vraiment, j'essaie de tout coeur de donner la plus belle réponse de la terre
-                    !
-                </p>
-                <p>Je ne voudrais pas rentrer dans des choses trop dimensionnelles, mais, si vraiment tu veux te rappeler des souvenirs de ton perroquet, on vit dans une réalité qu'on a créée et que j'appelle illusion parce que spirituellement, on est tous
-                    ensemble, ok ? C'est cette année que j'ai eu la révélation !</p>
+                <ul>
+                    <li>
+                        <h2>WAF-INPUT</h2>
+                        <p>Un champs texte qui englobe un tag input et le style à la Material design. Le champs input reste complètement fonctionnel, il est simplement "décoré" avec un label et un style approprié. Les erreurs natives sont également gérées
+                            (type="email", pattern, placeholder, value, disabled, required, ...).</p>
+                    </li>
+                </ul>
             </waf-tab>
             <waf-tab tab-header="WAF-INPUT">
                 <h2>WAF-INPUT - textfield</h2>
-                <h3>all waf-input cases</h3>
+                <p>Un champs texte qui englobe un tag input et le style à la Material design. Le champs <a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input" title="go to MDN reference" target="_blank">&lt;input&gt; tag</a> reste complètement
+                    fonctionnel, il est simplement "décoré" avec un label et un style approprié. Les erreurs natives sont également gérées (type="email", pattern, placeholder, value, disabled, required, ...).</p>
+                <h3>&lt;waf-input&gt; API - <em>minimal requirement</em></h3>
+                <ul>
+                    <li>insert a unique input tag inside</li>
+                    <li>"label" attribute must be provided on waf-input tag (accessibility binding with id is automatic)</li>
+                    <li>"id" attribute must be provided on input (would not make sense to auto generate it)</li>
+                </ul>
+                <h3>&lt;waf-input&gt; tag API - <em>optional requirement</em></h3>
+                <ul>
+                    <li><em>float (mdl specific)</em> boolean attribute to customize behavior with floated animated label</li>
+                    <li><em>alignRight (mdl specific)</em> boolean attribute to customize style for RTL languages</li>
+                    <li><em>fullWidth (mdl specific)</em> boolean attribute to customize style for full width inputs</li>
+                    <li><em>disabled|required|pattern|value|step|placeholder|...</em> accept and react to all valid &lt;input&gt; attributes without alterations</li>
+                    <li><em>errors</em> you can provide a set of custom error messages to override the built-in defaults</li>
+                </ul>
+                <h3>&lt;waf-input&gt; tag API - <em>limitations</em></h3>
+                <ul>
+                    <li>not fit for custom sync|async validation, need to be extended or using another component</li>
+                    <li>input attributes are only evaluated at bootstrap time, if "placeholder" value is changed, for exmaple, it is ignored by the &lt;waf-input&gt; component, you would have to recreate a new one</li>
+                    <li>custom specifications are tied to theme and may overload the component uselessly for other themes</li>
+                </ul>
+                <hr>
+                <h3>waf-input cases - regular cases</h3>
                 <waf-input label="simple textfield">
                     <input id="sample1" type="text" />
                 </waf-input>
@@ -74,22 +98,31 @@
                 <waf-input label="label G" float>
                     <input id="sample8" name="age" type="number" min="0" step="1" value="36" />
                 </waf-input>
-                <h3>invalid use of component</h3>
+                <hr>
+                <h3>waf-input cases - invalid usage for compoenent</h3>
+                <h4>No ID</h4>
                 <waf-input label="no id input" float>
                     <input name="age" type="number" min="0" step="1" value="36" />
                 </waf-input>
+                <h4>No tag inserted</h4>
                 <waf-input label="no input"></waf-input>
+                <h4>multiple input tag</h4>
                 <waf-input label="no id input" float>
                     <input name="age" type="number" min="0" step="1" value="36" />
                     <input name="age" type="number" min="0" step="1" value="36" />
                 </waf-input>
+                <h4>no input tag inserted p tag instead</h4>
                 <waf-input label="no id input" float>
                     <p>I'm not an input tag</p>
                 </waf-input>
+                <h4>no label provided</h4>
                 <waf-input float>
                     <input id="sample9" name="age" type="number" min="0" step="1" value="36" />
                 </waf-input>
+                <hr>
                 <h3>not a component (demonstrate style scope without shadow DOM)</h3>
+                <p>below is pure HTML with classes to reflect the same structure that would be generated by the component. It is not impacted by styles, therefore it can safely be used in existing pages.</p>
+                <p>Still, any regular CSS with selector containing the component tag name will be applied - this open the possibility to provide custom elements with only behavior and core styles</p>
                 <div class="waf-textfield waf-textfield--floating-label is-disabled"><label class="waf-textfield__label" for="sample6">label E</label>
                     <input id="sample6" name="age" type="number" min="0" step="1" />
                     <span class="waf-textfield__error">errorText</span>
@@ -97,13 +130,41 @@
             </waf-tab>
             <waf-tab tab-header="WAF-IMG">
                 <h2>WAF-IMG - image async loading</h2>
+                <p>remplacement for <a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Element/img" title="go to MDN reference" target="_blank">&lt;img&gt; tag</a>. Accepts all attributes that a regular img tag would accept (ignoring deprecated ones).
+                    Only add custom loading enhancement. Add max-width:100% on images by default to avoid breaking layout in RWD.</p>
+                <h3>&lt;waf-img&gt; API - <em>minimal requirement</em></h3>
+                <ul>
+                    <li>"src" attribute must be provided on waf-img tag</li>
+                </ul>
+                <h3>&lt;waf-input&gt; tag API - <em>optional requirement</em></h3>
+                <ul>
+                    <li><em>alt</em> attribute for textual alternative to image (optional because accessibility requires to not have them in case of a purely decorational visual)</li>
+                    <li><em>srcset</em> regular &lt;img&gt; attribute</li>
+                    <li><em>decoding</em> regular &lt;img&gt; attribute</li>
+                    <li><em>width</em> regular &lt;img&gt; attribute. Loading placeholder apply also the specified width.</li>
+                    <li><em>height</em> regular &lt;img&gt; attribute. Loading placeholder apply also the specified height.</li>
+                    <li><em>sizes</em> regular &lt;img&gt; attribute</li>
+                </ul>
+                <h3>&lt;waf-input&gt; tag API - <em>limitations</em></h3>
+                <ul>
+                    <li>can't specify custom HTML for loading and broken placeholders. You can still style them though.</li>
+                    <li>not optimal for srcset settings because the browser act as a black box and we don't know which image source will be applied beforehand.</li>
+                </ul>
+                <hr>
+                <h3>waf-img cases - regular cases</h3>
+                <span>only "src", "alt" are provided</span>
                 <waf-img src="https://picsum.photos/300/200/?random" alt="basic image"></waf-img>
+                <span>"src", "alt", "width", "height" are provided (both loading the same image using the browser cache, one network request only)</span>
                 <waf-img src="https://picsum.photos/200/200/?image=500" width="200" height="200" alt="image with dimensions"></waf-img>
                 <waf-img src="https://picsum.photos/200/200/?image=500" width="200" height="200" alt="cached image"></waf-img>
+                <span>"src", "alt", "width", "height", "srcset" are provided</span>
                 <waf-img src="https://picsum.photos/g/200/200/?random" width="300" srcset="https://picsum.photos/g/200/200/?random 1x, https://picsum.photos/g/600/600/?random 2x, https://picsum.photos/g/1200/1200/?random 3x" alt="image with srcset"></waf-img>
-                <h3>invalid use of component</h3>
+                <hr>
+                <h3>waf-img edge cases - src is broken</h3>
                 <waf-img src="https://brokenimg" alt="404 url"></waf-img>
                 <waf-img src="https://brokenimg" width="200" height="200" alt="404 url with dimensions"></waf-img>
+                <hr>
+                <h3>waf-img cases - invalid use of component (no "src" attribute)</h3>
                 <waf-img width="200" height="200" alt="missing src attribute"></waf-img>
             </waf-tab>
             <waf-tab tab-header="WAF-TABS">
