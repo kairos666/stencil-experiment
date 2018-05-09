@@ -15,7 +15,8 @@
         "serve": "stencil-dev-server",
         "start": "npm run dev",
         "test": "jest --no-cache",
-        "test.watch": "jest --watch --no-cache"
+        "test.watch": "jest --watch --no-cache",
+        "docs": "typedoc src/components/"
     },
     "dependencies": {
         "@stencil/sass": "0.0.3",
@@ -26,7 +27,8 @@
         "@stencil/dev-server": "latest",
         "@stencil/utils": "latest",
         "@types/jest": "^21.1.1",
-        "jest": "^21.2.1"
+        "jest": "^21.2.1",
+        "typedoc": "^0.11.1"
     },
     "repository": {
         "type": "git",
