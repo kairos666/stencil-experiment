@@ -161,8 +161,9 @@
                 <waf-img src="https://picsum.photos/g/200/200/?random" width="300" srcset="https://picsum.photos/g/200/200/?random 1x, https://picsum.photos/g/600/600/?random 2x, https://picsum.photos/g/1200/1200/?random 3x" alt="image with srcset"></waf-img>
                 <hr>
                 <h3>waf-img cases - regular cases (as soon as the tag is visible)</h3>
-                <waf-img src="https://picsum.photos/400/200/?random" alt="basic image" visible-async-loading></waf-img>
-                <waf-img src="https://picsum.photos/1200/600/?random" width="400" height="200" alt="image with dimensions" visible-async-loading></waf-img>
+                <waf-img src="https://picsum.photos/400/200/?image=304" alt="basic image" visible-async-loading></waf-img>
+                <waf-img src="https://picsum.photos/1200/600/?image=306" width="400" height="200" alt="image with dimensions" visible-async-loading></waf-img>
+                <waf-img src="https://picsum.photos/200/200/?image=500" width="200" height="200" alt="was cached previously" visible-async-loading></waf-img>
                 <hr>
                 <h3>waf-img edge cases - src is broken</h3>
                 <waf-img src="https://brokenimg" alt="404 url"></waf-img>

@@ -69,7 +69,6 @@ export class WafImg {
                                 this.srcSwapHandler(this.src);
                             });
                         }
-                        this.srcSwapHandler(this.src);
                         observer.disconnect();
                     }
                 });
@@ -94,10 +93,16 @@ export class WafImg {
     srcSwapHandler(newValue:string) {
         // first fetch the image (browser put it in cache)
         fetch(newValue)
-            .then(() => {
-                // then add src set that will use that cache directly
+            .then(response => {
+                return response.blob();
+            })
+            .then(responseBlob => {
+                return URL.createObjectURL(responseBlob);
+            })
+            .then(responseBlobObjectURL => {
+                // then add src set that will use that response directly
                 this.isBroken = false;
-                this.innerSrc = this.src;
+                this.innerSrc = responseBlobObjectURL;
             })
             .catch(() => {
                 // if image can't be fetched
