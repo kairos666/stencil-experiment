@@ -83,7 +83,7 @@ export class WafImg {
         if (!this.src) {
             console.warn('waf-img | a src is required');
             this.isBroken = true;
-        } else if(!this.visibleAsyncLoading) {
+        } else if(!this.visibleAsyncLoading || !('IntersectionObserver' in window)) {
             // async load when browser is available (not waiting for element to be visible in viewport)
             const docState = document.readyState.toString();
             if (docState === 'loaded' || docState === 'interactive' || docState === 'complete') {
