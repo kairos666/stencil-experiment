@@ -231,9 +231,29 @@
                     </waf-tab>
                 </waf-tabs>
             </waf-tab>
+            <waf-tab tab-header="WAF-DIALOG">
+                <h2>WAF-DIALOG - modal windows made easy</h2>
+                <p>Easy way to create full feature modal windows with accessibility</p>
+                <hr>
+                <h3>waf-modals cases - regular cases</h3>
+                <button class="dialog-trigger" type="button">show information dialog</button>
+                <waf-dialog>
+                    <h1 slot="title">Allow data collection?</h1>
+                    <p slot="content">Allowing us to collect data will let us get you the information you want faster.</p>
+                    <menu slot="actions">
+                        <button type="button" class="mdl-button">Agree</button>
+                        <button type="button" data-dialog-close class="mdl-button">Disagree</button>
+                    </menu>
+                </waf-dialog>
+                <button class="dialog-trigger" type="button">show confirmation dialog</button>
+                <waf-dialog prevent-backdrop-closing></waf-dialog>
+                <button class="dialog-trigger" type="button">show dialog without backdrop</button>
+                <waf-dialog no-backdrop></waf-dialog>
+            </waf-tab>
         </waf-tabs>
     </main>
     <script>
+        // WAF-INPUT
         document.querySelector('#waf-input-custom-errors').errors = {
             badInput: 'error passed by JS',
             patternMismatch: 'error passed by JS',
@@ -263,6 +283,18 @@
             console.info('HTML errors string updated');
             document.querySelector('#waf-input-custom-html-errors').errors = '{ "patternMismatch": "HTML JSON string" }';
         }, 10000);
+    </script>
+    <script>
+        // WAF-DIALOG
+        const dialogTriggers = document.querySelectorAll('.dialog-trigger');
+        for (let i = 0; i < dialogTriggers.length; i++) {
+            // set listeners on all buttons
+            dialogTriggers.item(i).addEventListener('click', function(evt) {
+                const dialogElt = evt.target.nextElementSibling;
+                // call custom element toggleFunction
+                dialogElt.toggleModal();
+            });
+        }
     </script>
 </body>
 
