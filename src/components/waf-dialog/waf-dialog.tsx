@@ -61,12 +61,16 @@ export class WafDialog {
         // listen to backdrop click
         this.backdropElt = this.wafDialogElt.querySelector('.waf-dialog-backdrop')
         this.backdropElt.addEventListener('click', this.backdropClickHandler.bind(this));
+
+        // listen to escape key
+        document.addEventListener('keydown', this.escapeKeyHandler.bind(this));
     }
 
     componentDidUnload() {
         // cleanup listeners
         this.wafDialogElt.removeEventListener('click', this.innerCloseHandler.bind(this), true);
         this.backdropElt.removeEventListener('click', this.backdropClickHandler.bind(this));
+        document.removeEventListener('keydown', this.escapeKeyHandler.bind(this));
     }
 
     private innerCloseHandler(evt:Event) {
@@ -86,6 +90,10 @@ export class WafDialog {
 
     private backdropClickHandler() {
         if (!this.preventBackdropClosing && !this.noBackdrop) this.hideModal();
+    }
+
+    private escapeKeyHandler(evt:KeyboardEvent) {
+        if (evt.keyCode === 27) this.hideModal();
     }
 
     private idGenerator(type:'title'|'description') { return `dialog-${this.uniqueId}-${type}` }
