@@ -1,4 +1,4 @@
-import { Component, Prop, State, Method, Element } from '@stencil/core';
+import { Component, Prop, State, Method, Element, Event, EventEmitter } from '@stencil/core';
 import focusTrapBuilder from 'focus-trap';
 
 /**
@@ -13,8 +13,12 @@ import focusTrapBuilder from 'focus-trap';
  * ```
  * <waf-dialog>
  *  <!-- START - your dialog content here -->
- *  <h2>My dialog content</h2>
- *  <p>My dialog body copy yeah!</p>
+ *  <h1 slot="title">Allow data collection?</h1>
+    <p slot="content">Allowing us to collect data will let us get you the information you want faster.</p>
+    <menu slot="actions">
+        <button type="button" class="mdl-button">Agree</button>
+        <button type="button" data-dialog-close class="mdl-button">Disagree</button>
+    </menu>
  *  <!-- END - your dialog content here -->
  * </waf-dialog>
  * ```
@@ -35,7 +39,9 @@ export class WafDialog {
     private backdropElt:Element;
     private focusTrap;
     @Element() private wafDialogElt:Element;
-    @State() isOpen:boolean = false;
+    @Event() private waf_dialog_open:EventEmitter;
+    @Event() private waf_dialog_close:EventEmitter;
+    @State() private isOpen:boolean = false;
     @Prop() preventBackdropClosing:boolean;
     @Prop() noBackdrop:boolean;
     @Prop() limitedHeight:boolean;
@@ -116,12 +122,14 @@ export class WafDialog {
     showModal() { 
         this.isOpen = true;
         this.focusTrap.activate();
+        this.waf_dialog_open.emit();
     } 
 
     @Method()
     hideModal() { 
         this.isOpen = false;
         this.focusTrap.deactivate();
+        this.waf_dialog_close.emit();
     }
 
     @Method()
