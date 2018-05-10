@@ -48,8 +48,8 @@ export class WafDialog {
 
     render() {
         return [
-            <div class="waf-dialog-backdrop" tabindex="-1" style={(!this.isOpen || this.noBackdrop) ? { display: 'none' } : { zIndex: String(this.backdropZIndex) }}></div>,
-            <div aria-hidden={(!this.isOpen).toString()} aria-labelledby={this.idGenerator('title')} aria-describedby={this.idGenerator('description')} role="dialog"  style={(!this.isOpen) ? { display: 'none' } : { zIndex: String(this.dialogZIndex) }}>
+            <div class="waf-dialog-backdrop" tabindex="-1" style={this.backdropStyles()}></div>,
+            <div aria-hidden={(!this.isOpen).toString()} aria-labelledby={this.idGenerator('title')} aria-describedby={this.idGenerator('description')} role="dialog"  style={this.dialogStyles()}>
                 <section role="document" tabindex="-1">
                     <div id={this.idGenerator('description')} class="sr-only">Beginning of dialog window. Escape will cancel and close the window.</div>
                     <div id={this.idGenerator('title')}>
@@ -117,6 +117,31 @@ export class WafDialog {
     }
 
     private idGenerator(type:'title'|'description') { return `dialog-${this.uniqueId}-${type}` }
+
+    private backdropStyles() {
+        // base styles
+        let stylesObject:any = {
+            zIndex: String(this.backdropZIndex)
+        };
+
+        // additional style when hidden or no backdrop
+        if (!this.isOpen || this.noBackdrop) stylesObject.display = 'none';
+
+        return stylesObject;
+    }
+
+    private dialogStyles() {
+        // base styles
+        let stylesObject:any = {
+            position: (this.limitedHeight) ? 'fixed' : 'absolute',
+            zIndex: String(this.dialogZIndex)
+        };
+
+        // additional style when hidden or no backdrop
+        if (!this.isOpen) stylesObject.display = 'none';
+
+        return stylesObject;
+    }
 
     @Method()
     showModal() { 
