@@ -241,14 +241,87 @@
                     <h1 slot="title">Allow data collection?</h1>
                     <p slot="content">Allowing us to collect data will let us get you the information you want faster.</p>
                     <menu slot="actions">
+                        <button type="button" data-dialog-close class="mdl-button">Ok</button>
+                    </menu>
+                </waf-dialog>
+                <button class="dialog-trigger" type="button">show confirmation dialog</button>
+                <waf-dialog prevent-backdrop-closing>
+                    <h2 slot="title">dialog title</h2>
+                    <p slot="content">dialog content</p>
+                    <menu slot="actions">
                         <button type="button" class="mdl-button">Agree</button>
                         <button type="button" data-dialog-close class="mdl-button">Disagree</button>
                     </menu>
                 </waf-dialog>
-                <button class="dialog-trigger" type="button">show confirmation dialog</button>
-                <waf-dialog prevent-backdrop-closing></waf-dialog>
                 <button class="dialog-trigger" type="button">show dialog without backdrop</button>
-                <waf-dialog no-backdrop></waf-dialog>
+                <waf-dialog no-backdrop>
+                    <h2 slot="title">i'm a teapot</h2>
+                </waf-dialog>
+                <button class="dialog-trigger" type="button">show very long dialog</button>
+                <waf-dialog>
+                    <h2 slot="title" style="margin-top:0;">dialog title</h2>
+                    <div slot="content">
+                        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec sit amet erat in libero elementum consequat in et quam. Phasellus porta felis tortor, et faucibus turpis auctor sed. Aenean laoreet feugiat felis. Proin nec dapibus
+                            enim, sit amet venenatis quam. Aenean sit amet finibus magna. Fusce pulvinar interdum tellus, nec finibus dolor mattis et. Nulla faucibus porta mattis. Etiam vulputate bibendum ultrices. In sed consequat augue. Ut tristique
+                            mauris vitae pretium fermentum. Cras eros nunc, laoreet vel neque ut, suscipit tempus odio. Vivamus a dapibus arcu, a suscipit eros. Nam condimentum erat nec ipsum aliquam fringilla non vel tortor. Nunc aliquet magna sed elit
+                            faucibus gravida.</p>
+                        <p>Pellentesque sit amet sodales mauris. Curabitur suscipit felis non leo pulvinar dictum. Praesent tempor nulla a posuere aliquam. Nunc feugiat, enim nec consectetur finibus, purus turpis maximus sapien, eget tincidunt est ligula
+                            ut nulla. Aliquam eu justo pellentesque, mollis erat vel, feugiat enim. Nullam vel posuere nunc. Suspendisse potenti. Nullam posuere aliquet neque eget cursus. Morbi luctus elementum rhoncus.</p>
+                        <p>Phasellus malesuada posuere ipsum, eu gravida risus tincidunt convallis. Nam ac purus ligula. Sed ut blandit libero. Vestibulum sodales enim et leo ultricies pharetra. Nam turpis nisl, tempor ac neque quis, fringilla facilisis
+                            mauris. Aliquam molestie, lacus vel consectetur pellentesque, lorem lacus posuere turpis, sit amet iaculis est magna eget ipsum. Vivamus leo sapien, blandit in maximus at, efficitur quis nibh. Donec in nibh sed lorem faucibus
+                            commodo. Sed sollicitudin ligula semper massa vehicula pulvinar egestas vitae felis. Vivamus ullamcorper pellentesque diam, eu venenatis dui efficitur nec. Proin pharetra augue eget metus ullamcorper aliquam.</p>
+                        <p>Aliquam gravida sem enim, vel efficitur metus maximus eget. Curabitur venenatis quam sed turpis vestibulum sagittis. Mauris non massa metus. Vestibulum sapien massa, efficitur a nisi at, ullamcorper accumsan velit. Nam consequat
+                            molestie libero. Vestibulum nec neque id quam ullamcorper dapibus non eget odio. Proin aliquam ante eleifend euismod blandit. Nulla laoreet nisl ac efficitur elementum. Integer dignissim sapien in massa condimentum consequat
+                            at ut ligula. Fusce eget sapien justo. Praesent eget ex sit amet magna molestie tristique a condimentum sem. Vivamus bibendum interdum gravida. Nam congue libero et erat lacinia, consequat dictum est varius. Sed magna enim,
+                            bibendum vitae sem in, efficitur molestie nisi.</p>
+                        <p>Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Etiam vel dui et libero dignissim iaculis. Etiam enim nisl, rhoncus non enim ut, tristique ullamcorper magna. Mauris vehicula tristique
+                            sapien, dignissim tincidunt sem pellentesque sit amet. Maecenas pretium turpis risus, a sollicitudin sem gravida sed. Ut commodo viverra tristique. Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
+                        <p>In non felis non metus mattis malesuada at id lacus. Nam tempor nulla sit amet elit sollicitudin facilisis. Nulla convallis, dui in iaculis bibendum, nulla lorem vestibulum quam, ac pellentesque purus purus viverra augue. Duis
+                            bibendum sollicitudin bibendum. In leo magna, rhoncus at finibus in, volutpat eu massa. Aliquam vel neque at enim semper tempor in ac ex. Praesent vitae lacus consectetur, lacinia est eget, fermentum eros. Aenean id felis nulla.
+                            Mauris vitae faucibus lorem. Sed nulla erat, egestas vel massa quis, rhoncus porta orci. Nulla mollis eleifend commodo. Curabitur elit tortor, ultricies id auctor sed, condimentum nec quam. Nulla ornare, augue quis imperdiet
+                            fermentum, turpis augue luctus odio, at molestie massa libero non mauris. Pellentesque sit amet risus hendrerit, accumsan orci vel, tempus risus.</p>
+                        <p>Sed magna ex, condimentum vel nisi ac, pulvinar lacinia orci. Vestibulum nec gravida est. Morbi consectetur tincidunt massa, sit amet tincidunt purus aliquet in. Nam efficitur varius ullamcorper. Nullam at dolor quis nisl gravida
+                            blandit sed in nunc. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Cras ac velit vulputate, egestas dolor quis, vehicula leo. Orci varius natoque penatibus et magnis dis parturient
+                            montes, nascetur ridiculus mus. Cras consequat quam et tempus volutpat. Nulla bibendum tincidunt ligula, a rhoncus augue auctor nec. Maecenas laoreet in purus sit amet auctor.</p>
+                    </div>
+                    <menu slot="actions">
+                        <button type="button" class="mdl-button">Agree</button>
+                        <button type="button" data-dialog-close class="mdl-button">Disagree</button>
+                    </menu>
+                </waf-dialog>
+                <button class="dialog-trigger" type="button">show very long dialog (limited height)</button>
+                <waf-dialog limited-height>
+                    <h2 slot="title" style="margin-top:0;">dialog title</h2>
+                    <div slot="content">
+                        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec sit amet erat in libero elementum consequat in et quam. Phasellus porta felis tortor, et faucibus turpis auctor sed. Aenean laoreet feugiat felis. Proin nec dapibus
+                            enim, sit amet venenatis quam. Aenean sit amet finibus magna. Fusce pulvinar interdum tellus, nec finibus dolor mattis et. Nulla faucibus porta mattis. Etiam vulputate bibendum ultrices. In sed consequat augue. Ut tristique
+                            mauris vitae pretium fermentum. Cras eros nunc, laoreet vel neque ut, suscipit tempus odio. Vivamus a dapibus arcu, a suscipit eros. Nam condimentum erat nec ipsum aliquam fringilla non vel tortor. Nunc aliquet magna sed elit
+                            faucibus gravida.</p>
+                        <p>Pellentesque sit amet sodales mauris. Curabitur suscipit felis non leo pulvinar dictum. Praesent tempor nulla a posuere aliquam. Nunc feugiat, enim nec consectetur finibus, purus turpis maximus sapien, eget tincidunt est ligula
+                            ut nulla. Aliquam eu justo pellentesque, mollis erat vel, feugiat enim. Nullam vel posuere nunc. Suspendisse potenti. Nullam posuere aliquet neque eget cursus. Morbi luctus elementum rhoncus.</p>
+                        <p>Phasellus malesuada posuere ipsum, eu gravida risus tincidunt convallis. Nam ac purus ligula. Sed ut blandit libero. Vestibulum sodales enim et leo ultricies pharetra. Nam turpis nisl, tempor ac neque quis, fringilla facilisis
+                            mauris. Aliquam molestie, lacus vel consectetur pellentesque, lorem lacus posuere turpis, sit amet iaculis est magna eget ipsum. Vivamus leo sapien, blandit in maximus at, efficitur quis nibh. Donec in nibh sed lorem faucibus
+                            commodo. Sed sollicitudin ligula semper massa <a href="#" title="fake link">vehicula pulvinar</a> egestas vitae felis. Vivamus ullamcorper pellentesque diam, eu venenatis dui efficitur nec. Proin pharetra augue eget metus ullamcorper
+                            aliquam.</p>
+                        <p>Aliquam gravida sem enim, vel efficitur metus maximus eget. Curabitur venenatis quam sed turpis vestibulum sagittis. Mauris non massa metus. Vestibulum sapien massa, efficitur a nisi at, ullamcorper accumsan velit. Nam consequat
+                            molestie libero. Vestibulum nec neque id quam ullamcorper dapibus non eget odio. Proin aliquam ante eleifend euismod blandit. Nulla laoreet nisl ac efficitur elementum. Integer dignissim sapien in massa condimentum consequat
+                            at ut ligula. Fusce eget sapien justo. Praesent eget ex sit amet magna molestie tristique a condimentum sem. Vivamus bibendum interdum gravida. Nam congue libero et erat lacinia, consequat dictum est varius. Sed magna enim,
+                            bibendum vitae sem in, efficitur molestie nisi.</p>
+                        <p>Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Etiam vel dui et libero dignissim iaculis. Etiam enim nisl, rhoncus non enim ut, tristique ullamcorper magna. Mauris vehicula tristique
+                            sapien, dignissim tincidunt sem pellentesque sit amet. Maecenas pretium turpis risus, a sollicitudin sem gravida sed. Ut commodo viverra tristique. Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
+                        <p>In non felis non metus mattis malesuada at id lacus. Nam tempor nulla sit amet elit sollicitudin facilisis. Nulla convallis, dui in iaculis bibendum, nulla lorem vestibulum quam, ac pellentesque purus purus viverra augue. Duis
+                            bibendum sollicitudin bibendum. In leo magna, rhoncus at finibus in, volutpat eu massa. Aliquam vel neque at enim semper tempor in ac ex. Praesent vitae lacus consectetur, lacinia est eget, fermentum eros. Aenean id felis nulla.
+                            Mauris vitae faucibus lorem. Sed nulla erat, egestas vel massa quis, rhoncus porta orci. Nulla mollis eleifend commodo. Curabitur elit tortor, ultricies id auctor sed, condimentum nec quam. Nulla ornare, augue quis imperdiet
+                            fermentum, turpis augue luctus odio, at molestie massa libero non mauris. Pellentesque sit amet risus hendrerit, accumsan orci vel, tempus risus.</p>
+                        <p>Sed magna ex, condimentum vel nisi ac, pulvinar lacinia orci. Vestibulum nec gravida est. Morbi consectetur tincidunt massa, sit amet tincidunt purus aliquet in. Nam efficitur varius ullamcorper. Nullam at dolor quis nisl gravida
+                            blandit sed in nunc. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Cras ac velit vulputate, egestas dolor quis, vehicula leo. Orci varius natoque penatibus et magnis dis parturient
+                            montes, nascetur ridiculus mus. Cras consequat quam et tempus volutpat. Nulla bibendum tincidunt ligula, a rhoncus augue auctor nec. Maecenas laoreet in purus sit amet auctor.</p>
+                    </div>
+                    <menu slot="actions">
+                        <button type="button" class="mdl-button">Agree</button>
+                        <button type="button" data-dialog-close class="mdl-button">Disagree</button>
+                    </menu>
+                </waf-dialog>
             </waf-tab>
         </waf-tabs>
     </main>

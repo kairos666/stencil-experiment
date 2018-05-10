@@ -50,7 +50,7 @@ export class WafDialog {
         return [
             <div class="waf-dialog-backdrop" tabindex="-1" style={this.backdropStyles()}></div>,
             <div aria-hidden={(!this.isOpen).toString()} aria-labelledby={this.idGenerator('title')} aria-describedby={this.idGenerator('description')} role="dialog"  style={this.dialogStyles()}>
-                <section role="document" tabindex="-1">
+                <section role="document" tabindex="-1" style={(this.limitedHeight) ? {} : { maxHeight: 'none' }}>
                     <div id={this.idGenerator('description')} class="sr-only">Beginning of dialog window. Escape will cancel and close the window.</div>
                     <div id={this.idGenerator('title')}>
                         <slot name="title"/>
