@@ -14,11 +14,11 @@ import focusTrapBuilder from 'focus-trap';
  * <waf-dialog>
  *  <!-- START - your dialog content here -->
  *  <h1 slot="title">Allow data collection?</h1>
-    <p slot="content">Allowing us to collect data will let us get you the information you want faster.</p>
-    <menu slot="actions">
-        <button type="button" class="mdl-button">Agree</button>
-        <button type="button" data-dialog-close class="mdl-button">Disagree</button>
-    </menu>
+ *  <p slot="content">Allowing us to collect data will let us get you the information you want faster.</p>
+ *  <menu slot="actions">
+ *   <button type="button" class="mdl-button">Agree</button>
+ *   <button type="button" data-dialog-close class="mdl-button">Disagree</button>
+ *  </menu>
  *  <!-- END - your dialog content here -->
  * </waf-dialog>
  * ```
@@ -32,8 +32,6 @@ import focusTrapBuilder from 'focus-trap';
   styleUrl: 'waf-dialog.scss'
 })
 export class WafDialog {
-    private backdropZIndex:number = 666;
-    private dialogZIndex:number = 667;
     private closeAttrName:string = 'data-dialog-close';
     private uniqueId:number = Date.now();
     private backdropElt:Element;
@@ -49,8 +47,8 @@ export class WafDialog {
     render() {
         return [
             <div class="waf-dialog-backdrop" tabindex="-1" style={this.backdropStyles()}></div>,
-            <div aria-hidden={(!this.isOpen).toString()} aria-labelledby={this.idGenerator('title')} aria-describedby={this.idGenerator('description')} role="dialog"  style={this.dialogStyles()}>
-                <section role="document" tabindex="-1" style={(this.limitedHeight) ? {} : { maxHeight: 'none' }}>
+            <div aria-hidden={(!this.isOpen).toString()} aria-labelledby={this.idGenerator('title')} aria-describedby={this.idGenerator('description')} role="dialog" class={this.dialogClass()} style={this.dialogStyles()}>
+                <section role="document" tabindex="-1">
                     <div id={this.idGenerator('description')} class="sr-only">Beginning of dialog window. Escape will cancel and close the window.</div>
                     <div id={this.idGenerator('title')}>
                         <slot name="title"/>
@@ -120,9 +118,7 @@ export class WafDialog {
 
     private backdropStyles() {
         // base styles
-        let stylesObject:any = {
-            zIndex: String(this.backdropZIndex)
-        };
+        let stylesObject:any = {};
 
         // additional style when hidden or no backdrop
         if (!this.isOpen || this.noBackdrop) stylesObject.display = 'none';
@@ -132,15 +128,16 @@ export class WafDialog {
 
     private dialogStyles() {
         // base styles
-        let stylesObject:any = {
-            position: (this.limitedHeight) ? 'fixed' : 'absolute',
-            zIndex: String(this.dialogZIndex)
-        };
+        let stylesObject:any = {};
 
         // additional style when hidden or no backdrop
         if (!this.isOpen) stylesObject.display = 'none';
 
         return stylesObject;
+    }
+
+    private dialogClass() {
+        return (this.limitedHeight) ? 'limited-height' : '';
     }
 
     @Method()

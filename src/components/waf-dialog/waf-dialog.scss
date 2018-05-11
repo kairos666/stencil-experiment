@@ -4,6 +4,7 @@
 waf-dialog {
     .waf-dialog-backdrop {
         position: fixed;
+        z-index: $backdropZIndex;
         background-color: $backdropColor;
         top: 0;
         left: 0;
@@ -22,18 +23,26 @@ waf-dialog {
         }
     }
     [role="dialog"] {
+        position: absolute;
+        z-index: $dialogZindex;
         background-color: $dialogBgColor;
-        padding: 24px;
+        padding: $lg-pad;
         box-shadow: unquote($dialogShadow);
-        top: 50%;
         left: 50%;
-        transform: translate(-50%, -50%);
+        transform: translateX(-50%);
+        top: $unlimitedHeightVerticalMargins;
+        margin-bottom: $unlimitedHeightVerticalMargins;
+        &.limited-height {
+            position: fixed;
+            top: 50%;
+            transform: translate(-50%, -50%);
+        }
     }
     @include media(">=desktop") {
         [role="dialog"] {
             width: 50%;
         }
-        [role="document"] {
+        .limited-height [role="document"] {
             max-height: 50vh;
         }
     }
@@ -41,7 +50,7 @@ waf-dialog {
         [role="dialog"] {
             width: 80%;
         }
-        [role="document"] {
+        .limited-height [role="document"] {
             max-height: 80vh;
         }
     }
