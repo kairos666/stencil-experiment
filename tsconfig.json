@@ -22,5 +22,11 @@
   ],
   "exclude": [
     "node_modules"
-  ]
+  ],
+  "typedocOptions": {
+    "ignoreCompilerErrors": true,
+    "mode": "file",
+    "target": "ES6",
+    "out": "./docs"
+  }
 }
