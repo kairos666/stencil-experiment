@@ -20,8 +20,8 @@ export class WafInput {
         rangeOverflow: 'supérieur au maximum autorisé',
         rangeUnderflow: 'inférieur au minimum autorisé',
         stepMismatch: 'valeur non autorisée',
-        tooLong: 'trop de charactères',
-        tooShort: 'trop peu de charactères',
+        tooLong: 'trop de caractères',
+        tooShort: 'trop peu de caractères',
         typeMismatch: 'format incorrect',
         valueMissing: 'champs requis'
     };
