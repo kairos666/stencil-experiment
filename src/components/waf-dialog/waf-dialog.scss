@@ -54,7 +54,6 @@ waf-dialog {
             max-height: 80vh;
         }
     }
-    /* utils - TODO push that in a generic util stylesheet for other components to share */
     .sr-only {
         @include sr-only;
     }
