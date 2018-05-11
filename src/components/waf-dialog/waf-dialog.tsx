@@ -9,6 +9,7 @@ import focusTrapBuilder from 'focus-trap';
  * - backdrop closing on click/tap (controllable for confirmation modals)
  * - RWD for smaller screens
  * - 2 alternatives to display long dialog (height bigger than viewport)
+ * - component emit custom events when opening (waf.dialog.open) & closing (waf.dialog.close)
  * 
  * Sample
  * ------
@@ -45,10 +46,10 @@ export class WafDialog {
     private focusTrap;
     /** DOM Element for the component */
     @Element() private wafDialogElt:Element;
-    /** emitter for 'waf_dialog_open' custom event - fired when modal is opened */
-    @Event() private waf_dialog_open:EventEmitter;
-    /** emitter for 'waf_dialog_close' custom event - fired when modal is closed */
-    @Event() private waf_dialog_close:EventEmitter;
+    /** emitter for 'waf.dialog.open' custom event - fired when modal is opened */
+    @Event({eventName: 'waf.dialog.open'}) private wafDialogOpenEE:EventEmitter;
+    /** emitter for 'waf.dialog.close' custom event - fired when modal is closed */
+    @Event({eventName: 'waf.dialog.close'}) private wafDialogCloseEE:EventEmitter;
     /** current state of this dialog box open|close */
     @State() private isOpen:boolean = false;
     /** flag for toggling off the closing of modal when backdrop is clicked */
@@ -194,7 +195,7 @@ export class WafDialog {
     showModal() { 
         this.isOpen = true;
         this.focusTrap.activate();
-        this.waf_dialog_open.emit();
+        this.wafDialogOpenEE.emit();
     } 
 
     /**
@@ -204,7 +205,7 @@ export class WafDialog {
     hideModal() { 
         this.isOpen = false;
         this.focusTrap.deactivate();
-        this.waf_dialog_close.emit();
+        this.wafDialogCloseEE.emit();
     }
 
     /**

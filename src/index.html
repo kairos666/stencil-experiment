@@ -372,10 +372,10 @@
         // listen to custom events from waf-dialog elements
         const dialogTags = document.querySelectorAll('waf-dialog');
         for (let j = 0; j < dialogTags.length; j++) {
-            dialogTags.item(j).addEventListener('waf_dialog_open', function(evt) {
+            dialogTags.item(j).addEventListener('waf.dialog.open', function(evt) {
                 console.log('Waf Dialog Open', evt);
             });
-            dialogTags.item(j).addEventListener('waf_dialog_close', function(evt) {
+            dialogTags.item(j).addEventListener('waf.dialog.close', function(evt) {
                 console.log('Waf Dialog Close', evt);
             });
         }
