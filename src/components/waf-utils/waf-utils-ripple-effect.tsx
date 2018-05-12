@@ -21,7 +21,7 @@ import { Component, Prop } from '@stencil/core';
   tag: 'waf-utils-ripple-effect',
   styleUrl: 'waf-utils-ripple-effect.scss'
 })
-export class WafImg {
+export class WafRippleFX {
     private debounceDelay:number = 2000;
     private hookAttribute:string = '[ripple]'
     @Prop() selector:string;
