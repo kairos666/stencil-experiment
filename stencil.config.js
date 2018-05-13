@@ -12,7 +12,8 @@ exports.config = {
             type: 'www',
             serviceWorker: false
         }
-    ]
+    ],
+    globalScript: 'src/global/index.ts'
 };
 
 exports.devServer = {
