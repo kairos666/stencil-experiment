@@ -1,4 +1,5 @@
 import { Component, Prop, State, Method, Element, Event, EventEmitter } from '@stencil/core';
+import focusTrapBuilder from 'focus-trap';
 
 /**
  * &lt;WAF-DIALOG&gt;
@@ -57,8 +58,6 @@ export class WafDialog {
     @Prop() noBackdrop:boolean;
     /** by default long dialog box are scrollable in the viewport, this attribute toggle on the behavior where the dialog box is limited to the visible viewport, scroll happens in the content section of the box */
     @Prop() limitedHeight:boolean;
-    /** focusTrapBuilder reference retrieved from global scripts */
-    @Prop({ context: 'focusTrapBuilder' }) private focusTrapBuilder;
 
     /**
      * Based on component state, render the dialog HTML structure and displays it or hide it
@@ -95,7 +94,7 @@ export class WafDialog {
 
         // setup focus trap
         const fallback:HTMLElement = (this.wafDialogElt.querySelector('[role="document"]') as HTMLElement); // used if no focusable element was provided inside the dialog box
-        this.focusTrap = this.focusTrapBuilder((this.wafDialogElt as HTMLElement), {
+        this.focusTrap = focusTrapBuilder((this.wafDialogElt as HTMLElement), {
             onActivate: undefined,
             onDeactivate: undefined,
             initialFocus: undefined,
