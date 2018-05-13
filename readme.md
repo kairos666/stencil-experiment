@@ -46,8 +46,16 @@ npm run build
 To run the unit tests for the components, run:
 
 ```bash
-npm test
+npm unit:test
 ```
+
+To run end-2-end tests for scenarios in e2e-tests folder, run:
+```bash
+npm run e2e:test:<chrome|firefox|ie|remote>
+```
+
+Choose the last keyword depending on your browser target.
+Note: Chrome is unable to connect without a selected profile (by default testcafe use a blank profile but that do not work for this browser)
 
 Need help? Check out our docs [here](https://stenciljs.com/docs/my-first-component).
 
