@@ -55,7 +55,11 @@ npm run e2e:test:<chrome|firefox|ie|remote>
 ```
 
 Choose the last keyword depending on your browser target.
-Note: Chrome is unable to connect without a selected profile (by default testcafe use a blank profile but that do not work for this browser)
+Notes: 
+- Chrome is unable to connect without a selected profile (by default testcafe use a blank profile but that do not work for this browser)
+- Chrome is strong against CORS so this [extension](https://chrome.google.com/webstore/detail/cors-toggle/jioikioepegflmdnbocfhgmpmopmjkim) is useful to enable to load components anyway passing CORS checks 
+- Again Chrome is so fucking strong towards security that you need to allow your scripts to skip random DOMException that it will throw at you (-e)
+
 
 Need help? Check out our docs [here](https://stenciljs.com/docs/my-first-component).
 

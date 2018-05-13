@@ -16,9 +16,9 @@
         "start": "npm run dev",
         "unit:test": "jest --no-cache",
         "unit:test.watch": "jest --watch --no-cache",
-        "e2e:test:chrome": "testcafe chrome:userProfile e2e-tests/",
-        "e2e:test:firefox": "testcafe firefox e2e-tests/",
-        "e2e:test:ie": "testcafe ie e2e-tests/",
+        "e2e:test:chrome": "testcafe chrome:userProfile e2e-tests/ -e --debug-on-fail",
+        "e2e:test:firefox": "testcafe firefox e2e-tests/ --debug-on-fail",
+        "e2e:test:ie": "testcafe ie e2e-tests/ --debug-on-fail",
         "e2e:test:remote": "testcafe remote e2e-tests/",
         "docs": "typedoc src/components/"
     },
