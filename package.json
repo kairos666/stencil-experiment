@@ -14,8 +14,12 @@
         "dev": "sd concurrent \"stencil build --dev --watch\" \"stencil-dev-server\" ",
         "serve": "stencil-dev-server",
         "start": "npm run dev",
-        "test": "jest --no-cache",
-        "test.watch": "jest --watch --no-cache",
+        "unit:test": "jest --no-cache",
+        "unit:test.watch": "jest --watch --no-cache",
+        "e2e:test:chrome": "testcafe chrome:userProfile e2e-tests/ -e --debug-on-fail",
+        "e2e:test:firefox": "testcafe firefox e2e-tests/ --debug-on-fail",
+        "e2e:test:ie": "testcafe ie e2e-tests/ --debug-on-fail",
+        "e2e:test:remote": "testcafe remote e2e-tests/",
         "docs": "typedoc src/components/"
     },
     "dependencies": {
@@ -29,6 +33,7 @@
         "@stencil/utils": "latest",
         "@types/jest": "^21.1.1",
         "jest": "^21.2.1",
+        "testcafe": "^0.19.2",
         "typedoc": "^0.11.1"
     },
     "repository": {

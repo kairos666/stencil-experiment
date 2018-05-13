@@ -26,6 +26,21 @@
         h3 {
             margin-top: 1rem;
         }
+        
+        menu {
+            padding-left: 0;
+        }
+        
+        .button-stylish {
+            border: none;
+            background: none;
+            background-color: teal;
+            color: #fff;
+            text-transform: uppercase;
+            padding: 5px 15px;
+            border-radius: 3px;
+            cursor: pointer;
+        }
     </style>
 </head>
 
@@ -302,7 +317,8 @@
                         <p>Phasellus malesuada posuere ipsum, eu gravida risus tincidunt convallis. Nam ac purus ligula. Sed ut blandit libero. Vestibulum sodales enim et leo ultricies pharetra. Nam turpis nisl, tempor ac neque quis, fringilla facilisis
                             mauris. Aliquam molestie, lacus vel consectetur pellentesque, lorem lacus posuere turpis, sit amet iaculis est magna eget ipsum. Vivamus leo sapien, blandit in maximus at, efficitur quis nibh. Donec in nibh sed lorem faucibus
                             commodo. Sed sollicitudin ligula semper massa <a href="#" title="fake link">vehicula pulvinar</a> egestas vitae felis. Vivamus ullamcorper pellentesque diam, eu venenatis dui efficitur nec. Proin pharetra augue eget metus ullamcorper
-                            aliquam.</p>
+                            aliquam.
+                        </p>
                         <p>Aliquam gravida sem enim, vel efficitur metus maximus eget. Curabitur venenatis quam sed turpis vestibulum sagittis. Mauris non massa metus. Vestibulum sapien massa, efficitur a nisi at, ullamcorper accumsan velit. Nam consequat
                             molestie libero. Vestibulum nec neque id quam ullamcorper dapibus non eget odio. Proin aliquam ante eleifend euismod blandit. Nulla laoreet nisl ac efficitur elementum. Integer dignissim sapien in massa condimentum consequat
                             at ut ligula. Fusce eget sapien justo. Praesent eget ex sit amet magna molestie tristique a condimentum sem. Vivamus bibendum interdum gravida. Nam congue libero et erat lacinia, consequat dictum est varius. Sed magna enim,
@@ -322,6 +338,27 @@
                         <button type="button" data-dialog-close class="mdl-button">Disagree</button>
                     </menu>
                 </waf-dialog>
+            </waf-tab>
+            <waf-tab tab-header="WAF-UTILS">
+                <h2>WAF-UTILS-RIPPLE-EFFECT - apply material design ripple effect on your buttons</h2>
+                <p>Some kind of partial theme and JS effect for your buttons</p>
+                <hr>
+                <waf-utils-ripple-effect></waf-utils-ripple-effect>
+                <waf-utils-ripple-effect selector="#btn-container-2 .ripple-button"></waf-utils-ripple-effect>
+                <h3>ripple-effect cases - regular cases: all elements with attribute "ripple"</h3>
+                <menu id="btn-container-1">
+                    <button type="button" class="not-rippled">Button</button>
+                    <button type="button" ripple>Button with ripple attribute</button>
+                    <button type="button" class="not-rippled button-stylish">Button</button>
+                    <button type="button" class="button-stylish" ripple>Button with ripple attribute</button>
+                </menu>
+                <h3>ripple-effect cases - regular cases: some elements with specific class included in component selector string</h3>
+                <menu id="btn-container-2">
+                    <button type="button" class="ripple-button">Button included in selector</button>
+                    <button type="button" class="not-rippled">Button excluded from selector</button>
+                    <button type="button" class="button-stylish ripple-button">Button included in selector</button>
+                    <button type="button" class="not-rippled button-stylish">Button excluded from selector</button>
+                </menu>
             </waf-tab>
         </waf-tabs>
     </main>
@@ -372,10 +409,10 @@
         // listen to custom events from waf-dialog elements
         const dialogTags = document.querySelectorAll('waf-dialog');
         for (let j = 0; j < dialogTags.length; j++) {
-            dialogTags.item(j).addEventListener('waf_dialog_open', function(evt) {
+            dialogTags.item(j).addEventListener('waf.dialog.open', function(evt) {
                 console.log('Waf Dialog Open', evt);
             });
-            dialogTags.item(j).addEventListener('waf_dialog_close', function(evt) {
+            dialogTags.item(j).addEventListener('waf.dialog.close', function(evt) {
                 console.log('Waf Dialog Close', evt);
             });
         }
