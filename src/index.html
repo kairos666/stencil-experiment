@@ -347,17 +347,17 @@
                 <waf-utils-ripple-effect selector="#btn-container-2 .ripple-button"></waf-utils-ripple-effect>
                 <h3>ripple-effect cases - regular cases: all elements with attribute "ripple"</h3>
                 <menu id="btn-container-1">
-                    <button type="button">Button</button>
+                    <button type="button" class="not-rippled">Button</button>
                     <button type="button" ripple>Button with ripple attribute</button>
-                    <button type="button" class="button-stylish">Button</button>
+                    <button type="button" class="not-rippled button-stylish">Button</button>
                     <button type="button" class="button-stylish" ripple>Button with ripple attribute</button>
                 </menu>
                 <h3>ripple-effect cases - regular cases: some elements with specific class included in component selector string</h3>
                 <menu id="btn-container-2">
                     <button type="button" class="ripple-button">Button included in selector</button>
-                    <button type="button">Button excluded from selector</button>
+                    <button type="button" class="not-rippled">Button excluded from selector</button>
                     <button type="button" class="button-stylish ripple-button">Button included in selector</button>
-                    <button type="button" class="button-stylish">Button excluded from selector</button>
+                    <button type="button" class="not-rippled button-stylish">Button excluded from selector</button>
                 </menu>
             </waf-tab>
         </waf-tabs>

@@ -5,16 +5,32 @@ fixture('Ripple FX Tests')
 
 test('Navigate to WAF-UTILS tab', async (t) => {
     const mainWafTabs = Selector('main > waf-tabs > nav > [role="tablist"] > li');
-    const mainWafTabpanes = Selector('main > waf-tabs > waf-tab');
+    const mainWafTabpanes = Selector('main > waf-tabs > .waf-tabs__tabpanel-container > waf-tab');
     const wafUtilsTab = mainWafTabs.withText('WAF-UTILS');
     const wafUtilsTabPane = mainWafTabpanes.withAttribute('tab-header', 'WAF-UTILS');
 
-    const rippledBtns = wafUtilsTabPane.child('button[ripple], button.ripple-button');
-    const nonRippledBtns = wafUtilsTabPane.child('button:not([ripple]), button:not(.ripple-button)');
+    const rippledBtns = Selector('button[ripple],button.ripple-button');
+    const nonRippledBtns = Selector('button.not-rippled');
 
-    // wait for page to load
+    // wait for page to load then navigate to correct tab
     await t
         .click(wafUtilsTab)
-        .expect(rippledBtns.exists).ok()
-        .expect(nonRippledBtns.exists).ok()
+        .expect(rippledBtns.exists).ok('no elements matching selector')
+        .expect(nonRippledBtns.exists).ok('no elements matching selector')
+
+    // click on all rippled buttons and check the existence of the ripple container
+    for (let i = 0; i < await rippledBtns.count; i++) {
+        await t
+            .expect(rippledBtns.nth(i).exists).ok('couldn\'t find elt - rippled button')
+            .expect(rippledBtns.nth(i).find('.ripple--container').exists).ok('couldn\'t find elt - ripple--container')
+            .click(rippledBtns.nth(i));
+    }
+
+    // click on all non rippled buttons and check the absence of the ripple container
+    for (let i = 0; i < await nonRippledBtns.count; i++) {
+        await t
+            .expect(nonRippledBtns.nth(i).exists).ok()
+            .expect(nonRippledBtns.nth(i).find('.ripple--container').exists).notOk('found elt - ripple--container')
+            .click(nonRippledBtns.nth(i));
+    }
 });
