@@ -3,7 +3,7 @@ const sass = require('@stencil/sass');
 exports.config = {
     namespace: 'waf',
     plugins: [
-        sass({ includePaths: ['./node_modules/material-design-lite/src'] })
+        sass()
     ],
     outputTargets: [{
             type: 'dist'
