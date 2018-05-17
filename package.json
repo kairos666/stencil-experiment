@@ -20,7 +20,7 @@
         "e2e:test:firefox": "testcafe firefox e2e-tests/ --debug-on-fail",
         "e2e:test:ie": "testcafe ie e2e-tests/ --debug-on-fail",
         "e2e:test:remote": "testcafe remote e2e-tests/",
-        "docs": "typedoc src/components/"
+        "docs": "typedoc --options typedoc.json"
     },
     "dependencies": {
         "@stencil/sass": "0.0.3",

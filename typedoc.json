@@ -1,0 +1,6 @@
+{
+    "out": "./docs/",
+    "includes": "./src/components/",
+    "exclude": "**/*.spec.*",
+    "mode": "file"
+}
