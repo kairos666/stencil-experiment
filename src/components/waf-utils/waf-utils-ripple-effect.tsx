@@ -1,4 +1,4 @@
-import { Component, Prop } from '@stencil/core';
+import { Component, Prop, Element } from '@stencil/core';
 
 /**
  * &lt;WAF-MATERIAL-DESIGN-BUTTONS&gt;
@@ -23,13 +23,18 @@ import { Component, Prop } from '@stencil/core';
 })
 export class WafRippleFX {
     private debounceDelay:number = 2000;
-    private hookAttribute:string = '[ripple]'
+    private hookAttribute:string = '[ripple]';
+    /** the custom DOM element itself */
+    @Element() private wafFX:Element;
+
+    /** include all element inside the custom tag that matches the selector */
     @Prop() selector:string;
+
     /**
      * Empty renderer
      */
     render() {
-        return;
+        return <slot />;
     }
 
     componentDidLoad() {
@@ -37,14 +42,14 @@ export class WafRippleFX {
         if (this.selector) this.addMissingRippleAttribute();
 
         // select all occurrences
-        const elts:NodeList = document.querySelectorAll(this.hookAttribute);
+        const elts:NodeList = this.wafFX.querySelectorAll(this.hookAttribute);
         
         // process all elts
         Array.from(elts).forEach(this.generateRipple.bind(this));
     }
 
     private addMissingRippleAttribute() {
-        const elts:NodeList = document.querySelectorAll(`${this.selector}:not(${this.hookAttribute})`);
+        const elts:NodeList = this.wafFX.querySelectorAll(`${this.selector}:not(${this.hookAttribute})`);
         
         // process all elts
         Array.from(elts).forEach(elt => {
