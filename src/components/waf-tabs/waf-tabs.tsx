@@ -1,4 +1,5 @@
 import { Component, State, Element } from '@stencil/core';
+import vuid from 'vuid';
 
 interface SingleTabModel {
     tabID:string,
@@ -13,7 +14,7 @@ interface TabModel extends Array<SingleTabModel> {};
   styleUrl: 'waf-tabs.scss'
 })
 export class WafTabs {
-    private uniqueId:number = Date.now();
+    private uniqueId:number = vuid();
     private slottedElt:Element;
     private slotHTMLLiveHTMLCollection:HTMLCollection;
     private slotMutationObserver:MutationObserver;

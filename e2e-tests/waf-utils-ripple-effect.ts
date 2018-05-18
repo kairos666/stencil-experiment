@@ -3,7 +3,7 @@ import { Selector } from 'testcafe';
 fixture('Ripple FX Tests')
     .page('http://localhost:3333/');
 
-test('Navigate to WAF-UTILS tab', async (t) => {
+test('Navigate to WAF-UTILS tab & evaluate FX applied to buttons', async (t) => {
     const mainWafTabs = Selector('main > waf-tabs > nav > [role="tablist"] > li');
     const mainWafTabpanes = Selector('main > waf-tabs > .waf-tabs__tabpanel-container > waf-tab');
     const wafUtilsTab = mainWafTabs.withText('WAF-UTILS');
