@@ -20,12 +20,13 @@
         "e2e:test:firefox": "testcafe firefox e2e-tests/ --debug-on-fail",
         "e2e:test:ie": "testcafe ie e2e-tests/ --debug-on-fail",
         "e2e:test:remote": "testcafe remote e2e-tests/",
-        "docs": "typedoc src/components/"
+        "docs": "typedoc --options typedoc.json"
     },
     "dependencies": {
         "@stencil/sass": "0.0.3",
         "focus-trap": "^2.4.4",
-        "material-design-lite": "^1.3.0"
+        "material-design-lite": "^1.3.0",
+        "vuid": "^1.0.0"
     },
     "devDependencies": {
         "@stencil/core": "^0.9.1",

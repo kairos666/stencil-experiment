@@ -1,5 +1,6 @@
 import { Component, Prop, State, Method, Element, Event, EventEmitter } from '@stencil/core';
 import focusTrapBuilder from 'focus-trap';
+import vuid from 'vuid';
 
 /**
  * &lt;WAF-DIALOG&gt;
@@ -39,7 +40,7 @@ export class WafDialog {
     /** class name used to target on click close modal side effect */
     private closeAttrName:string = 'data-dialog-close';
     /** used to generate a unique ID for the component HTML DOM nodes that require it (will change at each run) */
-    private uniqueId:number = Date.now();
+    private uniqueId:number = vuid();
     /** DOM Element used as backdrop for this specific dialog box */
     private backdropElt:Element;
     /** [focus trap](https://github.com/davidtheclark/focus-trap) instance  */
