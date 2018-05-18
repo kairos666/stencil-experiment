@@ -60,13 +60,17 @@ export class WafRippleFX {
 
     private generateRipple(elt:Element) {
         // handlers
-        const addRipple = function(evt:MouseEvent) {
+        const addRipple = function(evt:MouseEvent|TouchEvent) {
+            const evtPos = {
+                x: ((evt as TouchEvent).touches) ? (evt as TouchEvent).touches[0].pageX : (evt as MouseEvent).pageX,
+                y: ((evt as TouchEvent).touches) ? (evt as TouchEvent).touches[0].pageY : (evt as MouseEvent).pageY
+            };
             const ripple = this;
             const size = ripple.offsetWidth;
             const pos = ripple.getBoundingClientRect();
             const rippler = document.createElement('span');
-            const x = evt.pageX - pos.left - (size / 2);
-            const y = evt.pageY - pos.top - (size / 2);
+            const x = evtPos.x - pos.left - (size / 2);
+            const y = evtPos.y - pos.top - (size / 2);
             const style = `top:${y}px;left:${x}px;height:${size}px;width:${size}px;`;
             ripple.rippleContainer.appendChild(rippler);
             rippler.setAttribute('style', style);
