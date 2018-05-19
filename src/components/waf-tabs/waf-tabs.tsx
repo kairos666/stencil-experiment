@@ -40,6 +40,10 @@ export class WafTabs {
     }
 
     componentDidLoad() {
+        // polyfills checks
+        if (!Array.prototype.findIndex) console.warn('need Array.findIndex() polyfill');
+        if (!Array.from) console.warn('need Array.from() polyfill');
+
         // slot
         this.slottedElt = this.wafTabsElt.querySelector('.waf-tabs__tabpanel-container');
 
