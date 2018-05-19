@@ -146,7 +146,8 @@ export class WafImg {
     @Watch('src')
     private srcSwapHandler(srcURL:string) {
         // first fetch the image (browser put it in cache)
-        fetch(srcURL)
+        if (fetch) {
+            fetch(srcURL)
             .then(response => {
                 return response.blob();
             })
@@ -163,5 +164,10 @@ export class WafImg {
                 this.isBroken = true;
                 this.innerSrc = undefined;
             });
+        } else {
+            // just go through for older browsers without fetch API
+            this.isBroken = false;
+            this.innerSrc = srcURL;
+        }
     }
 }
