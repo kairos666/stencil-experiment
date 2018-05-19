@@ -39,8 +39,8 @@ import vuid from 'vuid';
 export class WafDialog {
     /** class name used to target on click close modal side effect */
     private closeAttrName:string = 'data-dialog-close';
-    /** used to generate a unique ID for the component HTML DOM nodes that require it (will change at each run) */
-    private uniqueId:number = vuid();
+    /** used to generate a unique ID for the component HTML DOM nodes that require it (will change at each run - for IE11 fallback to timestamp) */
+    private uniqueId:number = (window.crypto) ? vuid() : Date.now();
     /** DOM Element used as backdrop for this specific dialog box */
     private backdropElt:Element;
     /** [focus trap](https://github.com/davidtheclark/focus-trap) instance  */
@@ -73,7 +73,7 @@ export class WafDialog {
                         <slot name="title"/>
                     </div>
                     <slot name="content"/>
-                    <slot name="actions"></slot>
+                    <slot name="actions"/>
                 </section>
             </div>
         ]

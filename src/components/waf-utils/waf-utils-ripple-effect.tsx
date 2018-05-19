@@ -45,7 +45,11 @@ export class WafRippleFX {
         const elts:NodeList = this.wafFX.querySelectorAll(this.hookAttribute);
         
         // process all elts
-        Array.from(elts).forEach(this.generateRipple.bind(this));
+        if (Array.from) {
+            Array.from(elts).forEach(this.generateRipple.bind(this));
+        } else {
+            console.warn('need Array.from() polyfill');
+        }
     }
 
     private addMissingRippleAttribute() {
@@ -69,8 +73,8 @@ export class WafRippleFX {
             const size = ripple.offsetWidth;
             const pos = ripple.getBoundingClientRect();
             const rippler = document.createElement('span');
-            const x = evtPos.x - pos.left - (size / 2);
-            const y = evtPos.y - pos.top - (size / 2);
+            const x = evtPos.x - pos.left - (size / 2) - window.scrollX;
+            const y = evtPos.y - pos.top - (size / 2) - window.scrollY;
             const style = `top:${y}px;left:${x}px;height:${size}px;width:${size}px;`;
             ripple.rippleContainer.appendChild(rippler);
             rippler.setAttribute('style', style);

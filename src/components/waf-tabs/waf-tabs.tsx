@@ -14,7 +14,8 @@ interface TabModel extends Array<SingleTabModel> {};
   styleUrl: 'waf-tabs.scss'
 })
 export class WafTabs {
-    private uniqueId:number = vuid();
+    /** used to generate a unique ID for the component HTML DOM nodes that require it (will change at each run - for IE11 fallback to timestamp) */
+    private uniqueId:number = (window.crypto) ? vuid() : Date.now();
     private slottedElt:Element;
     private slotHTMLLiveHTMLCollection:HTMLCollection;
     private slotMutationObserver:MutationObserver;
@@ -39,6 +40,10 @@ export class WafTabs {
     }
 
     componentDidLoad() {
+        // polyfills checks
+        if (!Array.prototype.findIndex) console.warn('need Array.findIndex() polyfill');
+        if (!Array.from) console.warn('need Array.from() polyfill');
+
         // slot
         this.slottedElt = this.wafTabsElt.querySelector('.waf-tabs__tabpanel-container');
 

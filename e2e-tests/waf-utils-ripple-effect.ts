@@ -3,18 +3,12 @@ import { Selector } from 'testcafe';
 fixture('Ripple FX Tests')
     .page('http://localhost:3333/');
 
-test('Navigate to WAF-UTILS tab & evaluate FX applied to buttons', async (t) => {
-    const mainWafTabs = Selector('main > waf-tabs > nav > [role="tablist"] > li');
-    const mainWafTabpanes = Selector('main > waf-tabs > .waf-tabs__tabpanel-container > waf-tab');
-    const wafUtilsTab = mainWafTabs.withText('WAF-UTILS');
-    const wafUtilsTabPane = mainWafTabpanes.withAttribute('tab-header', 'WAF-UTILS');
-
+test('evaluate FX applied to buttons', async (t) => {
     const rippledBtns = Selector('button[ripple],button.ripple-button');
     const nonRippledBtns = Selector('button.not-rippled');
 
     // wait for page to load then navigate to correct tab
     await t
-        .click(wafUtilsTab)
         .expect(rippledBtns.exists).ok('no elements matching selector')
         .expect(nonRippledBtns.exists).ok('no elements matching selector')
 

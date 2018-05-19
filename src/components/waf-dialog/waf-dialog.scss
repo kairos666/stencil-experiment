@@ -30,7 +30,7 @@ waf-dialog {
         box-shadow: unquote($dialogShadow);
         left: 50%;
         transform: translateX(-50%);
-        top: $unlimitedHeightVerticalMargins;
+        margin-top: 4rem;
         margin-bottom: $unlimitedHeightVerticalMargins;
         &.limited-height {
             position: fixed;

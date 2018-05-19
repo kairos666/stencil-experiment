@@ -5,151 +5,114 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=5.0">
     <title>Stencil Component Starter</title>
+    <script src="https://cdn.polyfill.io/v2/polyfill.min.js?features=default,Array.prototype.find,Array.prototype.findIndex,fetch,IntersectionObserver,IntersectionObserverEntry"></script>
     <script src="/build/waf.js"></script>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-        }
-        
-        main {
-            margin: 2rem;
-        }
-        
-        h1 {
-            margin-bottom: 5rem;
-        }
-        
-        h2 {
-            margin-top: 4rem;
-        }
-        
-        h3 {
-            margin-top: 1rem;
-        }
-        
-        menu {
-            padding-left: 0;
-        }
-        
-        .button-stylish {
-            border: none;
-            background: none;
-            background-color: teal;
-            color: #fff;
-            text-transform: uppercase;
-            padding: 5px 15px;
-            border-radius: 3px;
-            cursor: pointer;
-        }
-    </style>
 </head>
 
 <body>
     <main>
-        <h1>StencilJS - playground</h1>
-        <waf-tabs>
-            <waf-tab selected tab-header="Intro">
-                <p><a href="https://github.com/kairos666/stencil-experiment/issues" target="_blank">IE missing features</a></p>
-                <p>
-                    To support IE11 at least - disable waf-img visible-async-loading behavior - refactor waf-tabs to avoid findIndex & Array.from()
-                </p>
-            </waf-tab>
-            <waf-tab tab-header="WAF-INPUT">
-                <h2>WAF-INPUT - textfield</h2>
-                <p>Un champs texte qui englobe un tag input et le style à la Material design. Le champs <a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input" title="go to MDN reference" target="_blank">&lt;input&gt; tag</a> reste complètement
-                    fonctionnel, il est simplement "décoré" avec un label et un style approprié. Les erreurs natives sont également gérées (type="email", pattern, placeholder, value, disabled, required, ...).</p>
-                <h3>&lt;waf-input&gt; API - <em>minimal requirement</em></h3>
+        <header>
+            <h1>StencilJS - playground</h1>
+        </header>
+        <aside>
+            <menu class="navigation">
+                <h2>Jump to</h2>
+                <a href="#" title="go to this section">Introduction</a>
+                <a href="#waf-input" title="go to this section">&lt;waf-input&gt;</a>
+                <a href="#waf-img" title="go to this section">&lt;waf-img&gt;</a>
+                <a href="#waf-dialog" title="go to this section">&lt;waf-dialog&gt;</a>
+                <a href="#waf-tabs" title="go to this section">&lt;waf-tabs&gt;</a>
+                <a href="#waf-utils-ripple-effect" title="go to this section">&lt;waf-utils-ripple-effect&gt;</a>
+            </menu>
+        </aside>
+        <div class="sections-containers">
+            <section>
+                <h2>Introduction</h2>
+                <p>Demo page for components in the collection. E2E tests are run in this page.</p>
+                <p>Important: IE11 is fully supported by StencilJS components. However, inner logic in some of those components requires some polyfills to work. Polyfill.io provides those and patch the browser depending browser capabilities.</p>
+                <p>This page is using &lt;script src="https://cdn.polyfill.io/v2/polyfill.min.js?features=default,Array.prototype.find,Array.prototype.findIndex,fetch,IntersectionObserver,IntersectionObserverEntry"&gt;&lt;/script&gt;</p>
+            </section>
+            <section>
+                <a name="waf-input"></a>
+                <h2>&lt;waf-input&gt;</h2>
+                <p>text input field decorator to add material design v1 look & feel to any <a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input" title="go to MDN reference" target="_blank">&lt;input&gt;</a> tag</p>
+                <p>Do ot interfere with native input attributes. ex: type="email", pattern, placeholder, value, disabled, required, ...</p>
+                <h3>minimal requirement</h3>
                 <ul>
-                    <li>insert a unique input tag inside</li>
-                    <li>"label" attribute must be provided on waf-input tag (accessibility binding with id is automatic)</li>
-                    <li>"id" attribute must be provided on input (would not make sense to auto generate it)</li>
+                    <li><em>id</em> attribute must be provided on &lt;input&gt; tag</li>
                 </ul>
-                <h3>&lt;waf-input&gt; tag API - <em>optional requirement</em></h3>
-                <ul>
-                    <li><em>float (mdl specific)</em> boolean attribute to customize behavior with floated animated label</li>
-                    <li><em>alignRight (mdl specific)</em> boolean attribute to customize style for RTL languages</li>
-                    <li><em>fullWidth (mdl specific)</em> boolean attribute to customize style for full width inputs</li>
-                    <li><em>disabled|required|pattern|value|step|placeholder|...</em> accept and react to all valid &lt;input&gt; attributes without alterations</li>
-                    <li><em>errors</em> you can provide a set of custom error messages to override the built-in defaults</li>
-                </ul>
-                <h3>&lt;waf-input&gt; tag API - <em>limitations</em></h3>
+                <h3>limitations</h3>
                 <ul>
                     <li>not fit for custom sync|async validation, need to be extended or using another component</li>
-                    <li>input attributes are only evaluated at bootstrap time, if "placeholder" value is changed, for exmaple, it is ignored by the &lt;waf-input&gt; component, you would have to recreate a new one</li>
+                    <li>input attributes are only evaluated at bootstrap time, if "placeholder" value is changed, for example, it is ignored by the &lt;waf-input&gt; component, you would have to recreate a new one</li>
                     <li>custom specifications are tied to theme and may overload the component uselessly for other themes</li>
                 </ul>
-                <hr>
-                <h3>waf-input cases - regular cases</h3>
-                <waf-input label="simple textfield">
-                    <input id="sample1" type="text" />
-                </waf-input>
-                <waf-input label="default errors" float>
-                    <input id="sample2" name="age" type="text" pattern="-?[0-9]*(\.[0-9]+)?" required />
-                </waf-input>
-                <waf-input id="waf-input-custom-html-errors" label="custom errors (pure HTML)" float errors='{ "badInput": "bad input", "patternMismatch": "against the rules", "rangeOverflow": "too big", "rangeUnderflow": "too small", "stepMismatch": "illegal value", "tooLong": "too long", "tooShort": "too short", "typeMismatch": "wrong format", "valueMissing": "mandatory" }'>
-                    <input id="sample2bis" name="age" type="text" pattern="-?[0-9]*(\.[0-9]+)?" required />
-                </waf-input>
-                <waf-input id="waf-input-custom-errors" label="custom errors (via JS)" float>
-                    <input id="sample2ter" name="age" type="text" pattern="-?[0-9]*(\.[0-9]+)?" required />
-                </waf-input>
-                <waf-input label="label B" align-right>
-                    <input id="sample3" name="age" type="number" min="0" step="1" />
-                </waf-input>
-                <waf-input label="label C" full-width>
-                    <input id="sample4" name="age" type="number" min="0" step="1" />
-                </waf-input>
-                <waf-input label="label D" float align-right full-width>
-                    <input id="sample5" name="age" type="number" min="0" step="1" />
-                </waf-input>
-                <waf-input label="label E" float>
-                    <input id="sample6" name="age" type="number" min="0" step="1" disabled />
-                </waf-input>
-                <waf-input label="label F" float>
-                    <input id="sample7" name="age" type="number" min="0" step="1" placeholder="36" />
-                </waf-input>
-                <waf-input label="label G" float>
-                    <input id="sample8" name="age" type="number" min="0" step="1" value="36" />
-                </waf-input>
-                <hr>
-                <h3>waf-input cases - invalid usage for compoenent</h3>
-                <h4>No ID</h4>
-                <waf-input label="no id input" float>
-                    <input name="age" type="number" min="0" step="1" value="36" />
-                </waf-input>
-                <h4>No tag inserted</h4>
-                <waf-input label="no input"></waf-input>
-                <h4>multiple input tag</h4>
-                <waf-input label="no id input" float>
-                    <input name="age" type="number" min="0" step="1" value="36" />
-                    <input name="age" type="number" min="0" step="1" value="36" />
-                </waf-input>
-                <h4>no input tag inserted p tag instead</h4>
-                <waf-input label="no id input" float>
-                    <p>I'm not an input tag</p>
-                </waf-input>
-                <h4>no label provided</h4>
-                <waf-input float>
-                    <input id="sample9" name="age" type="number" min="0" step="1" value="36" />
-                </waf-input>
-                <hr>
-                <h3>not a component (demonstrate style scope without shadow DOM)</h3>
-                <p>below is pure HTML with classes to reflect the same structure that would be generated by the component. It is not impacted by styles, therefore it can safely be used in existing pages.</p>
-                <p>Still, any regular CSS with selector containing the component tag name will be applied - this open the possibility to provide custom elements with only behavior and core styles</p>
-                <div class="waf-textfield waf-textfield--floating-label is-disabled"><label class="waf-textfield__label" for="sample6">label E</label>
-                    <input id="sample16" name="age" type="number" min="0" step="1" />
-                    <span class="waf-textfield__error">errorText</span>
+                <h3>Samples</h3>
+                <div class="sample-block">
+                    <h4 class="valid-case">regular cases</h4>
+                    <waf-input label="simple textfield">
+                        <input id="sample1" type="text" />
+                    </waf-input>
+                    <waf-input label="default errors" float>
+                        <input id="sample2" name="age" type="text" pattern="-?[0-9]*(\.[0-9]+)?" required />
+                    </waf-input>
+                    <waf-input id="waf-input-custom-html-errors" label="custom errors (pure HTML)" float errors='{ "badInput": "bad input", "patternMismatch": "against the rules", "rangeOverflow": "too big", "rangeUnderflow": "too small", "stepMismatch": "illegal value", "tooLong": "too long", "tooShort": "too short", "typeMismatch": "wrong format", "valueMissing": "mandatory" }'>
+                        <input id="sample2bis" name="age" type="text" pattern="-?[0-9]*(\.[0-9]+)?" required />
+                    </waf-input>
+                    <waf-input id="waf-input-custom-errors" label="custom errors (via JS)" float>
+                        <input id="sample2ter" name="age" type="text" pattern="-?[0-9]*(\.[0-9]+)?" required />
+                    </waf-input>
+                    <waf-input label="label B" align-right>
+                        <input id="sample3" name="age" type="number" min="0" step="1" />
+                    </waf-input>
+                    <waf-input label="label C" full-width>
+                        <input id="sample4" name="age" type="number" min="0" step="1" />
+                    </waf-input>
+                    <waf-input label="label D" float align-right full-width>
+                        <input id="sample5" name="age" type="number" min="0" step="1" />
+                    </waf-input>
+                    <waf-input label="label E" float>
+                        <input id="sample6" name="age" type="number" min="0" step="1" disabled />
+                    </waf-input>
+                    <waf-input label="label F" float>
+                        <input id="sample7" name="age" type="number" min="0" step="1" placeholder="36" />
+                    </waf-input>
+                    <waf-input label="label G" float>
+                        <input id="sample8" name="age" type="number" min="0" step="1" value="36" />
+                    </waf-input>
+                    <h4 class="invalid-case">invalid usage for component</h4>
+                    <h5>No ID</h5>
+                    <waf-input label="no id input" float>
+                        <input name="age" type="number" min="0" step="1" value="36" />
+                    </waf-input>
+                    <h5>No tag inserted</h5>
+                    <waf-input label="no input"></waf-input>
+                    <h5>multiple input tag</h5>
+                    <waf-input label="no id input" float>
+                        <input name="age" type="number" min="0" step="1" value="36" />
+                        <input name="age" type="number" min="0" step="1" value="36" />
+                    </waf-input>
+                    <h5>no input tag inserted p tag instead</h5>
+                    <waf-input label="no id input" float>
+                        <p>I'm not an input tag</p>
+                    </waf-input>
+                    <h5>no label provided</h5>
+                    <waf-input float>
+                        <input id="sample9" name="age" type="number" min="0" step="1" value="36" />
+                    </waf-input>
                 </div>
-            </waf-tab>
-            <waf-tab tab-header="WAF-IMG">
-                <h2>WAF-IMG - image async loading</h2>
+            </section>
+            <section>
+                <a name="waf-img"></a>
+                <h2>&lt;waf-img&gt;</h2>
                 <p>replacement for <a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Element/img" title="go to MDN reference" target="_blank">&lt;img&gt; tag</a>. Accepts all attributes that a regular img tag would accept (ignoring deprecated ones).
                     Only add custom loading enhancement for loading images asynchroneously thus improving performance of the page first paint.</p>
                 <p>Add max-width:100% on images by default to avoid breaking layout in RWD.</p>
-                <h3>&lt;waf-img&gt; API - <em>minimal requirement</em></h3>
+                <h3>minimal requirement</h3>
                 <ul>
-                    <li>"src" attribute must be provided on waf-img tag</li>
+                    <li><em>src</em> attribute must be provided on waf-img tag</li>
                 </ul>
-                <h3>&lt;waf-img&gt; tag API - <em>optional requirement</em></h3>
+                <h3>optional requirements</h3>
                 <ul>
                     <li><em>alt</em> attribute for textual alternative to image (optional because accessibility requires to not have them in case of a purely decorational visual)</li>
                     <li><em>visible-async-loading</em> boolean attribute that change behavior to async load the image if both the document is ready AND the waf-img is visible in the browser</li>
@@ -159,211 +122,242 @@
                     <li><em>height</em> regular &lt;img&gt; attribute. Loading placeholder apply also the specified height.</li>
                     <li><em>sizes</em> regular &lt;img&gt; attribute</li>
                 </ul>
-                <h3>&lt;waf-img&gt; tag API - <em>limitations</em></h3>
+                <h3>limitations</h3>
                 <ul>
                     <li>can't specify custom HTML for loading and broken placeholders. You can still style them though.</li>
                     <li>not optimal for srcset settings because the browser act as a black box and we don't know which image source will be applied beforehand.</li>
                     <li>&lt;waf-img&gt; can't be self closing tag like &lt;img&gt; because it is not allowed by CustomElements specs</li>
                 </ul>
-                <hr>
-                <h3>waf-img cases - regular cases (as soon as the page is ready)</h3>
-                <span>only "src", "alt" are provided</span>
-                <waf-img src="https://picsum.photos/300/200/?random" alt="basic image"></waf-img>
-                <span>"src", "alt", "width", "height" are provided (both loading the same image using the browser cache, one network request only)</span>
-                <waf-img src="https://picsum.photos/200/200/?image=500" width="200" height="200" alt="image with dimensions"></waf-img>
-                <waf-img src="https://picsum.photos/200/200/?image=500" width="200" height="200" alt="cached image"></waf-img>
-                <span>"src", "alt", "width", "height", "srcset" are provided</span>
-                <waf-img src="https://picsum.photos/g/200/200/?random" width="300" srcset="https://picsum.photos/g/200/200/?random 1x, https://picsum.photos/g/600/600/?random 2x, https://picsum.photos/g/1200/1200/?random 3x" alt="image with srcset"></waf-img>
-                <hr>
-                <h3>waf-img cases - regular cases (as soon as the tag is visible)</h3>
-                <waf-img src="https://picsum.photos/400/200/?image=304" alt="basic image" visible-async-loading></waf-img>
-                <waf-img src="https://picsum.photos/1200/600/?image=306" width="400" height="200" alt="image with dimensions" visible-async-loading></waf-img>
-                <waf-img src="https://picsum.photos/200/200/?image=500" width="200" height="200" alt="was cached previously" visible-async-loading></waf-img>
-                <hr>
-                <h3>waf-img edge cases - src is broken</h3>
-                <waf-img src="https://brokenimg" alt="404 url"></waf-img>
-                <waf-img src="https://brokenimg" width="200" height="200" alt="404 url with dimensions"></waf-img>
-                <waf-img src="https://brokenimg" width="200" height="200" alt="404 url with visible async loading" visible-async-loading></waf-img>
-                <hr>
-                <h3>waf-img cases - invalid use of component (no "src" attribute)</h3>
-                <waf-img width="200" height="200" alt="missing src attribute"></waf-img>
-            </waf-tab>
-            <waf-tab tab-header="WAF-TABS">
-                <h2>WAF-TABS - tab system</h2>
-                <waf-tabs>
-                    <waf-tab tab-header="Tab 1">
-                        <p>Tu vois, là on voit qu'on a beaucoup à travailler sur nous-mêmes car il faut toute la splendeur du aware car l'aboutissement de l'instinct, c'est l'amour ! Et là, vraiment, j'essaie de tout coeur de donner la plus belle réponse
-                            de la terre !</p>
-                    </waf-tab>
-                    <waf-tab selected tab-header="<i>Tab 2</i>">
-                        <p>Je ne voudrais pas rentrer dans des choses trop dimensionnelles, mais, si vraiment tu veux te rappeler des souvenirs de ton perroquet, on vit dans une réalité qu'on a créée et que j'appelle illusion parce que spirituellement, on
-                            est tous ensemble, ok ? C'est cette année que j'ai eu la révélation !</p>
-                    </waf-tab>
-                    <waf-tab tab-header="&lt;i class=&quot;my-custom-class&quot;&gt;Tab 3&lt;/i&gt;">
-                        <p>Si je t'emmerde, tu me le dis, je sais que, grâce à ma propre vérité le cycle du cosmos dans la vie... c'est une grande roue car l'aboutissement de l'instinct, c'est l'amour ! C'est cette année que j'ai eu la révélation !</p>
-                    </waf-tab>
-                    <waf-tab tab-header="Tab 4">
-                        <p>This <strong>temporary text is part of the <em>WYSIWYG editor</em></strong> and was <kbd title="Keyboard tag &laquo;kbd&raquo;">copy/pasted</kbd> here to get text for testing the content layout of this site before <q title="Quote tag &laquo;q&raquo;">content editors</q>                            have access to your CMS.</p>
-                        <p>060 bytes lôrem ïpsum <code>&laquo;a href&raquo;</code> <a href="#internal_link_example" title="#internal_link_example">internal link</a> VS <a href="http://example.com/" title="http://example.com/" target="_blank">external link</a>                            à dolor</p>
+                <h3>Samples</h3>
+                <div class="sample-block">
+                    <h4 class="valid-case">regular cases (as soon as the page is ready)</h4>
+                    <h5>only "src", "alt" are provided</h5>
+                    <waf-img src="https://picsum.photos/300/200/?random" alt="basic image"></waf-img>
+                    <h5>"src", "alt", "width", "height" are provided (both loading the same image using the browser cache, one network request only)</h5>
+                    <waf-img src="https://picsum.photos/200/200/?image=500" width="200" height="200" alt="image with dimensions"></waf-img>
+                    <waf-img src="https://picsum.photos/200/200/?image=500" width="200" height="200" alt="cached image"></waf-img>
+                    <h5>"src", "alt", "width", "height", "srcset" are provided</h5>
+                    <waf-img src="https://picsum.photos/g/200/200/?random" width="300" srcset="https://picsum.photos/g/200/200/?random 1x, https://picsum.photos/g/600/600/?random 2x, https://picsum.photos/g/1200/1200/?random 3x" alt="image with srcset"></waf-img>
+                    <h4 class="valid-case">regular cases (as soon as the tag is visible)</h4>
+                    <waf-img src="https://picsum.photos/400/200/?image=304" alt="basic image" visible-async-loading></waf-img>
+                    <waf-img src="https://picsum.photos/1200/600/?image=306" width="400" height="200" alt="image with dimensions" visible-async-loading></waf-img>
+                    <waf-img src="https://picsum.photos/200/200/?image=500" width="200" height="200" alt="was cached previously" visible-async-loading></waf-img>
+                    <h4 class="valid-case">edge cases - src is broken</h4>
+                    <waf-img src="https://brokenimg" alt="404 url"></waf-img>
+                    <waf-img src="https://brokenimg" width="200" height="200" alt="404 url with dimensions"></waf-img>
+                    <waf-img src="https://brokenimg" width="200" height="200" alt="404 url with visible async loading" visible-async-loading></waf-img>
+                    <h4 class="invalid-case">invalid use of component (no "src" attribute)</h4>
+                    <waf-img width="200" height="200" alt="missing src attribute"></waf-img>
+                </div>
+            </section>
+            <section>
+                <a name="waf-dialog"></a>
+                <h2>&lt;waf-dialog&gt;</h2>
+                <p>replacement for <a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Element/dialog" title="go to MDN reference" target="_blank">&lt;dialog&gt; tag</a> due to scarce support in browsers.</p>
+                <p>Dead simple, accessible, responsive ready dialog boxes</p>
+                <h3>minimal requirement</h3>
+                <p>No minimal requirement, just put the tag around the content you want to serve in a dialog box.</p>
+                <p>3 slots are available to distribute your content across the dialog box. You can target those with the <em>slot</em> attribute. Possible values are: <i>title, content, actions</i></p>
+                <h3>optional requirements</h3>
+                <ul>
+                    <li><em>limited-height</em> enable the modal to be completely visible on screen, only the content part is scrolling if too much content. Without this attribute, the full page scrolls for revealing a long dialog box.</li>
+                    <li><em>no-backdrop</em> boolean attribute that remove the backdrop effect on the page when dialog box is open.</li>
+                    <li><em>prevent-backdrop-closing</em> boolean attribute that remove the ability to click the backdrop to close the dialog. Useful to force user to interact with the dialog box. Escape is still working though (accessibility)</li>
+                    <li><em>data-dialog-close</em> attribute you can put on any element contained inside the tag. When a user click this element it will close the dialog.</li>
+                </ul>
+                <h3>limitations</h3>
+                <ul>
+                    <li>Unless you use <em>limited-height</em> attribute, the modal is positioned absolutely, therefore the dialog box is not vertically centered into the page and can go out of sight in long pages.</li>
+                    <li>Not really a good idea to nest these tags inside one another.</li>
+                </ul>
+                <h3>Samples</h3>
+                <div class="sample-block">
+                    <h4 class="valid-case">regular cases</h4>
+                    <button class="dialog-trigger" type="button">show information dialog</button>
+                    <waf-dialog>
+                        <h1 slot="title">Allow data collection?</h1>
+                        <p slot="content">Allowing us to collect data will let us get you the information you want faster.</p>
+                        <menu slot="actions">
+                            <button type="button" data-dialog-close class="mdl-button">Ok</button>
+                        </menu>
+                    </waf-dialog>
+                    <button class="dialog-trigger" type="button">show confirmation dialog</button>
+                    <waf-dialog prevent-backdrop-closing>
+                        <h2 slot="title">dialog title</h2>
+                        <p slot="content">dialog content</p>
+                        <menu slot="actions">
+                            <button type="button" class="mdl-button">Agree</button>
+                            <button type="button" data-dialog-close class="mdl-button">Disagree</button>
+                        </menu>
+                    </waf-dialog>
+                    <button class="dialog-trigger" type="button">show dialog without backdrop</button>
+                    <waf-dialog no-backdrop>
+                        <h2 slot="title">i'm a teapot</h2>
+                    </waf-dialog>
+                    <button class="dialog-trigger" type="button">show very long dialog</button>
+                    <waf-dialog>
+                        <h2 slot="title" style="margin-top:0;">dialog title</h2>
+                        <div slot="content">
+                            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec sit amet erat in libero elementum consequat in et quam. Phasellus porta felis tortor, et faucibus turpis auctor sed. Aenean laoreet feugiat felis. Proin nec dapibus
+                                enim, sit amet venenatis quam. Aenean sit amet finibus magna. Fusce pulvinar interdum tellus, nec finibus dolor mattis et. Nulla faucibus porta mattis. Etiam vulputate bibendum ultrices. In sed consequat augue. Ut tristique
+                                mauris vitae pretium fermentum. Cras eros nunc, laoreet vel neque ut, suscipit tempus odio. Vivamus a dapibus arcu, a suscipit eros. Nam condimentum erat nec ipsum aliquam fringilla non vel tortor. Nunc aliquet magna sed
+                                elit faucibus gravida.</p>
+                            <p>Pellentesque sit amet sodales mauris. Curabitur suscipit felis non leo pulvinar dictum. Praesent tempor nulla a posuere aliquam. Nunc feugiat, enim nec consectetur finibus, purus turpis maximus sapien, eget tincidunt est ligula
+                                ut nulla. Aliquam eu justo pellentesque, mollis erat vel, feugiat enim. Nullam vel posuere nunc. Suspendisse potenti. Nullam posuere aliquet neque eget cursus. Morbi luctus elementum rhoncus.</p>
+                            <p>Phasellus malesuada posuere ipsum, eu gravida risus tincidunt convallis. Nam ac purus ligula. Sed ut blandit libero. Vestibulum sodales enim et leo ultricies pharetra. Nam turpis nisl, tempor ac neque quis, fringilla facilisis
+                                mauris. Aliquam molestie, lacus vel consectetur pellentesque, lorem lacus posuere turpis, sit amet iaculis est magna eget ipsum. Vivamus leo sapien, blandit in maximus at, efficitur quis nibh. Donec in nibh sed lorem faucibus
+                                commodo. Sed sollicitudin ligula semper massa vehicula pulvinar egestas vitae felis. Vivamus ullamcorper pellentesque diam, eu venenatis dui efficitur nec. Proin pharetra augue eget metus ullamcorper aliquam.</p>
+                            <p>Aliquam gravida sem enim, vel efficitur metus maximus eget. Curabitur venenatis quam sed turpis vestibulum sagittis. Mauris non massa metus. Vestibulum sapien massa, efficitur a nisi at, ullamcorper accumsan velit. Nam consequat
+                                molestie libero. Vestibulum nec neque id quam ullamcorper dapibus non eget odio. Proin aliquam ante eleifend euismod blandit. Nulla laoreet nisl ac efficitur elementum. Integer dignissim sapien in massa condimentum consequat
+                                at ut ligula. Fusce eget sapien justo. Praesent eget ex sit amet magna molestie tristique a condimentum sem. Vivamus bibendum interdum gravida. Nam congue libero et erat lacinia, consequat dictum est varius. Sed magna enim,
+                                bibendum vitae sem in, efficitur molestie nisi.</p>
+                            <p>Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Etiam vel dui et libero dignissim iaculis. Etiam enim nisl, rhoncus non enim ut, tristique ullamcorper magna. Mauris vehicula tristique
+                                sapien, dignissim tincidunt sem pellentesque sit amet. Maecenas pretium turpis risus, a sollicitudin sem gravida sed. Ut commodo viverra tristique. Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
+                            <p>In non felis non metus mattis malesuada at id lacus. Nam tempor nulla sit amet elit sollicitudin facilisis. Nulla convallis, dui in iaculis bibendum, nulla lorem vestibulum quam, ac pellentesque purus purus viverra augue. Duis
+                                bibendum sollicitudin bibendum. In leo magna, rhoncus at finibus in, volutpat eu massa. Aliquam vel neque at enim semper tempor in ac ex. Praesent vitae lacus consectetur, lacinia est eget, fermentum eros. Aenean id felis
+                                nulla. Mauris vitae faucibus lorem. Sed nulla erat, egestas vel massa quis, rhoncus porta orci. Nulla mollis eleifend commodo. Curabitur elit tortor, ultricies id auctor sed, condimentum nec quam. Nulla ornare, augue quis
+                                imperdiet fermentum, turpis augue luctus odio, at molestie massa libero non mauris. Pellentesque sit amet risus hendrerit, accumsan orci vel, tempus risus.</p>
+                            <p>Sed magna ex, condimentum vel nisi ac, pulvinar lacinia orci. Vestibulum nec gravida est. Morbi consectetur tincidunt massa, sit amet tincidunt purus aliquet in. Nam efficitur varius ullamcorper. Nullam at dolor quis nisl gravida
+                                blandit sed in nunc. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Cras ac velit vulputate, egestas dolor quis, vehicula leo. Orci varius natoque penatibus et magnis dis parturient
+                                montes, nascetur ridiculus mus. Cras consequat quam et tempus volutpat. Nulla bibendum tincidunt ligula, a rhoncus augue auctor nec. Maecenas laoreet in purus sit amet auctor.</p>
+                        </div>
+                        <menu slot="actions">
+                            <button type="button" class="mdl-button">Agree</button>
+                            <button type="button" data-dialog-close class="mdl-button">Disagree</button>
+                        </menu>
+                    </waf-dialog>
+                    <button class="dialog-trigger" type="button">show very long dialog (limited height)</button>
+                    <waf-dialog limited-height>
+                        <h2 slot="title" style="margin-top:0;">dialog title</h2>
+                        <div slot="content">
+                            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec sit amet erat in libero elementum consequat in et quam. Phasellus porta felis tortor, et faucibus turpis auctor sed. Aenean laoreet feugiat felis. Proin nec dapibus
+                                enim, sit amet venenatis quam. Aenean sit amet finibus magna. Fusce pulvinar interdum tellus, nec finibus dolor mattis et. Nulla faucibus porta mattis. Etiam vulputate bibendum ultrices. In sed consequat augue. Ut tristique
+                                mauris vitae pretium fermentum. Cras eros nunc, laoreet vel neque ut, suscipit tempus odio. Vivamus a dapibus arcu, a suscipit eros. Nam condimentum erat nec ipsum aliquam fringilla non vel tortor. Nunc aliquet magna sed
+                                elit faucibus gravida.</p>
+                            <p>Pellentesque sit amet sodales mauris. Curabitur suscipit felis non leo pulvinar dictum. Praesent tempor nulla a posuere aliquam. Nunc feugiat, enim nec consectetur finibus, purus turpis maximus sapien, eget tincidunt est ligula
+                                ut nulla. Aliquam eu justo pellentesque, mollis erat vel, feugiat enim. Nullam vel posuere nunc. Suspendisse potenti. Nullam posuere aliquet neque eget cursus. Morbi luctus elementum rhoncus.</p>
+                            <p>Phasellus malesuada posuere ipsum, eu gravida risus tincidunt convallis. Nam ac purus ligula. Sed ut blandit libero. Vestibulum sodales enim et leo ultricies pharetra. Nam turpis nisl, tempor ac neque quis, fringilla facilisis
+                                mauris. Aliquam molestie, lacus vel consectetur pellentesque, lorem lacus posuere turpis, sit amet iaculis est magna eget ipsum. Vivamus leo sapien, blandit in maximus at, efficitur quis nibh. Donec in nibh sed lorem faucibus
+                                commodo. Sed sollicitudin ligula semper massa <a href="#" title="fake link">vehicula pulvinar</a> egestas vitae felis. Vivamus ullamcorper pellentesque diam, eu venenatis dui efficitur nec. Proin pharetra augue eget metus
+                                ullamcorper aliquam.
+                            </p>
+                            <p>Aliquam gravida sem enim, vel efficitur metus maximus eget. Curabitur venenatis quam sed turpis vestibulum sagittis. Mauris non massa metus. Vestibulum sapien massa, efficitur a nisi at, ullamcorper accumsan velit. Nam consequat
+                                molestie libero. Vestibulum nec neque id quam ullamcorper dapibus non eget odio. Proin aliquam ante eleifend euismod blandit. Nulla laoreet nisl ac efficitur elementum. Integer dignissim sapien in massa condimentum consequat
+                                at ut ligula. Fusce eget sapien justo. Praesent eget ex sit amet magna molestie tristique a condimentum sem. Vivamus bibendum interdum gravida. Nam congue libero et erat lacinia, consequat dictum est varius. Sed magna enim,
+                                bibendum vitae sem in, efficitur molestie nisi.</p>
+                            <p>Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Etiam vel dui et libero dignissim iaculis. Etiam enim nisl, rhoncus non enim ut, tristique ullamcorper magna. Mauris vehicula tristique
+                                sapien, dignissim tincidunt sem pellentesque sit amet. Maecenas pretium turpis risus, a sollicitudin sem gravida sed. Ut commodo viverra tristique. Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
+                            <p>In non felis non metus mattis malesuada at id lacus. Nam tempor nulla sit amet elit sollicitudin facilisis. Nulla convallis, dui in iaculis bibendum, nulla lorem vestibulum quam, ac pellentesque purus purus viverra augue. Duis
+                                bibendum sollicitudin bibendum. In leo magna, rhoncus at finibus in, volutpat eu massa. Aliquam vel neque at enim semper tempor in ac ex. Praesent vitae lacus consectetur, lacinia est eget, fermentum eros. Aenean id felis
+                                nulla. Mauris vitae faucibus lorem. Sed nulla erat, egestas vel massa quis, rhoncus porta orci. Nulla mollis eleifend commodo. Curabitur elit tortor, ultricies id auctor sed, condimentum nec quam. Nulla ornare, augue quis
+                                imperdiet fermentum, turpis augue luctus odio, at molestie massa libero non mauris. Pellentesque sit amet risus hendrerit, accumsan orci vel, tempus risus.</p>
+                            <p>Sed magna ex, condimentum vel nisi ac, pulvinar lacinia orci. Vestibulum nec gravida est. Morbi consectetur tincidunt massa, sit amet tincidunt purus aliquet in. Nam efficitur varius ullamcorper. Nullam at dolor quis nisl gravida
+                                blandit sed in nunc. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Cras ac velit vulputate, egestas dolor quis, vehicula leo. Orci varius natoque penatibus et magnis dis parturient
+                                montes, nascetur ridiculus mus. Cras consequat quam et tempus volutpat. Nulla bibendum tincidunt ligula, a rhoncus augue auctor nec. Maecenas laoreet in purus sit amet auctor.</p>
+                        </div>
+                        <menu slot="actions">
+                            <button type="button" class="mdl-button">Agree</button>
+                            <button type="button" data-dialog-close class="mdl-button">Disagree</button>
+                        </menu>
+                    </waf-dialog>
+                </div>
+            </section>
+            <section>
+                <a name="waf-tabs"></a>
+                <h2>&lt;waf-tabs&gt;</h2>
+                <p>Easily generate, accessible, good looking, nestable, material design tabs</p>
+                <h3>minimal requirement</h3>
+                <ul>
+                    <li>One &lt;waf-tabs&gt; containing exclusively &lt;waf-tab&gt; tags (one for each tab)</li>
+                    <li>Each &lt;waf-tab&gt; tag has a <em>title</em> attribute (value is either string or HTML string)</li>
+                    <li>Just insert your content inside &lt;waf-tab&gt; for each pane</li>
+                </ul>
+                <h3>optional requirements</h3>
+                <ul>
+                    <li><em>selected</em> boolean attribute allows to declare which pane will be opened initially (default if not set is first). Only set this once per tabs system.</li>
+                </ul>
+                <h3>limitations</h3>
+                <ul>
+                    <li>No advanced RWD behavior, this means that if you have many tabs the tab system will not look nice with a narrow screen</li>
+                </ul>
+                <h3>Samples</h3>
+                <div class="sample-block">
+                    <h4 class="valid-case">regular cases</h4>
+                    <waf-tabs>
+                        <waf-tab tab-header="Tab 1">
+                            <p>Tu vois, là on voit qu'on a beaucoup à travailler sur nous-mêmes car il faut toute la splendeur du aware car l'aboutissement de l'instinct, c'est l'amour ! Et là, vraiment, j'essaie de tout coeur de donner la plus belle réponse
+                                de la terre !</p>
+                        </waf-tab>
+                        <waf-tab selected tab-header="<i>Tab 2</i>">
+                            <p>Je ne voudrais pas rentrer dans des choses trop dimensionnelles, mais, si vraiment tu veux te rappeler des souvenirs de ton perroquet, on vit dans une réalité qu'on a créée et que j'appelle illusion parce que spirituellement,
+                                on est tous ensemble, ok ? C'est cette année que j'ai eu la révélation !</p>
+                        </waf-tab>
+                        <waf-tab tab-header="&lt;i class=&quot;my-custom-class&quot;&gt;Tab 3&lt;/i&gt;">
+                            <p>Si je t'emmerde, tu me le dis, je sais que, grâce à ma propre vérité le cycle du cosmos dans la vie... c'est une grande roue car l'aboutissement de l'instinct, c'est l'amour ! C'est cette année que j'ai eu la révélation !</p>
+                        </waf-tab>
+                        <waf-tab tab-header="Tab 4">
+                            <p>This <strong>temporary text is part of the <em>WYSIWYG editor</em></strong> and was <kbd title="Keyboard tag &laquo;kbd&raquo;">copy/pasted</kbd> here to get text for testing the content layout of this site before <q title="Quote tag &laquo;q&raquo;">content editors</q>                                have access to your CMS.</p>
+                            <p>060 bytes lôrem ïpsum <code>&laquo;a href&raquo;</code> <a href="#internal_link_example" title="#internal_link_example">internal link</a> VS <a href="http://example.com/" title="http://example.com/" target="_blank">external link</a>                                à dolor</p>
 
-                        <h1>Heading level 1 example <code>&laquo;h1&raquo;</code></h1>
-                        <p>120 bytes lôrem ïpsum dolor sit àmety consectetur adipiscing elit. Étiam suscipit velit velà venenatis accumsan volutpat</p>
+                            <h1>Heading level 1 example <code>&laquo;h1&raquo;</code></h1>
+                            <p>120 bytes lôrem ïpsum dolor sit àmety consectetur adipiscing elit. Étiam suscipit velit velà venenatis accumsan volutpat</p>
 
-                        <h2>Heading level 2 example <code>&laquo;h2&raquo;</code></h2>
-                        <p>500 bytes lôrem ïpsum dolor sit àmet, consectetur adipiscing elit. Sed ut ornare enim, ac tempor velit. Pellentesque id Ôdio scelerisque, feugiat lectus non, tristique leo. Aenean tincidunt vel risus at imperdiet. Donec rutrum
-                            malesuada urna at lacinia. Praesent pharetra porttitor elit vitae varius. çras commodo magna quis erat ultrices, et ultrices erat cursus. Maecenas eget orci lôrem. Suspendisse at arcu ac nisl blandit pretium quis et elit. Quisque
-                            ultrices dolor rhoncus, feugiat nulla àmet.</p>
+                            <h2>Heading level 2 example <code>&laquo;h2&raquo;</code></h2>
+                            <p>500 bytes lôrem ïpsum dolor sit àmet, consectetur adipiscing elit. Sed ut ornare enim, ac tempor velit. Pellentesque id Ôdio scelerisque, feugiat lectus non, tristique leo. Aenean tincidunt vel risus at imperdiet. Donec rutrum
+                                malesuada urna at lacinia. Praesent pharetra porttitor elit vitae varius. çras commodo magna quis erat ultrices, et ultrices erat cursus. Maecenas eget orci lôrem. Suspendisse at arcu ac nisl blandit pretium quis et elit.
+                                Quisque ultrices dolor rhoncus, feugiat nulla àmet.</p>
 
-                        <h3>Heading level 3 example <code>&laquo;h3&raquo;</code></h3>
-                        <p>300 bytes lôrem ïpsum dolor sit àmet, consectetur adipiscing elit. Donec vel sagittis mi. Pellentesque mollis mauris in Ôdio congue dictum. Aenean ultricies ligula at dui condimentum aliquet. Donec adipiscing, magna eu vulputate
-                            mattis, risus erat fringilla leo, non malesuada elit libero ac posuere.</p>
-                        <p>120 bytes lôrem ïpsum dolor sit àmety consectetur adipiscing elit. Étiam suscipit velit velà venenatis accumsan volutpat</p>
+                            <h3>Heading level 3 example <code>&laquo;h3&raquo;</code></h3>
+                            <p>300 bytes lôrem ïpsum dolor sit àmet, consectetur adipiscing elit. Donec vel sagittis mi. Pellentesque mollis mauris in Ôdio congue dictum. Aenean ultricies ligula at dui condimentum aliquet. Donec adipiscing, magna eu vulputate
+                                mattis, risus erat fringilla leo, non malesuada elit libero ac posuere.</p>
+                            <p>120 bytes lôrem ïpsum dolor sit àmety consectetur adipiscing elit. Étiam suscipit velit velà venenatis accumsan volutpat</p>
 
-                        <h4>Heading level 4 <code>&laquo;h4&raquo;</code></h4>
-                        <p>120 bytes lôrem ïpsum dolor sit àmety consectetur adipiscing elit. Étiam suscipit velit velà venenatis accumsan volutpat</p>
+                            <h4>Heading level 4 <code>&laquo;h4&raquo;</code></h4>
+                            <p>120 bytes lôrem ïpsum dolor sit àmety consectetur adipiscing elit. Étiam suscipit velit velà venenatis accumsan volutpat</p>
 
-                        <h3>List formatted strings</h3>
-                        <p>066 bytes lôrem ïpsum dolor sit àmety consectetur adipis sixty-six</p>
-                        <h4>Unordered list items <code>&laquo;ul&raquo;</code></h4>
-                        <ul>
-                            <li>First item of <code>&laquo;li&raquo;</code> list;</li>
-                            <li>2nd item of <code>&laquo;li&raquo;</code> list with long lôrem ïpsum dolor sit àmet, consectetur adipiscing elit. Donec vel sagittis mi. Pellentesque mollis mauris in Ôdio congue dictum. Aenean ultricies ligula at dui condimentum
-                                aliquet;
-                            </li>
-                            <li>Third and last item of <code>&laquo;li&raquo;</code> list.</li>
-                        </ul>
-                        <p>066 bytes lôrem ïpsum dolor sit àmety consectetur adipis sixty-six</p>
-                        <h4>Ordered list items <code>&laquo;ol&raquo;</code></h4>
-                        <ul>
-                            <li>First item of <code>&laquo;li&raquo;</code> list;</li>
-                            <li>2nd item of <code>&laquo;li&raquo;</code> list with long lôrem ïpsum dolor sit àmet, consectetur adipiscing elit. Donec vel sagittis mi. Pellentesque mollis mauris in Ôdio congue dictum. Aenean ultricies ligula at dui condimentum
-                                aliquet;
-                            </li>
-                            <li>Third and last item of <code>&laquo;li&raquo;</code> list.</li>
-                        </ul>
-                        <p>120 bytes lôrem ïpsum dolor sit àmety consectetur adipiscing elit. Étiam suscipit velit velà venenatis accumsan volutpat</p>
-                        <p>036 bytes lôrem ïpsum des caractères</p>
-                    </waf-tab>
-                </waf-tabs>
-            </waf-tab>
-            <waf-tab tab-header="WAF-DIALOG">
-                <h2>WAF-DIALOG - modal windows made easy</h2>
-                <p>Easy way to create full feature modal windows with accessibility</p>
-                <hr>
-                <h3>waf-modals cases - regular cases</h3>
-                <button class="dialog-trigger" type="button">show information dialog</button>
-                <waf-dialog>
-                    <h1 slot="title">Allow data collection?</h1>
-                    <p slot="content">Allowing us to collect data will let us get you the information you want faster.</p>
-                    <menu slot="actions">
-                        <button type="button" data-dialog-close class="mdl-button">Ok</button>
-                    </menu>
-                </waf-dialog>
-                <button class="dialog-trigger" type="button">show confirmation dialog</button>
-                <waf-dialog prevent-backdrop-closing>
-                    <h2 slot="title">dialog title</h2>
-                    <p slot="content">dialog content</p>
-                    <menu slot="actions">
-                        <button type="button" class="mdl-button">Agree</button>
-                        <button type="button" data-dialog-close class="mdl-button">Disagree</button>
-                    </menu>
-                </waf-dialog>
-                <button class="dialog-trigger" type="button">show dialog without backdrop</button>
-                <waf-dialog no-backdrop>
-                    <h2 slot="title">i'm a teapot</h2>
-                </waf-dialog>
-                <button class="dialog-trigger" type="button">show very long dialog</button>
-                <waf-dialog>
-                    <h2 slot="title" style="margin-top:0;">dialog title</h2>
-                    <div slot="content">
-                        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec sit amet erat in libero elementum consequat in et quam. Phasellus porta felis tortor, et faucibus turpis auctor sed. Aenean laoreet feugiat felis. Proin nec dapibus
-                            enim, sit amet venenatis quam. Aenean sit amet finibus magna. Fusce pulvinar interdum tellus, nec finibus dolor mattis et. Nulla faucibus porta mattis. Etiam vulputate bibendum ultrices. In sed consequat augue. Ut tristique
-                            mauris vitae pretium fermentum. Cras eros nunc, laoreet vel neque ut, suscipit tempus odio. Vivamus a dapibus arcu, a suscipit eros. Nam condimentum erat nec ipsum aliquam fringilla non vel tortor. Nunc aliquet magna sed elit
-                            faucibus gravida.</p>
-                        <p>Pellentesque sit amet sodales mauris. Curabitur suscipit felis non leo pulvinar dictum. Praesent tempor nulla a posuere aliquam. Nunc feugiat, enim nec consectetur finibus, purus turpis maximus sapien, eget tincidunt est ligula
-                            ut nulla. Aliquam eu justo pellentesque, mollis erat vel, feugiat enim. Nullam vel posuere nunc. Suspendisse potenti. Nullam posuere aliquet neque eget cursus. Morbi luctus elementum rhoncus.</p>
-                        <p>Phasellus malesuada posuere ipsum, eu gravida risus tincidunt convallis. Nam ac purus ligula. Sed ut blandit libero. Vestibulum sodales enim et leo ultricies pharetra. Nam turpis nisl, tempor ac neque quis, fringilla facilisis
-                            mauris. Aliquam molestie, lacus vel consectetur pellentesque, lorem lacus posuere turpis, sit amet iaculis est magna eget ipsum. Vivamus leo sapien, blandit in maximus at, efficitur quis nibh. Donec in nibh sed lorem faucibus
-                            commodo. Sed sollicitudin ligula semper massa vehicula pulvinar egestas vitae felis. Vivamus ullamcorper pellentesque diam, eu venenatis dui efficitur nec. Proin pharetra augue eget metus ullamcorper aliquam.</p>
-                        <p>Aliquam gravida sem enim, vel efficitur metus maximus eget. Curabitur venenatis quam sed turpis vestibulum sagittis. Mauris non massa metus. Vestibulum sapien massa, efficitur a nisi at, ullamcorper accumsan velit. Nam consequat
-                            molestie libero. Vestibulum nec neque id quam ullamcorper dapibus non eget odio. Proin aliquam ante eleifend euismod blandit. Nulla laoreet nisl ac efficitur elementum. Integer dignissim sapien in massa condimentum consequat
-                            at ut ligula. Fusce eget sapien justo. Praesent eget ex sit amet magna molestie tristique a condimentum sem. Vivamus bibendum interdum gravida. Nam congue libero et erat lacinia, consequat dictum est varius. Sed magna enim,
-                            bibendum vitae sem in, efficitur molestie nisi.</p>
-                        <p>Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Etiam vel dui et libero dignissim iaculis. Etiam enim nisl, rhoncus non enim ut, tristique ullamcorper magna. Mauris vehicula tristique
-                            sapien, dignissim tincidunt sem pellentesque sit amet. Maecenas pretium turpis risus, a sollicitudin sem gravida sed. Ut commodo viverra tristique. Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
-                        <p>In non felis non metus mattis malesuada at id lacus. Nam tempor nulla sit amet elit sollicitudin facilisis. Nulla convallis, dui in iaculis bibendum, nulla lorem vestibulum quam, ac pellentesque purus purus viverra augue. Duis
-                            bibendum sollicitudin bibendum. In leo magna, rhoncus at finibus in, volutpat eu massa. Aliquam vel neque at enim semper tempor in ac ex. Praesent vitae lacus consectetur, lacinia est eget, fermentum eros. Aenean id felis nulla.
-                            Mauris vitae faucibus lorem. Sed nulla erat, egestas vel massa quis, rhoncus porta orci. Nulla mollis eleifend commodo. Curabitur elit tortor, ultricies id auctor sed, condimentum nec quam. Nulla ornare, augue quis imperdiet
-                            fermentum, turpis augue luctus odio, at molestie massa libero non mauris. Pellentesque sit amet risus hendrerit, accumsan orci vel, tempus risus.</p>
-                        <p>Sed magna ex, condimentum vel nisi ac, pulvinar lacinia orci. Vestibulum nec gravida est. Morbi consectetur tincidunt massa, sit amet tincidunt purus aliquet in. Nam efficitur varius ullamcorper. Nullam at dolor quis nisl gravida
-                            blandit sed in nunc. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Cras ac velit vulputate, egestas dolor quis, vehicula leo. Orci varius natoque penatibus et magnis dis parturient
-                            montes, nascetur ridiculus mus. Cras consequat quam et tempus volutpat. Nulla bibendum tincidunt ligula, a rhoncus augue auctor nec. Maecenas laoreet in purus sit amet auctor.</p>
-                    </div>
-                    <menu slot="actions">
-                        <button type="button" class="mdl-button">Agree</button>
-                        <button type="button" data-dialog-close class="mdl-button">Disagree</button>
-                    </menu>
-                </waf-dialog>
-                <button class="dialog-trigger" type="button">show very long dialog (limited height)</button>
-                <waf-dialog limited-height>
-                    <h2 slot="title" style="margin-top:0;">dialog title</h2>
-                    <div slot="content">
-                        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec sit amet erat in libero elementum consequat in et quam. Phasellus porta felis tortor, et faucibus turpis auctor sed. Aenean laoreet feugiat felis. Proin nec dapibus
-                            enim, sit amet venenatis quam. Aenean sit amet finibus magna. Fusce pulvinar interdum tellus, nec finibus dolor mattis et. Nulla faucibus porta mattis. Etiam vulputate bibendum ultrices. In sed consequat augue. Ut tristique
-                            mauris vitae pretium fermentum. Cras eros nunc, laoreet vel neque ut, suscipit tempus odio. Vivamus a dapibus arcu, a suscipit eros. Nam condimentum erat nec ipsum aliquam fringilla non vel tortor. Nunc aliquet magna sed elit
-                            faucibus gravida.</p>
-                        <p>Pellentesque sit amet sodales mauris. Curabitur suscipit felis non leo pulvinar dictum. Praesent tempor nulla a posuere aliquam. Nunc feugiat, enim nec consectetur finibus, purus turpis maximus sapien, eget tincidunt est ligula
-                            ut nulla. Aliquam eu justo pellentesque, mollis erat vel, feugiat enim. Nullam vel posuere nunc. Suspendisse potenti. Nullam posuere aliquet neque eget cursus. Morbi luctus elementum rhoncus.</p>
-                        <p>Phasellus malesuada posuere ipsum, eu gravida risus tincidunt convallis. Nam ac purus ligula. Sed ut blandit libero. Vestibulum sodales enim et leo ultricies pharetra. Nam turpis nisl, tempor ac neque quis, fringilla facilisis
-                            mauris. Aliquam molestie, lacus vel consectetur pellentesque, lorem lacus posuere turpis, sit amet iaculis est magna eget ipsum. Vivamus leo sapien, blandit in maximus at, efficitur quis nibh. Donec in nibh sed lorem faucibus
-                            commodo. Sed sollicitudin ligula semper massa <a href="#" title="fake link">vehicula pulvinar</a> egestas vitae felis. Vivamus ullamcorper pellentesque diam, eu venenatis dui efficitur nec. Proin pharetra augue eget metus ullamcorper
-                            aliquam.
-                        </p>
-                        <p>Aliquam gravida sem enim, vel efficitur metus maximus eget. Curabitur venenatis quam sed turpis vestibulum sagittis. Mauris non massa metus. Vestibulum sapien massa, efficitur a nisi at, ullamcorper accumsan velit. Nam consequat
-                            molestie libero. Vestibulum nec neque id quam ullamcorper dapibus non eget odio. Proin aliquam ante eleifend euismod blandit. Nulla laoreet nisl ac efficitur elementum. Integer dignissim sapien in massa condimentum consequat
-                            at ut ligula. Fusce eget sapien justo. Praesent eget ex sit amet magna molestie tristique a condimentum sem. Vivamus bibendum interdum gravida. Nam congue libero et erat lacinia, consequat dictum est varius. Sed magna enim,
-                            bibendum vitae sem in, efficitur molestie nisi.</p>
-                        <p>Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Etiam vel dui et libero dignissim iaculis. Etiam enim nisl, rhoncus non enim ut, tristique ullamcorper magna. Mauris vehicula tristique
-                            sapien, dignissim tincidunt sem pellentesque sit amet. Maecenas pretium turpis risus, a sollicitudin sem gravida sed. Ut commodo viverra tristique. Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
-                        <p>In non felis non metus mattis malesuada at id lacus. Nam tempor nulla sit amet elit sollicitudin facilisis. Nulla convallis, dui in iaculis bibendum, nulla lorem vestibulum quam, ac pellentesque purus purus viverra augue. Duis
-                            bibendum sollicitudin bibendum. In leo magna, rhoncus at finibus in, volutpat eu massa. Aliquam vel neque at enim semper tempor in ac ex. Praesent vitae lacus consectetur, lacinia est eget, fermentum eros. Aenean id felis nulla.
-                            Mauris vitae faucibus lorem. Sed nulla erat, egestas vel massa quis, rhoncus porta orci. Nulla mollis eleifend commodo. Curabitur elit tortor, ultricies id auctor sed, condimentum nec quam. Nulla ornare, augue quis imperdiet
-                            fermentum, turpis augue luctus odio, at molestie massa libero non mauris. Pellentesque sit amet risus hendrerit, accumsan orci vel, tempus risus.</p>
-                        <p>Sed magna ex, condimentum vel nisi ac, pulvinar lacinia orci. Vestibulum nec gravida est. Morbi consectetur tincidunt massa, sit amet tincidunt purus aliquet in. Nam efficitur varius ullamcorper. Nullam at dolor quis nisl gravida
-                            blandit sed in nunc. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Cras ac velit vulputate, egestas dolor quis, vehicula leo. Orci varius natoque penatibus et magnis dis parturient
-                            montes, nascetur ridiculus mus. Cras consequat quam et tempus volutpat. Nulla bibendum tincidunt ligula, a rhoncus augue auctor nec. Maecenas laoreet in purus sit amet auctor.</p>
-                    </div>
-                    <menu slot="actions">
-                        <button type="button" class="mdl-button">Agree</button>
-                        <button type="button" data-dialog-close class="mdl-button">Disagree</button>
-                    </menu>
-                </waf-dialog>
-            </waf-tab>
-            <waf-tab tab-header="WAF-UTILS">
-                <h2>WAF-UTILS-RIPPLE-EFFECT - apply material design ripple effect on your buttons</h2>
-                <p>Some kind of partial theme and JS effect for your buttons</p>
-                <hr>
-                </waf-utils-ripple-effect>
-                <h3>ripple-effect cases - regular cases: all elements with attribute "ripple"</h3>
-                <waf-utils-ripple-effect>
-                    <menu id="btn-container-1">
-                        <button type="button" class="not-rippled">Button</button>
-                        <button type="button" ripple>Button with ripple attribute</button>
-                        <button type="button" class="not-rippled button-stylish">Button</button>
-                        <button type="button" class="button-stylish" ripple>Button with ripple attribute</button>
-                    </menu>
-                </waf-utils-ripple-effect>
-                <h3>ripple-effect cases - regular cases: some elements with specific class included in component selector string</h3>
-                <waf-utils-ripple-effect selector="#btn-container-2 .ripple-button">
-                    <menu id="btn-container-2">
-                        <button type="button" class="ripple-button">Button included in selector</button>
-                        <button type="button" class="not-rippled">Button excluded from selector</button>
-                        <button type="button" class="button-stylish ripple-button">Button included in selector</button>
-                        <button type="button" class="not-rippled button-stylish">Button excluded from selector</button>
-                    </menu>
-                </waf-utils-ripple-effect>
-                <h3>ripple-effect edge case - nested FX tag got you covered, effect is only applied once</h3>
-                <waf-utils-ripple-effect>
+                            <h3>List formatted strings</h3>
+                            <p>066 bytes lôrem ïpsum dolor sit àmety consectetur adipis sixty-six</p>
+                            <h4>Unordered list items <code>&laquo;ul&raquo;</code></h4>
+                            <ul>
+                                <li>First item of <code>&laquo;li&raquo;</code> list;</li>
+                                <li>2nd item of <code>&laquo;li&raquo;</code> list with long lôrem ïpsum dolor sit àmet, consectetur adipiscing elit. Donec vel sagittis mi. Pellentesque mollis mauris in Ôdio congue dictum. Aenean ultricies ligula at dui condimentum
+                                    aliquet;
+                                </li>
+                                <li>Third and last item of <code>&laquo;li&raquo;</code> list.</li>
+                            </ul>
+                            <p>066 bytes lôrem ïpsum dolor sit àmety consectetur adipis sixty-six</p>
+                            <h4>Ordered list items <code>&laquo;ol&raquo;</code></h4>
+                            <ul>
+                                <li>First item of <code>&laquo;li&raquo;</code> list;</li>
+                                <li>2nd item of <code>&laquo;li&raquo;</code> list with long lôrem ïpsum dolor sit àmet, consectetur adipiscing elit. Donec vel sagittis mi. Pellentesque mollis mauris in Ôdio congue dictum. Aenean ultricies ligula at dui condimentum
+                                    aliquet;
+                                </li>
+                                <li>Third and last item of <code>&laquo;li&raquo;</code> list.</li>
+                            </ul>
+                            <p>120 bytes lôrem ïpsum dolor sit àmety consectetur adipiscing elit. Étiam suscipit velit velà venenatis accumsan volutpat</p>
+                            <p>036 bytes lôrem ïpsum des caractères</p>
+                        </waf-tab>
+                    </waf-tabs>
+                </div>
+            </section>
+            <section>
+                <a name="waf-utils-ripple-effect"></a>
+                <h2>&lt;waf-utils-ripple-effect&gt;</h2>
+                <p>Apply material design ripple effect on your buttons. Act like narrowly scoped behavior & style theme</p>
+                <h3>minimal requirement</h3>
+                <p>No minimal requirement, just put the tag around the content you want to target for the effect.</p>
+                <p>By default, all DOM elements with the <em>ripple</em> attribute will have the effect attached.</p>
+                <h3>optional requirements</h3>
+                <ul>
+                    <li><em>selector</em> enables to provide a CSS selector string to target specific elements. effect will be applied to either matching element, and elements with <em>ripple</em> attribute</li>
+                </ul>
+                <h3>limitations</h3>
+                <ul>
+                    <li>Effect can be hindered by host styles</li>
+                </ul>
+                <h3>Samples</h3>
+                <div class="sample-block">
+                    <h4 class="valid-case">regular cases - all elements with attribute "ripple"</h4>
                     <waf-utils-ripple-effect>
                         <menu id="btn-container-1">
                             <button type="button" class="not-rippled">Button</button>
@@ -372,41 +366,65 @@
                             <button type="button" class="button-stylish" ripple>Button with ripple attribute</button>
                         </menu>
                     </waf-utils-ripple-effect>
-                </waf-utils-ripple-effect>
-            </waf-tab>
-        </waf-tabs>
+                    <h4 class="valid-case">regular cases - some elements with specific class included in component selector string</h4>
+                    <waf-utils-ripple-effect selector="#btn-container-2 .ripple-button">
+                        <menu id="btn-container-2">
+                            <button type="button" class="ripple-button">Button included in selector</button>
+                            <button type="button" class="not-rippled">Button excluded from selector</button>
+                            <button type="button" class="button-stylish ripple-button">Button included in selector</button>
+                            <button type="button" class="not-rippled button-stylish">Button excluded from selector</button>
+                        </menu>
+                    </waf-utils-ripple-effect>
+                    <h4 class="valid-case">edge case - nested FX tag got you covered, effect is only applied once</h4>
+                    <waf-utils-ripple-effect>
+                        <waf-utils-ripple-effect>
+                            <menu id="btn-container-1">
+                                <button type="button" class="not-rippled">Button</button>
+                                <button type="button" ripple>Button with ripple attribute</button>
+                                <button type="button" class="not-rippled button-stylish">Button</button>
+                                <button type="button" class="button-stylish" ripple>Button with ripple attribute</button>
+                            </menu>
+                        </waf-utils-ripple-effect>
+                    </waf-utils-ripple-effect>
+                </div>
+            </section>
+        </div>
     </main>
     <script>
         // WAF-INPUT
-        document.querySelector('#waf-input-custom-errors').errors = {
-            badInput: 'error passed by JS',
-            patternMismatch: 'error passed by JS',
-            rangeOverflow: 'error passed by JS',
-            rangeUnderflow: 'error passed by JS',
-            stepMismatch: 'error passed by JS',
-            tooLong: 'error passed by JS',
-            tooShort: 'error passed by JS',
-            typeMismatch: 'error passed by JS',
-            valueMissing: 'error passed by JS'
-        };
-
-        setTimeout(function() {
-            console.info('JS errors object updated');
-            document.querySelector('#waf-input-custom-errors').errors = {
-                badInput: 'error passed by JS 2',
-                patternMismatch: 'error passed by JS 2',
-                rangeOverflow: 'error passed by JS 2',
-                rangeUnderflow: 'error passed by JS 2',
-                stepMismatch: 'error passed by JS 2',
-                tooLong: 'error passed by JS 2',
-                tooShort: 'error passed by JS 2',
-                typeMismatch: 'error passed by JS 2',
-                valueMissing: 'error passed by JS 2'
+        let inputErrorsA = document.querySelector('#waf-input-custom-errors');
+        let inputErrorsB = document.querySelector('#waf-input-custom-html-errors');
+        if (inputErrorsA && inputErrorsB) {
+            inputErrorsA.errors = {
+                badInput: 'error passed by JS',
+                patternMismatch: 'error passed by JS',
+                rangeOverflow: 'error passed by JS',
+                rangeUnderflow: 'error passed by JS',
+                stepMismatch: 'error passed by JS',
+                tooLong: 'error passed by JS',
+                tooShort: 'error passed by JS',
+                typeMismatch: 'error passed by JS',
+                valueMissing: 'error passed by JS'
             };
 
-            console.info('HTML errors string updated');
-            document.querySelector('#waf-input-custom-html-errors').errors = '{ "patternMismatch": "HTML JSON string" }';
-        }, 10000);
+            setTimeout(function() {
+                console.info('JS errors object updated');
+                inputErrorsA.errors = {
+                    badInput: 'error passed by JS 2',
+                    patternMismatch: 'error passed by JS 2',
+                    rangeOverflow: 'error passed by JS 2',
+                    rangeUnderflow: 'error passed by JS 2',
+                    stepMismatch: 'error passed by JS 2',
+                    tooLong: 'error passed by JS 2',
+                    tooShort: 'error passed by JS 2',
+                    typeMismatch: 'error passed by JS 2',
+                    valueMissing: 'error passed by JS 2'
+                };
+
+                console.info('HTML errors string updated');
+                inputErrorsB.errors = '{ "patternMismatch": "HTML JSON string" }';
+            }, 10000);
+        }
     </script>
     <script>
         // WAF-DIALOG
@@ -431,6 +449,155 @@
             });
         }
     </script>
+    <style>
+        html {
+            height: 100vh;
+        }
+        
+        body {
+            font-family: 'Helvetica Neue Thin', Arial, sans-serif;
+            min-height: 100%;
+        }
+        
+        main {
+            display: flex;
+            flex-wrap: wrap;
+            margin: 2rem auto;
+            padding-left: 2rem;
+            padding-right: 2rem;
+            max-width: 1600px;
+        }
+        
+        main>header {
+            flex: 0 0 100%;
+        }
+        
+        main>.sections-containers {
+            flex: 1 1 80%;
+        }
+        
+        main>aside {
+            flex: 1 0 20%;
+        }
+        
+        .navigation {
+            position: fixed;
+        }
+        
+        .navigation a {
+            float: left;
+            clear: left;
+            color: #000;
+            font-family: 'Helvetica Neue Black', Arial, sans-serif;
+            padding: 0.5rem;
+        }
+        
+        a {
+            color: teal;
+            text-decoration: none;
+        }
+        
+        a:hover,
+        a:focus,
+        a:active {
+            color: teal;
+            text-decoration: underline;
+        }
+        
+        .sections-containers>section {
+            margin-top: 1rem;
+            margin-bottom: 1rem;
+            padding-top: 0.5rem;
+            padding-bottom: 1rem;
+        }
+        
+        .sections-containers>section:first-child {
+            margin-top: 0.5rem;
+            padding-top: 0;
+        }
+        
+        .sections-containers>section+section {
+            border-top: 1px solid teal;
+        }
+        
+        .sections-containers>section>h2 {
+            position: sticky;
+            z-index: 111;
+            top: -1px;
+            background: linear-gradient(to bottom, rgba(255, 255, 255, 1) 0%, rgba(255, 255, 255, 1) 78%, rgba(255, 255, 255, 0) 100%);
+        }
+        
+        h1,
+        h2,
+        h3 {
+            font-family: 'Helvetica Neue Medium', Arial, sans-serif;
+        }
+        
+        h1 {
+            margin-bottom: 2rem;
+        }
+        
+        h2 {
+            margin-top: 0;
+            padding-top: 0.5rem;
+            padding-bottom: 1rem;
+            margin-bottom: 1rem;
+        }
+        
+        h3 {
+            margin-top: 0;
+            margin-bottom: 1.2rem;
+        }
+        
+        h4 {
+            margin-top: 0;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px solid lightgrey;
+            margin-bottom: 0.5rem;
+            font-family: 'Helvetica Neue Thin', Arial, sans-serif;
+        }
+        
+        h5 {
+            display: inline;
+            padding-right: 2rem;
+        }
+        
+        .valid-case {
+            color: teal;
+            border-color: teal;
+        }
+        
+        .invalid-case {
+            color: lightcoral;
+            border-color: lightcoral;
+        }
+        
+        em {
+            font-style: normal;
+            font-weight: bold;
+        }
+        
+        .sample-block {
+            padding: 1.5rem;
+            background-color: #f5f5f5;
+            border-radius: 5px;
+        }
+        
+        menu {
+            padding-left: 0;
+        }
+        
+        .button-stylish {
+            border: none;
+            background: none;
+            background-color: teal;
+            color: #fff;
+            text-transform: uppercase;
+            padding: 5px 15px;
+            border-radius: 3px;
+            cursor: pointer;
+        }
+    </style>
 </body>
 
 </html>
