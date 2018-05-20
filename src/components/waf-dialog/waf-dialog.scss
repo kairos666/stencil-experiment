@@ -8,8 +8,13 @@ waf-dialog {
         background-color: $backdropColor;
         top: 0;
         left: 0;
-        right: 0;
-        bottom: 0;
+        width: 100vw;
+        height: 100vh;
+        overflow-y: auto;
+        &.no-backdrop {
+            background-color: transparent;
+            pointer-events: none;
+        }
     }
     [role="document"] {
         outline: none;
@@ -30,28 +35,26 @@ waf-dialog {
         box-shadow: unquote($dialogShadow);
         left: 50%;
         transform: translateX(-50%);
-        margin-top: 4rem;
+        top: $unlimitedHeightVerticalMargins;
         margin-bottom: $unlimitedHeightVerticalMargins;
+        pointer-events: all;
         &.limited-height {
             position: fixed;
             top: 50%;
             transform: translate(-50%, -50%);
+            [role="document"] {
+                max-height: 80vh;
+            }
         }
     }
     @include media(">=desktop") {
         [role="dialog"] {
             width: 50%;
         }
-        .limited-height [role="document"] {
-            max-height: 50vh;
-        }
     }
     @include media("<desktop") {
         [role="dialog"] {
             width: 80%;
-        }
-        .limited-height [role="document"] {
-            max-height: 80vh;
         }
     }
     .sr-only {
