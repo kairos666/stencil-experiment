@@ -167,7 +167,9 @@
                 </ul>
                 <h3>limitations</h3>
                 <ul>
-                    <li>Unless you use <em>limited-height</em> attribute, the modal is positioned absolutely, therefore the dialog box is not vertically centered into the page and can go out of sight in long pages.</li>
+                    <li>There is no built-in behavior where you make sure only one opened modal at any given time. It is up to the developer to manage that.</li>
+                    <li>IE11 has issues rendering the <em>limited-height</em> modal when there is lots of content. It is a known issue, having a relative unit for <em>flex-basis</em> trigger the bug. Setting an absolute value like "350px" fix the issue. But
+                        because this has to be calculated dynamically this is out of scope of the component.</li>
                     <li>Not really a good idea to nest these tags inside one another.</li>
                 </ul>
                 <h3>Samples</h3>
@@ -192,7 +194,11 @@
                     </waf-dialog>
                     <button class="dialog-trigger" type="button">show dialog without backdrop</button>
                     <waf-dialog no-backdrop>
-                        <h2 slot="title">i'm a teapot</h2>
+                        <h2 slot="title">I'm a teapot!</h2>
+                        <menu slot="actions">
+                            <button type="button" data-dialog-close class="mdl-button">Good for you</button>
+                            <button type="button" data-dialog-close class="mdl-button">I couldn't car any less</button>
+                        </menu>
                     </waf-dialog>
                     <button class="dialog-trigger" type="button">show very long dialog</button>
                     <waf-dialog>

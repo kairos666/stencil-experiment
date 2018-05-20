@@ -64,19 +64,20 @@ export class WafDialog {
      * Based on component state, render the dialog HTML structure and displays it or hide it
      */
     render() {
-        return [
-            <div class="waf-dialog-backdrop" tabindex="-1" style={this.backdropStyles()}></div>,
-            <div aria-hidden={(!this.isOpen).toString()} aria-labelledby={this.idGenerator('title')} aria-describedby={this.idGenerator('description')} role="dialog" class={this.dialogClass()} style={this.dialogStyles()}>
-                <section role="document" tabindex="-1">
-                    <div id={this.idGenerator('description')} class="sr-only">Beginning of dialog window. Escape will cancel and close the window.</div>
-                    <div id={this.idGenerator('title')}>
-                        <slot name="title"/>
-                    </div>
-                    <slot name="content"/>
-                    <slot name="actions"/>
-                </section>
+        return (
+            <div tabindex="-1" class={'waf-dialog-backdrop ' + this.backdropClass()} style={this.backdropStyles()}>
+                <div aria-hidden={(!this.isOpen).toString()} aria-labelledby={this.idGenerator('title')} aria-describedby={this.idGenerator('description')} role="dialog" class={this.dialogClass()}>
+                    <section role="document" tabindex="-1">
+                        <div id={this.idGenerator('description')} class="sr-only">Beginning of dialog window. Escape will cancel and close the window.</div>
+                        <div id={this.idGenerator('title')}>
+                            <slot name="title"/>
+                        </div>
+                        <slot name="content"/>
+                        <slot name="actions"/>
+                    </section>
+                </div>
             </div>
-        ]
+        )
     }
 
     /**
@@ -138,8 +139,8 @@ export class WafDialog {
     /**
      * React to clicked backdrop
      */
-    private backdropClickHandler() {
-        if (!this.preventBackdropClosing && !this.noBackdrop) this.hideModal();
+    private backdropClickHandler(evt) {
+        if (!this.preventBackdropClosing && !this.noBackdrop && (evt.target === evt.currentTarget)) this.hideModal();
     }
 
     /**
@@ -164,22 +165,16 @@ export class WafDialog {
         let stylesObject:any = {};
 
         // additional style when hidden or no backdrop
-        if (!this.isOpen || this.noBackdrop) stylesObject.display = 'none';
+        if (!this.isOpen) stylesObject.display = 'none';
 
         return stylesObject;
     }
 
     /**
-     * Util function for dynamic styles generation based on component state - target dialog box
+     * Util function for dynamic classes generation based on component state - target backdrop
      */
-    private dialogStyles() {
-        // base styles
-        let stylesObject:any = {};
-
-        // additional style when hidden or no backdrop
-        if (!this.isOpen) stylesObject.display = 'none';
-
-        return stylesObject;
+    private backdropClass() {
+        return (this.noBackdrop) ? 'no-backdrop' : '';
     }
 
     /**
