@@ -14,29 +14,13 @@ export class WafFaceDetect {
 
     componentWillLoad() {
         if (WebAssembly) {
-            // strap wasm module on
-            fetch(`${this.assetsPath}${this.wasmFaceDetectorFile}.wasm`)
-                .then(resp => resp.arrayBuffer())
-                .then(buffer => {
-                    WebAssembly.compile(buffer);
-                    // the script 'wasmpico.js' will instantiate this object once the 'wasmpico.wasm' loads
-                    console.log(moduleInit);
-                    console.log(moduleInit());
+            WebAssembly.compileStreaming(fetch(`${this.assetsPath}${this.wasmFaceDetectorFile}.wasm`))
+                .then(() => {
+                    // the script 'wasmpico.js' will instantiate this object once the 'wasmpico.wasm' loads & compile
+                    this.wasmFaceDetectorModule = moduleInit();
                     console.log(this.wasmFaceDetectorModule);
-                })
-            // WebAssembly
-            //     .instantiateStreaming(fetch(`${this.assetsPath}${this.wasmFaceDetectorFile}`))
-            //     .then(obj => {
-            //             this.wasmFaceDetectorModule = obj.instance.exports._find_faces();
-            //             console.log(obj);
-            //         }
-            //     );
-            // WebAssembly.compileStreaming(fetch(`${this.assetsPath}${this.wasmFaceDetectorFile}`))
-            //     .then(mod => {
-            //         WebAssembly.Module.imports(mod); 
-            //         console.log(this.wasmFaceDetectorModule);
-            //     }
-            // );
+                }
+            );
         } else {
             console.warn('This browser can\'t execute Web Assembly modules');
         }
