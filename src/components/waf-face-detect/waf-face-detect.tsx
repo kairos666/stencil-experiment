@@ -41,13 +41,14 @@ export class WafFaceDetect {
     render() {
         return [
             <video autoplay playsinline width="1" height="1"/>,
-            <canvas width={this.fdWidth} height={this.fdHeight} />
+            <canvas class="face-detect" width={this.fdWidth} height={this.fdHeight} />,
+            <canvas class="arkanoid" width={this.fdWidth} height={this.fdHeight} />
         ]
     }
 
     componentDidLoad() {
         // reference canvas element
-        this.fdCanvas = this.fdElt.querySelector('canvas');
+        this.fdCanvas = this.fdElt.querySelector('canvas.face-detect');
         this.fdVideo = this.fdElt.querySelector('video');
 
         // initiate everything (video & wasm in parralel then canvas)
@@ -59,6 +60,7 @@ export class WafFaceDetect {
         const pBase = Promise.all([this.initCameraVideo(), this.initWebAssembly()]);
         pBase.then(() => {
             this.initCanvas();
+            this.initArkanoid();
         }).catch(err => {
             console.warn(err);
         });
@@ -187,5 +189,123 @@ export class WafFaceDetect {
         });
 
         return dets;
+    }
+
+    private initArkanoid() {
+        const arkanoidCanvas:HTMLCanvasElement = this.fdElt.querySelector('canvas.arkanoid');
+        const canvasContext:CanvasRenderingContext2D = arkanoidCanvas.getContext('2d');
+        const options = {
+            bricks: { 
+                brickPerRowCount: 10,
+                rowCount: 3,
+                sideSpace: 20,
+                brickHeight: 10,
+                brickGutter: 5
+            }
+        }
+        function generateObjectsModel(canvasWidth, canvasHeight, data) {
+            // generate all bricks data
+            const brickWidth = (canvasWidth - data.sideSpace * 2 - data.brickGutter * (data.brickPerRowCount - 1)) / data.brickPerRowCount;
+            const bricksBluePrint = Array(data.rowCount).fill('fake').map((_itemRow, i) => {
+                return Array(data.brickPerRowCount).fill('fake').map((_itemColumn, j) => {
+                    return {
+                        x: data.sideSpace + j * (brickWidth + data.brickGutter),
+                        y: data.sideSpace + i * (data.brickHeight + data.brickGutter),
+                        width: brickWidth,
+                        height: data.brickHeight,
+                        color: '#0093e0',
+                        isActive: true,
+                        type: 'brick'
+                    }
+                })
+            });
+
+            // generate bar data
+            const barWidth = 2 * brickWidth + data.brickGutter;
+            const bar = {
+                x: canvasWidth / 2 - barWidth / 2,
+                y: canvasHeight - data.sideSpace - data.brickHeight,
+                width: barWidth ,
+                height: data.brickHeight,
+                color: '#0093e0',
+                isActive: true,
+                type: 'bar'
+            }
+
+            // generate ball data
+            const ballRadius = 10;
+            const ball = {
+                x: canvasWidth / 2,
+                y: canvasHeight - data.sideSpace - data.brickHeight - ballRadius,
+                dx: 2,
+                dy: -2,
+                radius: ballRadius,
+                color: '#0093e0',
+                isActive: true,
+                type: 'ball'
+            };
+
+            // return flattened array
+            let flattenedModel = [].concat.apply([], bricksBluePrint);
+            flattenedModel.push(bar);
+            flattenedModel.push(ball);
+            return flattenedModel;
+        }
+        function draw(model, ctx:CanvasRenderingContext2D, cWidth, cHeight, options) {
+            function bounceOffWalls(ballbp, cWidth, cHeight, sideSpace) {
+                let futurePosition = { x: ballbp.x + ballbp.dx, y: ballbp.y + ballbp.dy };
+                
+                // top
+                if ((futurePosition.y - ballbp.radius) < sideSpace) ballbp.dy = -ballbp.dy;
+                // bottom (game over)
+                if ((futurePosition.y + ballbp.radius) > (cHeight - sideSpace)) ballbp.dy = -ballbp.dy;
+                // left
+                if (futurePosition.x - ballbp.radius < sideSpace) ballbp.dx = -ballbp.dx;
+                // right
+                if (futurePosition.x + ballbp.radius > (cWidth - sideSpace)) ballbp.dx = -ballbp.dx;
+            }
+
+            return () => {
+                // clean canvas
+                ctx.clearRect(0, 0, cWidth, cHeight)
+
+                // draw active bricks onto canvas
+                model.forEach(bbp => {
+                    switch (bbp.type) {
+                        case 'ball':
+                            // update position
+                            bounceOffWalls(bbp, cWidth, cHeight, options.bricks.sideSpace);
+                            bbp.x += bbp.dx;
+                            bbp.y += bbp.dy;
+
+                            // ball
+                            if (bbp.isActive) {
+                                ctx.beginPath();
+                                ctx.arc(bbp.x, bbp.y, bbp.radius, 0, Math.PI*2);
+                                ctx.fillStyle = bbp.color;
+                                ctx.fill();
+                                ctx.closePath();
+                            }
+                        break;
+                        default:
+                            // bricks & bar
+                            if (bbp.isActive) {
+                                ctx.beginPath();
+                                ctx.rect(bbp.x, bbp.y, bbp.width, bbp.height);
+                                ctx.fillStyle = bbp.color;
+                                ctx.fill();
+                                ctx.closePath();
+                            }
+                    }
+                });
+
+                // draw at each frame
+                window.requestAnimationFrame(draw(model, ctx, cWidth, cHeight, options));
+            }
+        }
+
+        // generate game
+        let model = generateObjectsModel(this.fdWidth, this.fdHeight, options.bricks);
+        draw(model, canvasContext, this.fdWidth, this.fdHeight, options)();
     }
 }
