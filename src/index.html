@@ -465,6 +465,13 @@
             });
         }
     </script>
+    <script>
+        // WAF-FACE DETECTOR
+        const fdTag = document.querySelector('waf-face-detect');
+        fdTag.addEventListener('waf.face-detector.detected', function(evt) {
+            // console.log('Waf face detect', evt.detail);
+        })
+    </script>
     <style>
         html {
             height: 100vh;
