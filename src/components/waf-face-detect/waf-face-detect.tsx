@@ -3,12 +3,31 @@ import { moduleInit } from '../../assets/wasmpico';
 
 declare const WebAssembly:any;
 
+/**
+ * &lt;WAF-FACE-DETECT&gt;
+ * ===============
+ * Access to device camera and detect faces in range. It supports multiple faces detection
+ * Great thanks to tehnokv for providing great ressources https://github.com/tehnokv/picojs
+ * 
+ * Sample
+ * ------
+ * ```
+ * <waf-face-detect></waf-face-detect>
+ * ```
+ * 
+ * Know limitations
+ * ----------------
+ * - good detection happens when you face the camera and look in front of you. The more the head and gaze stray from this the harder it is to get a good detection
+ * - WebAssembly needed for performance
+ * - WebRTC needed for video stream capture (sorry iOS users)
+ * - still bugs to fix (works only in Chrome right now)
+ */
 @Component({
   tag: 'waf-face-detect',
   styleUrl: 'waf-face-detect.scss'
 })
 export class WafFaceDetect {
-    @Element() fdElt:HTMLElement;
+    @Element() private fdElt:HTMLElement;
     @Event({eventName: 'waf.face-detector.detected'}) private wafFaceDetectorEE:EventEmitter;
     private fdCanvas:HTMLCanvasElement;
     private fdVideo:HTMLVideoElement;
