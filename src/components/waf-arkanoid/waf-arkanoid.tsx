@@ -17,7 +17,7 @@ export class WafArkanoid {
             rowCount: 6, 
             sideSpace: 20, 
             brickHeight: 10, 
-            brickGutter: 5,
+            brickGutter: 2,
             brickColor: '#0093e0'
         },
         paddle: {
@@ -28,7 +28,7 @@ export class WafArkanoid {
         },
         ball: {
             initialSpeed: 0.1,
-            acceleration: 0.00001,
+            acceleration: 0.0000015,
             ballRadius: 10,
             ballColor: '#0093e0'
         },
@@ -73,8 +73,8 @@ export class WafArkanoid {
             // calculate elapsed time
             const dt:number = this.elapsedTime(DHRTimeStamp);
             
-            // collision detection --> movement prediction
-            this.model = this.update(this.model, dt);
+            // collision detection & applied acceleration
+            this.model = this.update(dt);
 
             // draw game state
             this.drawModel(this.model);
@@ -83,75 +83,86 @@ export class WafArkanoid {
         requestAnimationFrame(this.drawLoop.bind(this));
     }
 
-    private update(model, dt) {
-        // future position
-        let pos = this.accelerate(model.ball.x, model.ball.y, model.ball.dx, model.ball.dy, model.ball.accel ,dt);
-        let pt;
-        // collision detection - side walls
-        pos = this.sideCollision(pos, model, this.width, this.height);
-        // collision detection - bricks
-        pt = this.bricksCollision();
-        // collision detection - paddle
-        pt = this.paddleCollision(pos, model);
+    private update(dt) {        
+        // collision detection & reaction
+        const newModel = Object.assign({}, this.model);
 
-        // collision occured - react
-        if(pt) {
-            switch(pt.d) {
+        return this.collisionHandler(dt, newModel);
+    }
+
+    private collisionHandler(dt, model) {
+        let updatedModel = Object.assign({}, model);
+        let ball = Object.assign({}, updatedModel.ball);
+        let pos = this.accelerate(ball.x, ball.y, ball.dx, ball.dy, ball.accel ,dt);
+        let magnitude = function(x, y) {
+            return Math.sqrt(x*x + y*y);
+        }
+        let collisionObjectsBuilder = model => {
+            // get all valid bricks
+            let collisionObjects = model.bricks.filter(brick => (brick.hitCount > 0));
+            // add paddle
+            collisionObjects.push(Object.assign({ type: 'no-brick' }, model.paddle));
+            // add walls
+            const leftWallRect = { type: 'no-brick', x: -WafArkanoid.config.bricks.sideSpace, y: 0, width: WafArkanoid.config.bricks.sideSpace, height: this.height };
+            const rightWallRect = { type: 'no-brick', x: this.width, y: 0, width: WafArkanoid.config.bricks.sideSpace, height: this.height };
+            const topWallRect = { type: 'no-brick', x: 0, y: -WafArkanoid.config.bricks.sideSpace, width: this.width, height: WafArkanoid.config.bricks.sideSpace };
+            const bottomWallRect = { type: 'no-brick', x: 0, y: this.height, width: this.width, height: WafArkanoid.config.bricks.sideSpace };
+            collisionObjects.push(leftWallRect, rightWallRect, topWallRect, bottomWallRect);
+
+            return collisionObjects;
+        }
+        const collisionObjects = collisionObjectsBuilder(updatedModel);
+        let closest = { obstacle: null, point: null, distance: Infinity };
+        let distance;
+
+        // look for closest collision
+        collisionObjects.forEach(obstacle => {
+            let px = this.ballIntercept(ball, obstacle, pos.nx, pos.ny);
+            if (px) {
+                distance = magnitude(px.x - obstacle.x, px.y - obstacle.y);
+                if (distance < closest.distance) {
+                    closest = { obstacle: obstacle, point: px, distance: distance};
+                }
+            }
+        });
+
+        if(closest.point) {
+            // react to closest collision
+            pos.x = closest.point.x;
+            pos.y = closest.point.y;
+            switch(closest.point.d) {
                 case 'left':
                 case 'right':
-                    pos.x = pt.x;
                     pos.dx = -pos.dx;
                     break;
+                
                 case 'top':
                 case 'bottom':
-                    pos.y = pt.y;
                     pos.dy = -pos.dy;
                     break;
             }
-        }
 
-        // merge pos into model
-        model.ball = Object.assign(model.ball, pos);
+            // update hit count when hitting a brick
+            if (closest.obstacle.hitCount) closest.obstacle.hitCount--;
+
+            // collision happened - how far along did we get before intercept ?
+            let udt = dt * (closest.distance / magnitude(pos.nx, pos.ny)) / 1000;
+
+            // update ball properties
+            updatedModel.ball = Object.assign(updatedModel.ball, pos);
+            // update bricks (remove 'no-brick' items: paddle & walls)
+            updatedModel.bricks = collisionObjects.filter(obs => (!obs.type || obs.type !== 'no-brick'));
+
+            // loop on collision detection
+            return this.collisionHandler(dt - udt, model);
+        } else {
+            // update ball properties
+            updatedModel.ball = Object.assign(updatedModel.ball, pos);
+
+            // no collision - ball moved normally
+            return updatedModel;
+        }
         
-        return model;
-    }
-
-    private sideCollision(initialPos, model, width, height) {
-        const pos = Object.assign({}, initialPos);
-        const radius = model.ball.radius;
-        const bottomThreshold = height;
-        const topThreshold = WafArkanoid.config.bricks.sideSpace + radius;
-        const leftThreshold = WafArkanoid.config.bricks.sideSpace + radius;
-        const rightThreshold = width - WafArkanoid.config.bricks.sideSpace - radius;
-
-        // top 
-        if ((pos.dy < 0) && (pos.y < topThreshold)) {
-            pos.dy = -pos.dy; 
-            pos.y = topThreshold;
-        }
-        // bottom (game over) 
-        if ((pos.dy > 0) && (pos.y > bottomThreshold)) {
-            pos.dy = -pos.dy;
-            pos.y = bottomThreshold;
-        }
-        // left 
-        if ((pos.dx < 0) && (pos.x < leftThreshold)) {
-            pos.dx = -pos.dx; 
-            pos.x = leftThreshold;
-        }
-        // right 
-        if ((pos.dx) > 0 && (pos.x > rightThreshold)) {
-            pos.dx = -pos.dx; 
-            pos.x = rightThreshold;
-        }
-
-        return pos;
-    }
-
-    private bricksCollision() {}
-
-    private paddleCollision(pos, model) {
-        return this.ballIntercept(model.ball, model.paddle, pos.nx, pos.ny);
     }
 
     private drawModel(model) {
