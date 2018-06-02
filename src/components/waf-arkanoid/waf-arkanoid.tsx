@@ -24,7 +24,8 @@ export class WafArkanoid {
             paddleWidth: 100,
             paddleHeight: 10,
             paddleColor: '#0093e0',
-            bottomMargin: 20
+            bottomMargin: 20,
+            maxTweenDelay: 1000
         },
         ball: {
             initialSpeed: 0.1,
@@ -51,8 +52,13 @@ export class WafArkanoid {
         ? 1
         : newValue;
 
+        // time for tween
+        const from = this.model.paddle.x;
+        const to = this.paddlePositionConverter(newPositionRatio);
+        let transitionTime = Math.abs(from - to)/this.width * WafArkanoid.config.paddle.maxTweenDelay;
+
         // convert to position & apply to model
-        this.model.paddle.x = this.paddlePositionConverter(newPositionRatio);
+        this.model.paddle.tween = { from: from, to: to, elapsedTime: 0, totalTime: transitionTime };
     }
 
     componentWillLoad() {
@@ -96,11 +102,35 @@ export class WafArkanoid {
         requestAnimationFrame(this.drawLoop.bind(this));
     }
 
-    private update(dt) {        
+    private update(dt) {    
         // collision detection & reaction
         const newModel = Object.assign({}, this.model);
 
+        // update paddlePosition
+        if (newModel.paddle.tween.elapsedTime < newModel.paddle.tween.totalTime) {
+            // paddle will move
+            newModel.paddle = this.paddleTweener(dt, Object.assign({}, newModel.paddle));
+        }
+
         return this.collisionHandler(dt, newModel);
+    }
+
+    private paddleTweener(dt, paddle) {
+        function easeInOutQuad(t) { return t<.5 ? 2*t*t : -1+(4-2*t)*t }
+        const pTween = paddle.tween;
+
+        // update time trackers
+        pTween.elapsedTime += dt;
+        if (pTween.elapsedTime > pTween.totalTime) pTween.elapsedTime = pTween.totalTime;
+        pTween.remainingTime -= dt;
+        if (pTween.remainingTime < 0) pTween.elapsedTime = 0;
+
+        // find current position
+        const timeRatio = pTween.elapsedTime / pTween.totalTime;
+        const positionRatio = easeInOutQuad(timeRatio);
+        paddle.x = pTween.from + positionRatio * (pTween.to - pTween.from);
+
+        return paddle;
     }
 
     private collisionHandler(dt, model) {
@@ -255,7 +285,8 @@ export class WafArkanoid {
             y: canvasHeight - config.bottomMargin - config.paddleHeight, 
             width: config.paddleWidth , 
             height: config.paddleHeight, 
-            color: config.paddleColor
+            color: config.paddleColor,
+            tween: { from: this.paddlePositionConverter(this.paddlePosition), to: this.paddlePositionConverter(this.paddlePosition), elapsedTime: 0, totalTime: 0 }
         } 
     }
 
