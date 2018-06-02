@@ -1,4 +1,4 @@
-import { Component, State, Prop, Element } from '@stencil/core';
+import { Component, State, Prop, Element, Watch } from '@stencil/core';
 
 @Component({
   tag: 'waf-arkanoid',
@@ -40,6 +40,19 @@ export class WafArkanoid {
 
     render() {
         return (<canvas class="arkanoid" width={this.width} height={this.height} />)
+    }
+
+    @Watch('paddlePosition')
+    paddlePositionHandler(newValue) {
+        // enforce boundaries
+        let newPositionRatio = (newValue < 0) 
+        ? 0
+        : (newValue > 1)
+        ? 1
+        : newValue;
+
+        // convert to position & apply to model
+        this.model.paddle.x = this.paddlePositionConverter(newPositionRatio);
     }
 
     componentWillLoad() {
