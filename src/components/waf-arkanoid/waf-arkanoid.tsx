@@ -25,7 +25,8 @@ export class WafArkanoid {
             paddleHeight: 10,
             paddleColor: '#0093e0',
             bottomMargin: 20,
-            maxTweenDelay: 1000
+            maxTweenDelay: 1000,
+            spinImpact: 0.2
         },
         ball: {
             initialSpeed: 0.1,
@@ -144,7 +145,7 @@ export class WafArkanoid {
             // get all valid bricks
             let collisionObjects = model.bricks.filter(brick => (brick.hitCount > 0));
             // add paddle
-            collisionObjects.push(Object.assign({ type: 'no-brick' }, model.paddle));
+            collisionObjects.push(Object.assign({ type: 'paddle' }, model.paddle));
             // add walls
             const leftWallRect = { type: 'no-brick', x: -WafArkanoid.config.bricks.sideSpace, y: 0, width: WafArkanoid.config.bricks.sideSpace, height: this.height };
             const rightWallRect = { type: 'no-brick', x: this.width, y: 0, width: WafArkanoid.config.bricks.sideSpace, height: this.height };
@@ -185,6 +186,14 @@ export class WafArkanoid {
                     break;
             }
 
+            // change slightly ball spin if hitting paddle
+            if (closest.obstacle.type === 'paddle' && closest.point.d === 'top') {
+                const paddleHitRatio = Math.max(Math.min((closest.point.x - closest.obstacle.x) / closest.obstacle.width, 1), 0) - 0.5;
+                
+                // impact ball spin
+                pos.dx += paddleHitRatio * WafArkanoid.config.paddle.spinImpact; 
+            }
+
             // update hit count when hitting a brick
             if (closest.obstacle.hitCount) closest.obstacle.hitCount--;
 
@@ -194,7 +203,7 @@ export class WafArkanoid {
             // update ball properties
             updatedModel.ball = Object.assign(updatedModel.ball, pos);
             // update bricks (remove 'no-brick' items: paddle & walls)
-            updatedModel.bricks = collisionObjects.filter(obs => (!obs.type || obs.type !== 'no-brick'));
+            updatedModel.bricks = collisionObjects.filter(obs => (!obs.type || obs.type !== 'no-brick' || obs.type !== 'paddle'));
 
             // loop on collision detection
             return this.collisionHandler(dt - udt, model);
