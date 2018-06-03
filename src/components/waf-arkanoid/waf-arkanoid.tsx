@@ -181,7 +181,7 @@ export class WafArkanoid {
             const leftWallRect = { type: 'no-brick', x: -WafArkanoid.config.bricks.sideSpace, y: 0, width: WafArkanoid.config.bricks.sideSpace, height: this.height };
             const rightWallRect = { type: 'no-brick', x: this.width, y: 0, width: WafArkanoid.config.bricks.sideSpace, height: this.height };
             const topWallRect = { type: 'no-brick', x: 0, y: -WafArkanoid.config.bricks.sideSpace, width: this.width, height: WafArkanoid.config.bricks.sideSpace };
-            const bottomWallRect = { type: 'no-brick', x: 0, y: this.height, width: this.width, height: WafArkanoid.config.bricks.sideSpace };
+            const bottomWallRect = { type: 'game-over', x: 0, y: this.height, width: this.width, height: WafArkanoid.config.bricks.sideSpace };
             collisionObjects.push(leftWallRect, rightWallRect, topWallRect, bottomWallRect);
 
             return collisionObjects;
@@ -225,6 +225,12 @@ export class WafArkanoid {
                 pos.dx += paddleHitRatio * WafArkanoid.config.paddle.spinImpact; 
             }
 
+            // GAME over (when ball hit the bottom wall)
+            if (closest.obstacle.type === 'game-over') {
+                this.model.game.isPaused = true;
+                this.componentWillLoad();
+            }
+
             // update hit count when hitting a brick
             if (closest.obstacle.hitCount) closest.obstacle.hitCount--;
 
@@ -234,7 +240,7 @@ export class WafArkanoid {
             // update ball properties
             updatedModel.ball = Object.assign(updatedModel.ball, pos);
             // update bricks (remove 'no-brick' items: paddle & walls)
-            updatedModel.bricks = collisionObjects.filter(obs => (!obs.type || obs.type !== 'no-brick' || obs.type !== 'paddle'));
+            updatedModel.bricks = collisionObjects.filter(obs => (!obs.type || obs.type !== 'no-brick' || obs.type !== 'paddle' || obs.type !== 'game-over'));
 
             // loop on collision detection
             return this.collisionHandler(dt - udt, model);
