@@ -69,7 +69,7 @@ export class WafArkanoid {
             bricks: null,
             paddle: null,
             ball: null,
-            game: WafArkanoid.config.game
+            game: Object.assign({}, WafArkanoid.config.game)
         };
 
         // generate model - bricks
@@ -301,7 +301,8 @@ export class WafArkanoid {
         return result;
     }
 
-    private generateBricksModel(config, canvasWidth) {
+    private generateBricksModel(configBrick, canvasWidth) {
+        const config = Object.assign({}, configBrick);
         const brickWidth = (canvasWidth - config.sideSpace * 2 - config.brickGutter * (config.brickPerRowCount - 1)) / config.brickPerRowCount; 
         const bricksBluePrint = Array(config.rowCount).fill('fake').map((_itemRow, i) => { 
             return Array(config.brickPerRowCount).fill('fake').map((_itemColumn, j) => { 
@@ -319,7 +320,8 @@ export class WafArkanoid {
         return [].concat.apply([], bricksBluePrint);
     }
 
-    private generatePaddleModel(config, canvasHeight) {
+    private generatePaddleModel(configPaddle, canvasHeight) {
+        const config = Object.assign({}, configPaddle);
         return { 
             x: this.paddlePositionConverter(this.paddlePosition), 
             y: canvasHeight - config.bottomMargin - config.paddleHeight, 
@@ -330,7 +332,8 @@ export class WafArkanoid {
         } 
     }
 
-    private generateBallModel(config, paddleModel) {
+    private generateBallModel(configBall, paddleModel) {
+        const config = Object.assign({}, configBall);
         return { 
             x: paddleModel.x + paddleModel.width / 2, 
             y: paddleModel.y - config.ballRadius, 
