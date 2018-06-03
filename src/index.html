@@ -410,8 +410,12 @@
                 <h2>&lt;waf-arkanoid&gt;</h2>
                 <h3>Samples</h3>
                 <div class="sample-block">
-                    <h4 class="valid-case">regular case - arkanoid</h4>
+                    <h4 class="valid-case">regular case - arkanoid keyboard & mouse controls</h4>
                     <waf-arkanoid width="640" height="480" paddle-position="0.5" activate-mouse-controls activate-keyboard-controls></waf-arkanoid>
+                    <h4 class="valid-case">regular case - face detection controls</h4>
+                    <waf-arkanoid width="640" height="480" activate-mouse-controls>
+                        <waf-face-detect></waf-face-detect>
+                    </waf-arkanoid>
                 </div>
             </section>
         </div>

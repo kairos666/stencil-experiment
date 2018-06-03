@@ -1,0 +1,14 @@
+waf-arkanoid {
+    display: block;
+    position: relative;
+    waf-face-detect {
+        position: absolute;
+        top: 0;
+        left: 0;
+        z-index: 1;
+    }
+    .arkanoid {
+        position: relative;
+        z-index: 2;
+    }
+}

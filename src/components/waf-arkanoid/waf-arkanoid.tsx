@@ -43,7 +43,10 @@ export class WafArkanoid {
     }
 
     render() {
-        return (<canvas class="arkanoid" width={this.width} height={this.height} />)
+        return [
+            <slot/>,
+            <canvas class="arkanoid" width={this.width} height={this.height} />
+        ]
     }
 
     @Watch('paddlePosition')
