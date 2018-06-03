@@ -5,9 +5,11 @@ import { Component, Prop, Element, Watch } from '@stencil/core';
   styleUrl: 'waf-arkanoid.scss'
 })
 export class WafArkanoid {
-    @Prop() paddlePosition:number = 0.5;
+    @Prop({ mutable: true, reflectToAttr: true }) paddlePosition:number = 0.5;
     @Prop() width:number;
     @Prop() height:number;
+    @Prop() activateKeyboardControls:boolean;
+    @Prop() activateMouseControls:boolean;
     private model:any;
     @Element() private akElt:HTMLElement;
     private akCanvasCtx:CanvasRenderingContext2D;
@@ -81,11 +83,40 @@ export class WafArkanoid {
     }
 
     componentDidLoad() {
+        // controls setup
+        if (this.activateKeyboardControls) this.setupControls('keyboard');
+        if (this.activateMouseControls) this.setupControls('mouse');
+
         // get canvas element
         this.akCanvasCtx = (this.akElt.querySelector('canvas.arkanoid') as HTMLCanvasElement).getContext('2d');
         
         // init game
         this.drawLoop();
+    }
+
+    @Watch('activateKeyboardControls')
+    updateKeyboardCtrlState(isActive:boolean) {
+        // keyboard controls setup or destroy
+        if (isActive) {
+            this.setupControls('keyboard');
+        } else {
+            this.setupControls('keyboard', true);
+        }
+    }
+    @Watch('activateMouseControls')
+    updateMouseCtrlState(isActive:boolean) {
+        // mouse controls setup or destroy
+        if (isActive) {
+            this.setupControls('mouse');
+        } else {
+            this.setupControls('mouse', true);
+        }
+    }
+
+    componentDidUnload() {
+        // controls destroy
+        this.setupControls('keyboard', true);
+        this.setupControls('mouse', true);
     }
 
     private drawLoop(DHRTimeStamp?:number) {
@@ -309,6 +340,34 @@ export class WafArkanoid {
             radius: config.ballRadius, 
             color: config.ballColor
         };
+    }
+
+    private setupControls(controlType:'keyboard'|'mouse', destroy:boolean = false) {
+        const keyboardHandler = (evt:KeyboardEvent) => {
+            switch(evt.which) {
+                case 37:
+                    // left
+                    this.paddlePosition = (this.paddlePosition - 0.05 > 0) ? this.paddlePosition - 0.05 : 0;
+                break;
+                case 39:
+                    // right
+                    this.paddlePosition = (this.paddlePosition + 0.05 < 1) ? this.paddlePosition + 0.05 : 1;
+                break;
+            }
+        }
+        const mouseHandler = (evt:MouseEvent) => {
+            const posRatio = evt.pageX / document.body.offsetWidth;
+            this.paddlePosition = posRatio;
+        }
+
+        // setup keyboard
+        if (controlType === 'keyboard' && !destroy) document.addEventListener('keydown', keyboardHandler);
+        // setup mouse
+        if (controlType === 'mouse' && !destroy) document.body.addEventListener('mousemove', mouseHandler);
+        // destroy keyboard controls
+        if (controlType === 'keyboard' && destroy) document.removeEventListener('keydown', keyboardHandler);
+        // destroy mouse controls
+        if (controlType === 'mouse' && destroy) document.body.removeEventListener('mousemove', mouseHandler);
     }
 
     private accelerate(x, y, dx, dy, accel, dt) {
