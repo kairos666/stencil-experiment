@@ -1,4 +1,4 @@
-import { Component, State, Prop, Element, Watch } from '@stencil/core';
+import { Component, Prop, Element, Watch } from '@stencil/core';
 
 @Component({
   tag: 'waf-arkanoid',
@@ -8,7 +8,7 @@ export class WafArkanoid {
     @Prop() paddlePosition:number = 0.5;
     @Prop() width:number;
     @Prop() height:number;
-    @State() model:any;
+    private model:any;
     @Element() private akElt:HTMLElement;
     private akCanvasCtx:CanvasRenderingContext2D;
     static config:any = {
