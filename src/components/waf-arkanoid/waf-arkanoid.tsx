@@ -1,4 +1,4 @@
-import { Component, Prop, Element, Watch } from '@stencil/core';
+import { Component, Prop, State, Element, Watch } from '@stencil/core';
 
 @Component({
   tag: 'waf-arkanoid',
@@ -10,6 +10,8 @@ export class WafArkanoid {
     @Prop() height:number;
     @Prop() activateKeyboardControls:boolean;
     @Prop() activateMouseControls:boolean;
+    @State() private isPaused:boolean = true;
+    @State() private isGameOver:boolean = false;
     private model:any;
     @Element() private akElt:HTMLElement;
     private akCanvasCtx:CanvasRenderingContext2D;
@@ -37,15 +39,31 @@ export class WafArkanoid {
             ballColor: '#0093e0'
         },
         game: {
-            isPaused: false,
             lastFrame: null
         }
     }
 
     render() {
+        const menuRenderer = () => {
+            let result = null;
+
+            if (this.isPaused) {
+                // need game menu
+                result = (
+                    <div class="waf-arkanoid-menu waf-arkanoid-menu--initial">
+                        <header>{this.isGameOver ? 'You failed!' : 'Start game!'}</header>
+                        <button type="button" onClick={() => this.start()} class="button-stylish">{this.isGameOver ? 'restart game' : 'start game!'}</button>
+                    </div>
+                )
+            }
+
+            return result;
+        }
+
         return [
             <slot/>,
-            <canvas class="arkanoid" width={this.width} height={this.height} />
+            <canvas class="arkanoid" width={this.width} height={this.height} />,
+            menuRenderer()
         ]
     }
 
@@ -67,25 +85,10 @@ export class WafArkanoid {
         this.model.paddle.tween = { from: from, to: to, elapsedTime: 0, totalTime: transitionTime };
     }
 
-    componentWillLoad() {
-        const model = {
-            bricks: null,
-            paddle: null,
-            ball: null,
-            game: Object.assign({}, WafArkanoid.config.game)
-        };
-
-        // generate model - bricks
-        model.bricks = this.generateBricksModel(WafArkanoid.config.bricks, this.width);
-        // generate model - paddle
-        model.paddle = this.generatePaddleModel(WafArkanoid.config.paddle, this.height);
-        // generate model - ball
-        model.ball = this.generateBallModel(WafArkanoid.config.ball, model.paddle);
-        
-        this.model = model;
-    }
-
     componentDidLoad() {
+        // init
+        this.gameInitModel();
+
         // controls setup
         if (this.activateKeyboardControls) this.setupControls('keyboard');
         if (this.activateMouseControls) this.setupControls('mouse');
@@ -123,7 +126,7 @@ export class WafArkanoid {
     }
 
     private drawLoop(DHRTimeStamp?:number) {
-        if (!this.model.game.isPaused) {
+        if (!this.isPaused) {
             // calculate elapsed time
             const dt:number = this.elapsedTime(DHRTimeStamp);
             
@@ -230,8 +233,8 @@ export class WafArkanoid {
 
             // GAME over (when ball hit the bottom wall)
             if (closest.obstacle.type === 'game-over') {
-                this.model.game.isPaused = true;
-                this.componentWillLoad();
+                this.isPaused = true;
+                this.isGameOver = true;
             }
 
             // update hit count when hitting a brick
@@ -354,6 +357,24 @@ export class WafArkanoid {
         };
     }
 
+    private gameInitModel() {
+        const model = {
+            bricks: null,
+            paddle: null,
+            ball: null,
+            game: Object.assign({}, WafArkanoid.config.game)
+        };
+
+        // generate model - bricks
+        model.bricks = this.generateBricksModel(WafArkanoid.config.bricks, this.width);
+        // generate model - paddle
+        model.paddle = this.generatePaddleModel(WafArkanoid.config.paddle, this.height);
+        // generate model - ball
+        model.ball = this.generateBallModel(WafArkanoid.config.ball, model.paddle);
+        
+        this.model = model;
+    }
+
     private setupControls(controlType:'keyboard'|'mouse', destroy:boolean = false) {
         const keyboardHandler = (evt:KeyboardEvent) => {
             switch(evt.which) {
@@ -447,5 +468,11 @@ export class WafArkanoid {
           }
         }
         return pt;
-      }
+    }
+
+    public start() {
+        this.isPaused = false;
+        this.isGameOver = false;
+        this.gameInitModel();
+    }
 }
