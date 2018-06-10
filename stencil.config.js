@@ -12,6 +12,9 @@ exports.config = {
             type: 'www',
             serviceWorker: false
         }
+    ],
+    copy: [
+        { src: './assets/**/*' }
     ]
 };
 

@@ -23,6 +23,8 @@
                 <a href="#waf-dialog" title="go to this section">&lt;waf-dialog&gt;</a>
                 <a href="#waf-tabs" title="go to this section">&lt;waf-tabs&gt;</a>
                 <a href="#waf-utils-ripple-effect" title="go to this section">&lt;waf-utils-ripple-effect&gt;</a>
+                <a href="#waf-face-detect" title="go to this section">&lt;waf-face-detect&gt;</a>
+                <a href="#waf-arkanoid" title="go to this section">&lt;waf-arkanoid&gt;</a>
             </menu>
         </aside>
         <div class="sections-containers">
@@ -394,6 +396,29 @@
                     </waf-utils-ripple-effect>
                 </div>
             </section>
+            <section>
+                <a name="waf-face-detect"></a>
+                <h2>&lt;waf-face-detect&gt;</h2>
+                <h3>Samples</h3>
+                <div class="sample-block">
+                    <h4 class="valid-case">regular case - face detection</h4>
+                    <waf-face-detect draw-detection></waf-face-detect>
+                </div>
+            </section>
+            <section>
+                <a name="waf-arkanoid"></a>
+                <h2>&lt;waf-arkanoid&gt;</h2>
+                <h3>Samples</h3>
+                <div class="sample-block">
+                    <h4 class="valid-case">regular case - arkanoid keyboard & mouse controls</h4>
+                    <waf-arkanoid width="640" height="480" paddle-position="0.5" activate-mouse-controls activate-keyboard-controls></waf-arkanoid>
+                    <h4 class="valid-case">regular case - face detection controls</h4>
+                    <div class="arkanoid-wrapper">
+                        <waf-face-detect></waf-face-detect>
+                        <waf-arkanoid width="640" height="480" activate-mouse-controls></waf-arkanoid>
+                    </div>
+                </div>
+            </section>
         </div>
     </main>
     <script>
@@ -454,6 +479,13 @@
                 console.log('Waf Dialog Close', evt);
             });
         }
+    </script>
+    <script>
+        // WAF-FACE DETECTOR
+        const fdTag = document.querySelector('waf-face-detect');
+        fdTag.addEventListener('waf.face-detector.detected', function(evt) {
+            // console.log('Waf face detect', evt.detail);
+        })
     </script>
     <style>
         html {
@@ -602,6 +634,21 @@
             padding: 5px 15px;
             border-radius: 3px;
             cursor: pointer;
+        }
+        
+        .arkanoid-wrapper {
+            position: relative;
+        }
+        
+        .arkanoid-wrapper waf-arkanoid {
+            position: relative;
+            z-index: 2;
+        }
+        
+        .arkanoid-wrapper waf-face-detect {
+            position: absolute;
+            top: 0;
+            left: 0;
         }
     </style>
 </body>
