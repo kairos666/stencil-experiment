@@ -413,9 +413,10 @@
                     <h4 class="valid-case">regular case - arkanoid keyboard & mouse controls</h4>
                     <waf-arkanoid width="640" height="480" paddle-position="0.5" activate-mouse-controls activate-keyboard-controls></waf-arkanoid>
                     <h4 class="valid-case">regular case - face detection controls</h4>
-                    <waf-arkanoid width="640" height="480" activate-mouse-controls>
+                    <div class="arkanoid-wrapper">
                         <waf-face-detect></waf-face-detect>
-                    </waf-arkanoid>
+                        <waf-arkanoid width="640" height="480" activate-mouse-controls></waf-arkanoid>
+                    </div>
                 </div>
             </section>
         </div>
@@ -633,6 +634,21 @@
             padding: 5px 15px;
             border-radius: 3px;
             cursor: pointer;
+        }
+        
+        .arkanoid-wrapper {
+            position: relative;
+        }
+        
+        .arkanoid-wrapper waf-arkanoid {
+            position: relative;
+            z-index: 2;
+        }
+        
+        .arkanoid-wrapper waf-face-detect {
+            position: absolute;
+            top: 0;
+            left: 0;
         }
     </style>
 </body>

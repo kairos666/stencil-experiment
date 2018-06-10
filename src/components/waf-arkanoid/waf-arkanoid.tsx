@@ -137,6 +137,7 @@ export class WafArkanoid {
             this.drawModel(this.model);
         }
 
+        // recursively call itself at each animation frame
         requestAnimationFrame(this.drawLoop.bind(this));
     }
 

@@ -18,7 +18,8 @@ declare const WebAssembly:any;
  * Know limitations
  * ----------------
  * - good detection happens when you face the camera and look in front of you. The more the head and gaze stray from this the harder it is to get a good detection
- * - WebAssembly needed for performance
+ * - WebAssembly necessary for performance
+ * - component freeze if used in a rerendered slot (nesting in other component)
  * - WebRTC needed for video stream capture (sorry iOS users)
  * - still bugs to fix (works only in Chrome right now)
  */
