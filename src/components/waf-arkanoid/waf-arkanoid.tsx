@@ -13,6 +13,7 @@ export class WafArkanoid {
     @State() private isPaused:boolean = true;
     @State() private isGameOver:boolean = false;
     private model:any;
+    private faceDetectLimiterActive:boolean = false;
     @Element() private akElt:HTMLElement;
     private akCanvasCtx:CanvasRenderingContext2D;
     static config:any = {
@@ -40,6 +41,10 @@ export class WafArkanoid {
         },
         game: {
             lastFrame: null
+        },
+        faceDetect: {
+            detectSideMargins: 200,
+            jitterThreshold: 0.04
         }
     }
 
@@ -92,6 +97,7 @@ export class WafArkanoid {
         // controls setup
         if (this.activateKeyboardControls) this.setupControls('keyboard');
         if (this.activateMouseControls) this.setupControls('mouse');
+        this.setupControls('face-detect');
 
         // get canvas element
         this.akCanvasCtx = (this.akElt.querySelector('canvas.arkanoid') as HTMLCanvasElement).getContext('2d');
@@ -123,6 +129,7 @@ export class WafArkanoid {
         // controls destroy
         this.setupControls('keyboard', true);
         this.setupControls('mouse', true);
+        this.setupControls('face-detect', true);
     }
 
     private drawLoop(DHRTimeStamp?:number) {
@@ -136,6 +143,9 @@ export class WafArkanoid {
             // draw game state
             this.drawModel(this.model);
         }
+
+        // allow face detection input to pass 
+        this.faceDetectLimiterActive = false;
 
         // recursively call itself at each animation frame
         requestAnimationFrame(this.drawLoop.bind(this));
@@ -376,7 +386,7 @@ export class WafArkanoid {
         this.model = model;
     }
 
-    private setupControls(controlType:'keyboard'|'mouse', destroy:boolean = false) {
+    private setupControls(controlType:'keyboard'|'mouse'|'face-detect', destroy:boolean = false) {
         const keyboardHandler = (evt:KeyboardEvent) => {
             switch(evt.which) {
                 case 37:
@@ -393,15 +403,33 @@ export class WafArkanoid {
             const posRatio = evt.pageX / document.body.offsetWidth;
             this.paddlePosition = posRatio;
         }
+        const faceDetectHandler = (evt:CustomEvent) => {
+            if (!this.faceDetectLimiterActive && evt.detail.length > 0) {
+                const sideMargins = WafArkanoid.config.faceDetect.detectSideMargins; // allow to go all the way left or right
+                const jitterThreshold = WafArkanoid.config.faceDetect.jitterThreshold; // smooth jitter from detection jumps
+                const detection = Object.assign({}, evt.detail[0]); // ignoring other detected faces
+                const offsettedX = Math.max(detection.x - sideMargins, 0);
+                const posRatio = 1 - Math.min(offsettedX / (this.width - 2 * sideMargins), 1);
+                if (Math.abs(this.paddlePosition - posRatio) > jitterThreshold) {
+                    // update position and limit face detection input until next frame
+                    this.faceDetectLimiterActive = true;
+                    this.paddlePosition = posRatio;
+                }
+            }
+        }
 
         // setup keyboard
         if (controlType === 'keyboard' && !destroy) document.addEventListener('keydown', keyboardHandler);
         // setup mouse
         if (controlType === 'mouse' && !destroy) document.body.addEventListener('mousemove', mouseHandler);
+        // setup face detect
+        if (controlType === 'face-detect' && !destroy) this.akElt.parentElement.addEventListener('waf.face-detector.detected', faceDetectHandler);
         // destroy keyboard controls
         if (controlType === 'keyboard' && destroy) document.removeEventListener('keydown', keyboardHandler);
         // destroy mouse controls
         if (controlType === 'mouse' && destroy) document.body.removeEventListener('mousemove', mouseHandler);
+        // face detect controls
+        if (controlType === 'face-detect' && destroy) document.body.removeEventListener('waf.face-detector.detected', faceDetectHandler);
     }
 
     private accelerate(x, y, dx, dy, accel, dt) {
