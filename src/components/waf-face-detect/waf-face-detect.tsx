@@ -1,4 +1,4 @@
-import { Component, Element, Event, EventEmitter } from '@stencil/core';
+import { Component, Prop, Element, Event, EventEmitter } from '@stencil/core';
 import { moduleInit } from '../../assets/wasmpico';
 
 declare const WebAssembly:any;
@@ -28,6 +28,7 @@ declare const WebAssembly:any;
   styleUrl: 'waf-face-detect.scss'
 })
 export class WafFaceDetect {
+    @Prop() private drawDetection:boolean = false;
     @Element() private fdElt:HTMLElement;
     @Event({eventName: 'waf.face-detector.detected'}) private wafFaceDetectorEE:EventEmitter;
     private fdCanvas:HTMLCanvasElement;
@@ -178,12 +179,14 @@ export class WafFaceDetect {
             if (rcsq[4*i+3] > this.detectionThreshold) {
                 dets.push({ x: rcsq[4*i+1], y: rcsq[4*i+0], size: rcsq[4*i+2] });
 
-                // draw detection
-                ctx.beginPath();
-                ctx.arc(rcsq[4*i+1], rcsq[4*i+0], rcsq[4*i+2]/2, 0, 2*Math.PI, false);
-                ctx.lineWidth = 2;
-                ctx.strokeStyle = 'red';
-                ctx.stroke();
+                if (this.drawDetection) {
+                    // draw detection
+                    ctx.beginPath();
+                    ctx.arc(rcsq[4*i+1], rcsq[4*i+0], rcsq[4*i+2]/2, 0, 2*Math.PI, false);
+                    ctx.lineWidth = 2;
+                    ctx.strokeStyle = '#0093e0';
+                    ctx.stroke();
+                }
             }
         });
 
