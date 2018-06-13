@@ -198,8 +198,7 @@ export class WafArkanoid {
             const leftWallRect = { type: 'no-brick', x: -WafArkanoid.config.bricks.sideSpace, y: 0, width: WafArkanoid.config.bricks.sideSpace, height: this.height };
             const rightWallRect = { type: 'no-brick', x: this.width, y: 0, width: WafArkanoid.config.bricks.sideSpace, height: this.height };
             const topWallRect = { type: 'no-brick', x: 0, y: -WafArkanoid.config.bricks.sideSpace, width: this.width, height: WafArkanoid.config.bricks.sideSpace };
-            const bottomWallRect = { type: 'game-over', x: 0, y: this.height, width: this.width, height: WafArkanoid.config.bricks.sideSpace };
-            collisionObjects.push(leftWallRect, rightWallRect, topWallRect, bottomWallRect);
+            collisionObjects.push(leftWallRect, rightWallRect, topWallRect);
 
             return collisionObjects;
         }
@@ -242,12 +241,6 @@ export class WafArkanoid {
                 pos.dx += paddleHitRatio * WafArkanoid.config.paddle.spinImpact; 
             }
 
-            // GAME over (when ball hit the bottom wall)
-            if (closest.obstacle.type === 'game-over') {
-                this.isPaused = true;
-                this.isGameOver = true;
-            }
-
             // update hit count when hitting a brick
             if (closest.obstacle.hitCount) closest.obstacle.hitCount--;
 
@@ -264,6 +257,12 @@ export class WafArkanoid {
         } else {
             // update ball properties
             updatedModel.ball = Object.assign(updatedModel.ball, pos);
+
+            // GAME over (when ball disappear at the bottom)
+            if (updatedModel.ball.y >= this.height) {
+                this.isPaused = true;
+                this.isGameOver = true;
+            }
 
             // no collision - ball moved normally
             return updatedModel;
