@@ -16,11 +16,12 @@ export class WafArkanoid {
     private faceDetectLimiterActive:boolean = false;
     @Element() private akElt:HTMLElement;
     private akCanvasCtx:CanvasRenderingContext2D;
+    private collisionDetectionLoopCount:number = 0;
     static config:any = {
         bricks: {  
             brickPerRowCount: 10, 
-            rowCount: 6, 
-            sideSpace: 20, 
+            rowCount: 5, 
+            sideSpace: 15, 
             brickHeight: 10, 
             brickGutter: 2,
             brickColor: '#0093e0'
@@ -31,7 +32,7 @@ export class WafArkanoid {
             paddleColor: '#0093e0',
             bottomMargin: 20,
             maxTweenDelay: 1000,
-            spinImpact: 0.2
+            spinImpact: 0.15
         },
         ball: {
             initialSpeed: 0.1,
@@ -40,7 +41,8 @@ export class WafArkanoid {
             ballColor: '#0093e0'
         },
         game: {
-            lastFrame: null
+            lastFrame: null,
+            collisionDetectionLoopMaxCount: 20
         },
         faceDetect: {
             detectSideMargins: 200,
@@ -217,6 +219,16 @@ export class WafArkanoid {
             }
         });
 
+        // loop count check (avoid ball being stuck in an infinte loop of collision)
+        this.collisionDetectionLoopCount++;
+        if (this.collisionDetectionLoopCount > WafArkanoid.config.game.collisionDetectionLoopMaxCount) {
+            // too much loops - force end game
+            this.isPaused = true;
+            this.isGameOver = true;
+            // erase collision point to break free of loops
+            closest.point = null;
+        }
+
         if(closest.point) {
             // react to closest collision
             pos.x = closest.point.x;
@@ -263,6 +275,9 @@ export class WafArkanoid {
                 this.isPaused = true;
                 this.isGameOver = true;
             }
+
+            // breaking out of collision detection loop --> reset loop counter
+            this.collisionDetectionLoopCount = 0;
 
             // no collision - ball moved normally
             return updatedModel;
