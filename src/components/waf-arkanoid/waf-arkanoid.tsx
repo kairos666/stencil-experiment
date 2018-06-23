@@ -17,38 +17,8 @@ export class WafArkanoid {
     @Element() private akElt:HTMLElement;
     private akCanvasCtx:CanvasRenderingContext2D;
     private collisionDetectionLoopCount:number = 0;
-    static config:any = {
-        bricks: {  
-            brickPerRowCount: 10, 
-            rowCount: 5, 
-            sideSpace: 15, 
-            brickHeight: 10, 
-            brickGutter: 2,
-            brickColor: '#0093e0'
-        },
-        paddle: {
-            paddleWidth: 100,
-            paddleHeight: 10,
-            paddleColor: '#0093e0',
-            bottomMargin: 20,
-            maxTweenDelay: 1000,
-            spinImpact: 0.15
-        },
-        ball: {
-            initialSpeed: 0.1,
-            acceleration: 0.0000015,
-            ballRadius: 10,
-            ballColor: '#0093e0'
-        },
-        game: {
-            lastFrame: null,
-            collisionDetectionLoopMaxCount: 20
-        },
-        faceDetect: {
-            detectSideMargins: 200,
-            jitterThreshold: 0.04
-        }
-    }
+    private configURL:string = `${location.origin}/assets/arkanoid-levels.json`;
+    private config:any;
 
     render() {
         const menuRenderer = () => {
@@ -86,26 +56,37 @@ export class WafArkanoid {
         // time for tween
         const from = this.model.paddle.x;
         const to = this.paddlePositionConverter(newPositionRatio);
-        let transitionTime = Math.abs(from - to)/this.width * WafArkanoid.config.paddle.maxTweenDelay;
+        let transitionTime = Math.abs(from - to)/this.width * this.config.paddle.maxTweenDelay;
 
         // convert to position & apply to model
         this.model.paddle.tween = { from: from, to: to, elapsedTime: 0, totalTime: transitionTime };
     }
 
-    componentDidLoad() {
-        // init
-        this.gameInitModel();
+    async componentDidLoad() {
+        // load game config json
+        const configResp:Response = await fetch(this.configURL);
+        const configJSON:Promise<any> = configResp.json();
+        configJSON.then(config => {
+            // successfully loaded game config
+            this.config = config;
 
-        // controls setup
-        if (this.activateKeyboardControls) this.setupControls('keyboard');
-        if (this.activateMouseControls) this.setupControls('mouse');
-        this.setupControls('face-detect');
+            // init
+            this.gameInitModel();
 
-        // get canvas element
-        this.akCanvasCtx = (this.akElt.querySelector('canvas.arkanoid') as HTMLCanvasElement).getContext('2d');
-        
-        // init game
-        this.drawLoop();
+            // controls setup
+            if (this.activateKeyboardControls) this.setupControls('keyboard');
+            if (this.activateMouseControls) this.setupControls('mouse');
+            this.setupControls('face-detect');
+
+            // get canvas element
+            this.akCanvasCtx = (this.akElt.querySelector('canvas.arkanoid') as HTMLCanvasElement).getContext('2d');
+            
+            // init game
+            this.drawLoop();
+        }).catch(() => {
+            // failed to load game config
+            console.warn('waf-arkanoid | config file couldn\'t be loaded or parsed');
+        });
     }
 
     @Watch('activateKeyboardControls')
@@ -197,9 +178,9 @@ export class WafArkanoid {
             // add paddle
             collisionObjects.push(Object.assign({ type: 'paddle' }, model.paddle));
             // add walls
-            const leftWallRect = { type: 'no-brick', x: -WafArkanoid.config.bricks.sideSpace, y: 0, width: WafArkanoid.config.bricks.sideSpace, height: this.height };
-            const rightWallRect = { type: 'no-brick', x: this.width, y: 0, width: WafArkanoid.config.bricks.sideSpace, height: this.height };
-            const topWallRect = { type: 'no-brick', x: 0, y: -WafArkanoid.config.bricks.sideSpace, width: this.width, height: WafArkanoid.config.bricks.sideSpace };
+            const leftWallRect = { type: 'no-brick', x: -this.config.bricks.sideSpace, y: 0, width: this.config.bricks.sideSpace, height: this.height };
+            const rightWallRect = { type: 'no-brick', x: this.width, y: 0, width: this.config.bricks.sideSpace, height: this.height };
+            const topWallRect = { type: 'no-brick', x: 0, y: -this.config.bricks.sideSpace, width: this.width, height: this.config.bricks.sideSpace };
             collisionObjects.push(leftWallRect, rightWallRect, topWallRect);
 
             return collisionObjects;
@@ -221,7 +202,7 @@ export class WafArkanoid {
 
         // loop count check (avoid ball being stuck in an infinte loop of collision)
         this.collisionDetectionLoopCount++;
-        if (this.collisionDetectionLoopCount > WafArkanoid.config.game.collisionDetectionLoopMaxCount) {
+        if (this.collisionDetectionLoopCount > this.config.game.collisionDetectionLoopMaxCount) {
             // too much loops - force end game
             this.isPaused = true;
             this.isGameOver = true;
@@ -250,7 +231,7 @@ export class WafArkanoid {
                 const paddleHitRatio = Math.max(Math.min((closest.point.x - closest.obstacle.x) / closest.obstacle.width, 1), 0) - 0.5;
                 
                 // impact ball spin
-                pos.dx += paddleHitRatio * WafArkanoid.config.paddle.spinImpact; 
+                pos.dx += paddleHitRatio * this.config.paddle.spinImpact; 
             }
 
             // update hit count when hitting a brick
@@ -321,8 +302,8 @@ export class WafArkanoid {
 
     private paddlePositionConverter(ratio) {
         // convert position ratio to x position on canvas
-        const maxLeftX = WafArkanoid.config.bricks.sideSpace;
-        const maxRightX = this.width - WafArkanoid.config.bricks.sideSpace - WafArkanoid.config.paddle.paddleWidth;
+        const maxLeftX = this.config.bricks.sideSpace;
+        const maxRightX = this.width - this.config.bricks.sideSpace - this.config.paddle.paddleWidth;
         return maxLeftX + ratio * (maxRightX - maxLeftX);
     }
 
@@ -387,15 +368,15 @@ export class WafArkanoid {
             bricks: null,
             paddle: null,
             ball: null,
-            game: Object.assign({}, WafArkanoid.config.game)
+            game: Object.assign({}, this.config.game)
         };
 
         // generate model - bricks
-        model.bricks = this.generateBricksModel(WafArkanoid.config.bricks, this.width);
+        model.bricks = this.generateBricksModel(this.config.bricks, this.width);
         // generate model - paddle
-        model.paddle = this.generatePaddleModel(WafArkanoid.config.paddle, this.height);
+        model.paddle = this.generatePaddleModel(this.config.paddle, this.height);
         // generate model - ball
-        model.ball = this.generateBallModel(WafArkanoid.config.ball, model.paddle);
+        model.ball = this.generateBallModel(this.config.ball, model.paddle);
         
         this.model = model;
     }
@@ -419,8 +400,8 @@ export class WafArkanoid {
         }
         const faceDetectHandler = (evt:CustomEvent) => {
             if (!this.faceDetectLimiterActive && evt.detail.length > 0) {
-                const sideMargins = WafArkanoid.config.faceDetect.detectSideMargins; // allow to go all the way left or right
-                const jitterThreshold = WafArkanoid.config.faceDetect.jitterThreshold; // smooth jitter from detection jumps
+                const sideMargins = this.config.faceDetect.detectSideMargins; // allow to go all the way left or right
+                const jitterThreshold = this.config.faceDetect.jitterThreshold; // smooth jitter from detection jumps
                 const detection = Object.assign({}, evt.detail[0]); // ignoring other detected faces
                 const offsettedX = Math.max(detection.x - sideMargins, 0);
                 const posRatio = 1 - Math.min(offsettedX / (this.width - 2 * sideMargins), 1);
