@@ -17,7 +17,7 @@ export class WafArkanoid {
     @Element() private akElt:HTMLElement;
     private akCanvasCtx:CanvasRenderingContext2D;
     private collisionDetectionLoopCount:number = 0;
-    private configURL:string = `${location.origin}/assets/arkanoid-levels.json`;
+    private configURL:string = `${location.origin}/assets/arkanoid-config.json`;
     private config:any;
 
     render() {
@@ -28,7 +28,7 @@ export class WafArkanoid {
                 // need game menu
                 result = (
                     <div class="waf-arkanoid-menu waf-arkanoid-menu--initial">
-                        <header>{this.isGameOver ? 'You failed!' : 'Start game!'}</header>
+                        <header>{this.isGameOver ? 'You failed!' : 'Start game!'}<br/>Level {this.model ? this.model.game.level : '1'}<br/>Score {this.model ? this.model.game.score : '0'}, Lives {this.model ? this.model.game.lives : '3'}</header>
                         <button type="button" onClick={() => this.start()} class="button-stylish">{this.isGameOver ? 'restart game' : 'start game!'}</button>
                     </div>
                 )
@@ -234,8 +234,12 @@ export class WafArkanoid {
                 pos.dx += paddleHitRatio * this.config.paddle.spinImpact; 
             }
 
-            // update hit count when hitting a brick
-            if (closest.obstacle.hitCount) closest.obstacle.hitCount--;
+            // update hit count, color and score when hitting a brick
+            if (closest.obstacle.hitCount) {
+                closest.obstacle.hitCount--;
+                this.model.game.score++;
+                closest.obstacle.color = this.config.bricks.brickColor[closest.obstacle.hitCount - 1];
+            }
 
             // collision happened - how far along did we get before intercept ?
             let udt = dt * (closest.distance / magnitude(pos.nx, pos.ny)) / 1000;
@@ -319,23 +323,24 @@ export class WafArkanoid {
         return result;
     }
 
-    private generateBricksModel(configBrick, canvasWidth) {
+    private generateBricksModel(configBrick, levelBluePrint, canvasWidth) {
         const config = Object.assign({}, configBrick);
-        const brickWidth = (canvasWidth - config.sideSpace * 2 - config.brickGutter * (config.brickPerRowCount - 1)) / config.brickPerRowCount; 
-        const bricksBluePrint = Array(config.rowCount).fill('fake').map((_itemRow, i) => { 
-            return Array(config.brickPerRowCount).fill('fake').map((_itemColumn, j) => { 
-                return { 
+        const brickPerRowCount = levelBluePrint[0].length;
+        const brickWidth = (canvasWidth - config.sideSpace * 2 - config.brickGutter * (brickPerRowCount - 1)) / brickPerRowCount; 
+        const bricksBluePrint = levelBluePrint.map((_itemRow, i) => {
+            return _itemRow.map((_itemColumn, j) => {
+                return {
                     x: config.sideSpace + j * (brickWidth + config.brickGutter), 
                     y: config.sideSpace + i * (config.brickHeight + config.brickGutter), 
                     width: brickWidth, 
                     height: config.brickHeight, 
-                    color: config.brickColor, 
-                    hitCount: 1 
-                } 
-            }) 
-        }); 
+                    color: config.brickColor[_itemColumn - 1], 
+                    hitCount: _itemColumn
+                }
+            });
+        });
 
-        return [].concat.apply([], bricksBluePrint);
+        return [].concat.apply([], bricksBluePrint).filter(brick => (brick.hitCount > 0));
     }
 
     private generatePaddleModel(configPaddle, canvasHeight) {
@@ -372,7 +377,7 @@ export class WafArkanoid {
         };
 
         // generate model - bricks
-        model.bricks = this.generateBricksModel(this.config.bricks, this.width);
+        model.bricks = this.generateBricksModel(this.config.bricks, this.config.levels[model.game.level - 1], this.width);
         // generate model - paddle
         model.paddle = this.generatePaddleModel(this.config.paddle, this.height);
         // generate model - ball
