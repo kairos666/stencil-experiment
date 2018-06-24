@@ -12,7 +12,7 @@ export class WafArkanoid {
     @Prop() activateMouseControls:boolean;
     @Prop() activateFaceControls:boolean;
     @State() private isPaused:boolean = true;
-    @State() private isGameOver:boolean = false;
+    @State() private isGameOver:boolean = true;
     private model:any;
     private faceDetectLimiterActive:boolean = false;
     @Element() private akElt:HTMLElement;
@@ -39,7 +39,6 @@ export class WafArkanoid {
         }
 
         return [
-            <slot/>,
             <canvas class="arkanoid" width={this.width} height={this.height} />,
             menuRenderer()
         ]
@@ -72,7 +71,7 @@ export class WafArkanoid {
             this.config = config;
 
             // init
-            this.gameInitModel();
+            this.gameInitModel(true);
 
             // controls setup
             if (this.activateKeyboardControls) this.setupControls('keyboard');
@@ -214,8 +213,9 @@ export class WafArkanoid {
         this.collisionDetectionLoopCount++;
         if (this.collisionDetectionLoopCount > this.config.game.collisionDetectionLoopMaxCount) {
             // too much loops - force end game
-            this.isPaused = true;
-            this.isGameOver = true;
+            this.pause();
+            this.model.game.lives--;
+            if (this.model.game.lives <= 0) this.gameover();
             // erase collision point to break free of loops
             closest.point = null;
         }
@@ -241,11 +241,14 @@ export class WafArkanoid {
                 const paddleHitRatio = Math.max(Math.min((closest.point.x - closest.obstacle.x) / closest.obstacle.width, 1), 0) - 0.5;
                 
                 // impact ball spin
-                pos.dx += paddleHitRatio * this.config.paddle.spinImpact; 
+                pos.dx += paddleHitRatio * this.config.paddle.spinImpact;
+                
+                this.model.sounds.paddle.play();
             }
 
             // update hit count, color and score when hitting a brick
             if (closest.obstacle.hitCount) {
+                this.model.sounds.brick.play();
                 closest.obstacle.hitCount--;
                 this.model.game.score++;
                 closest.obstacle.color = this.config.bricks.brickColor[closest.obstacle.hitCount - 1];
@@ -267,8 +270,9 @@ export class WafArkanoid {
 
             // GAME over (when ball disappear at the bottom)
             if (updatedModel.ball.y >= this.height) {
-                this.isPaused = true;
-                this.isGameOver = true;
+                this.pause();
+                this.model.game.lives--;
+                if (this.model.game.lives <= 0) this.gameover();
             }
 
             // breaking out of collision detection loop --> reset loop counter
@@ -378,12 +382,17 @@ export class WafArkanoid {
         };
     }
 
-    private gameInitModel() {
+    private gameInitModel(isReset?:boolean) {
         const model = {
             bricks: null,
             paddle: null,
             ball: null,
-            game: Object.assign({}, this.config.game)
+            sounds: {
+                brick: (this.model) ? this.model.sounds.brick : new Audio(`${location.origin}${this.config.sounds.brick}`),
+                paddle: (this.model) ? this.model.sounds.paddle : new Audio(`${location.origin}${this.config.sounds.paddle}`),
+                gameover: (this.model) ? this.model.sounds.gameover : new Audio(`${location.origin}${this.config.sounds.gameover}`)
+            },
+            game: (isReset) ? Object.assign({}, this.config.game) : this.model.game
         };
 
         // generate model - bricks
@@ -509,9 +518,18 @@ export class WafArkanoid {
         return pt;
     }
 
+    private pause() {
+        this.isPaused = true;
+    }
+
+    private gameover() {
+        this.isGameOver = true;
+        this.model.sounds.gameover.play();
+    }
+
     public start() {
+        this.gameInitModel(this.isGameOver);
         this.isPaused = false;
         this.isGameOver = false;
-        this.gameInitModel();
     }
 }

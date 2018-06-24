@@ -33,6 +33,11 @@
         "detectSideMargins": 200,
         "jitterThreshold": 0.04
     },
+    "sounds": {
+        "brick": "/assets/sounds/brick.mp3",
+        "paddle": "/assets/sounds/paddle.mp3",
+        "gameover": "/assets/sounds/gameover.mp3"
+    },
     "levels": [
         [
             [1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
