@@ -10,6 +10,7 @@ export class WafArkanoid {
     @Prop() height:number;
     @Prop() activateKeyboardControls:boolean;
     @Prop() activateMouseControls:boolean;
+    @Prop() activateFaceControls:boolean;
     @State() private isPaused:boolean = true;
     @State() private isGameOver:boolean = false;
     private model:any;
@@ -76,7 +77,7 @@ export class WafArkanoid {
             // controls setup
             if (this.activateKeyboardControls) this.setupControls('keyboard');
             if (this.activateMouseControls) this.setupControls('mouse');
-            this.setupControls('face-detect');
+            if (this.activateFaceControls) this.setupControls('face-detect');
 
             // get canvas element
             this.akCanvasCtx = (this.akElt.querySelector('canvas.arkanoid') as HTMLCanvasElement).getContext('2d');
@@ -105,6 +106,15 @@ export class WafArkanoid {
             this.setupControls('mouse');
         } else {
             this.setupControls('mouse', true);
+        }
+    }
+    @Watch('activateFaceControls')
+    updateFaceCtrlState(isActive:boolean) {
+        // mouse controls setup or destroy
+        if (isActive) {
+            this.setupControls('face-detect');
+        } else {
+            this.setupControls('face-detect', true);
         }
     }
 
@@ -429,7 +439,7 @@ export class WafArkanoid {
         // destroy mouse controls
         if (controlType === 'mouse' && destroy) document.body.removeEventListener('mousemove', mouseHandler);
         // face detect controls
-        if (controlType === 'face-detect' && destroy) document.body.removeEventListener('waf.face-detector.detected', faceDetectHandler);
+        if (controlType === 'face-detect' && destroy) this.akElt.parentElement.removeEventListener('waf.face-detector.detected', faceDetectHandler);
     }
 
     private accelerate(x, y, dx, dy, accel, dt) {
