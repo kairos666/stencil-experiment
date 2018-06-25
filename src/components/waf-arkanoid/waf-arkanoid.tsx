@@ -20,6 +20,7 @@ export class WafArkanoid {
     private collisionDetectionLoopCount:number = 0;
     private configURL:string = `${location.origin}/assets/arkanoid-config.json`;
     private config:any;
+    private player:PlayerGame;
 
     render() {
         const menuRenderer = () => {
@@ -29,7 +30,7 @@ export class WafArkanoid {
                 // need game menu
                 result = (
                     <div class="waf-arkanoid-menu waf-arkanoid-menu--initial">
-                        <header>{this.isGameOver ? 'You failed!' : 'Start game!'}<br/>Level {this.model ? this.model.game.level : '1'}<br/>Score {this.model ? this.model.game.score : '0'}, Lives {this.model ? this.model.game.lives : '3'}</header>
+                        <header>{this.isGameOver ? 'You failed!' : 'Start game!'}<br/>Level {this.player ? this.player.status.level : '1'}<br/>Score {this.player ? this.player.status.score : '0'}, Lives {this.player ? this.player.status.lives : '3'}</header>
                         <button type="button" onClick={() => this.start()} class="button-stylish">{this.isGameOver ? 'restart game' : 'start game!'}</button>
                     </div>
                 )
@@ -69,9 +70,10 @@ export class WafArkanoid {
         configJSON.then(config => {
             // successfully loaded game config
             this.config = config;
+            this.player = new PlayerGame(this.config.game.levels, this.config.game.score, this.config.game.lives, this.gameover.bind(this));
 
             // init
-            this.gameInitModel(true);
+            this.gameInitModel();
 
             // controls setup
             if (this.activateKeyboardControls) this.setupControls('keyboard');
@@ -214,8 +216,7 @@ export class WafArkanoid {
         if (this.collisionDetectionLoopCount > this.config.game.collisionDetectionLoopMaxCount) {
             // too much loops - force end game
             this.pause();
-            this.model.game.lives--;
-            if (this.model.game.lives <= 0) this.gameover();
+            this.player.die();
             // erase collision point to break free of loops
             closest.point = null;
         }
@@ -250,7 +251,7 @@ export class WafArkanoid {
             if (closest.obstacle.hitCount) {
                 this.model.sounds.brick.play();
                 closest.obstacle.hitCount--;
-                this.model.game.score++;
+                this.player.scoreUpdate();
                 closest.obstacle.color = this.config.bricks.brickColor[closest.obstacle.hitCount - 1];
             }
 
@@ -271,8 +272,7 @@ export class WafArkanoid {
             // GAME over (when ball disappear at the bottom)
             if (updatedModel.ball.y >= this.height) {
                 this.pause();
-                this.model.game.lives--;
-                if (this.model.game.lives <= 0) this.gameover();
+                this.player.die();
             }
 
             // breaking out of collision detection loop --> reset loop counter
@@ -382,7 +382,7 @@ export class WafArkanoid {
         };
     }
 
-    private gameInitModel(isReset?:boolean) {
+    private gameInitModel() {
         const model = {
             bricks: null,
             paddle: null,
@@ -392,11 +392,11 @@ export class WafArkanoid {
                 paddle: (this.model) ? this.model.sounds.paddle : new Audio(`${location.origin}${this.config.sounds.paddle}`),
                 gameover: (this.model) ? this.model.sounds.gameover : new Audio(`${location.origin}${this.config.sounds.gameover}`)
             },
-            game: (isReset) ? Object.assign({}, this.config.game) : this.model.game
+            game: Object.assign({}, this.config.game)
         };
 
         // generate model - bricks
-        model.bricks = this.generateBricksModel(this.config.bricks, this.config.levels[model.game.level - 1], this.width);
+        model.bricks = this.generateBricksModel(this.config.bricks, this.config.levels[this.player.status.level - 1], this.width);
         // generate model - paddle
         model.paddle = this.generatePaddleModel(this.config.paddle, this.height);
         // generate model - ball
@@ -528,8 +528,51 @@ export class WafArkanoid {
     }
 
     public start() {
-        this.gameInitModel(this.isGameOver);
+        this.gameInitModel();
         this.isPaused = false;
         this.isGameOver = false;
+    }
+}
+
+class PlayerGame {
+    private level:number;
+    private score:number;
+    private lives:number;
+    private initialConfig;
+    private cb:Function;
+
+    constructor(level:number = 1, score:number = 0, lives:number = 3, gameoverCallback:Function) {
+        this.initialConfig = {};
+        this.level = this.initialConfig.level = level;
+        this.score = this.initialConfig.score = score;
+        this.lives = this.initialConfig.lives = lives;
+        this.cb = gameoverCallback;
+    }
+
+    public levelUp() {
+        this.level++;
+        return this.status;
+    }
+    public die() {
+        this.lives--;
+        if (this.lives <= 0) this.cb(this.status);
+        return this.status;
+    }
+    public scoreUpdate(amount:number = 1) {
+        this.score += amount;
+        return this.status;
+    }
+    public reset() {
+        this.level = this.initialConfig.level;
+        this.score = this.initialConfig.score;
+        this.lives = this.initialConfig.lives;
+        return this.status;
+    }
+    public get status() {
+        return {
+            level: this.level,
+            score: this.score,
+            lives: this.lives
+        }
     }
 }
