@@ -263,6 +263,13 @@ export class WafArkanoid {
             // update bricks (remove 'no-brick' items: paddle & walls)
             updatedModel.bricks = collisionObjects.filter(obs => (!obs.type || obs.type !== 'no-brick' || obs.type !== 'paddle' || obs.type !== 'game-over'));
 
+            // next level if no more bricks in level
+            if (updatedModel.bricks.filter(obj => (obj.type === 'brick' && obj.hitCount > 0)).length === 0) {
+                this.pause();
+                this.player.levelUp();
+                return updatedModel;
+            }
+
             // loop on collision detection
             return this.collisionHandler(dt - udt, model);
         } else {
@@ -349,7 +356,8 @@ export class WafArkanoid {
                     width: brickWidth, 
                     height: config.brickHeight, 
                     color: config.brickColor[_itemColumn - 1], 
-                    hitCount: _itemColumn
+                    hitCount: _itemColumn,
+                    type: 'brick'
                 }
             });
         });
