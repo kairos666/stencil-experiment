@@ -74,7 +74,9 @@ export class WafArkanoid {
                 const response = msg.data.return;
 
                 // update model
+                const paddleTween = this.model.paddle.tween;
                 this.model = Object.assign(this.model, response.updatedModel);
+                this.model.paddle.tween = paddleTween; // reinject paddle tween after merge
 
                 // execute post calculations commands
                 commandsExecutor.bind(this)(response.cmds);
