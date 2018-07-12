@@ -21,6 +21,7 @@ export class WafArkanoid {
     private configURL:string = `${location.origin}/assets/arkanoid-config.json`;
     private config:any;
     private player:PlayerGame;
+    private worker:Worker;
 
     render() {
         const menuRenderer = () => {
@@ -68,6 +69,15 @@ export class WafArkanoid {
         const configResp:Response = await fetch(this.configURL);
         const configJSON:Promise<any> = configResp.json();
         configJSON.then(config => {
+            // load worker file
+            this.worker = new Worker('/assets/arkanoid-collision-detection-worker.js');
+            this.worker.addEventListener('message', msg => {
+                console.log(msg);
+            });
+            this.worker.addEventListener('error', err => {
+                console.warn(err);
+            });
+
             // successfully loaded game config
             this.config = config;
             this.player = new PlayerGame(this.config.game.levels, this.config.game.score, this.config.game.lives, this.gameover.bind(this));
@@ -124,6 +134,9 @@ export class WafArkanoid {
         this.setupControls('keyboard', true);
         this.setupControls('mouse', true);
         this.setupControls('face-detect', true);
+
+        // worker termination
+        this.worker.terminate();
     }
 
     private drawLoop(DHRTimeStamp?:number) {
@@ -154,6 +167,25 @@ export class WafArkanoid {
             // paddle will move
             newModel.paddle = this.paddleTweener(dt, Object.assign({}, newModel.paddle));
         }
+
+        // send to worker (do not send sounds because it invalidates object cloning)
+        const workerMsg = {
+            func: 'collisionHandler',
+            args: {
+                dt: dt,
+                model: {
+                    ball: newModel.ball,
+                    bricks: newModel.bricks,
+                    game: newModel.game,
+                    paddle: newModel.paddle
+                },
+                config: this.config,
+                width: this.width,
+                height: this.height
+            }
+        };
+        console.log(workerMsg);
+        this.worker.postMessage(workerMsg);
 
         return this.collisionHandler(dt, newModel);
     }
