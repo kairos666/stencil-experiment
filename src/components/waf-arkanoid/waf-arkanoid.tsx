@@ -536,6 +536,11 @@ export class WafArkanoid {
     }
 
     public start() {
+        // reset if game was previously game over
+        if(this.isGameOver) {
+            this.player.reset();
+        }
+
         this.gameInitModel();
         this.isPaused = false;
         this.isGameOver = false;
