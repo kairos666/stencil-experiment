@@ -74,6 +74,11 @@ export class WafFaceDetect {
         this.fdCanvas = this.fdElt.querySelector('canvas.face-detect');
         this.fdVideo = this.fdElt.querySelector('video');
 
+        // reverse canvas left right (turn around by scaling stream itself is not reversed)
+        const ctx:CanvasRenderingContext2D = this.fdCanvas.getContext('2d');
+        ctx.translate(this.width, 0);
+        ctx.scale(-1, 1);
+
         // initiate everything (video & wasm in parralel then canvas)
         this.init();
     }
@@ -215,14 +220,15 @@ export class WafFaceDetect {
         let dets = [];
         const ctx:CanvasRenderingContext2D = this.fdCanvas.getContext('2d');
         Array(ndetections).fill('fake').forEach((_item, i) => {
-            // return detections positions
+            // return detections positions (reverse x position due to mirrored stream)
             if (rcsq[4*i+3] > this.detectionThreshold) {
-                dets.push({ x: rcsq[4*i+1], y: rcsq[4*i+0], size: rcsq[4*i+2] });
+                const mirroredX = this.width - rcsq[4*i+1];
+                dets.push({ x: mirroredX, y: rcsq[4*i+0], size: rcsq[4*i+2] });
 
                 if (this.drawDetection) {
                     // draw detection
                     ctx.beginPath();
-                    ctx.arc(rcsq[4*i+1], rcsq[4*i+0], rcsq[4*i+2]/2, 0, 2*Math.PI, false);
+                    ctx.arc(mirroredX, rcsq[4*i+0], rcsq[4*i+2]/2, 0, 2*Math.PI, false);
                     ctx.lineWidth = 2;
                     ctx.strokeStyle = '#0093e0';
                     ctx.stroke();

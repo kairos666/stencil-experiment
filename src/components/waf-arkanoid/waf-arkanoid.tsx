@@ -10,43 +10,17 @@ export class WafArkanoid {
     @Prop() height:number;
     @Prop() activateKeyboardControls:boolean;
     @Prop() activateMouseControls:boolean;
+    @Prop() activateFaceControls:boolean;
     @State() private isPaused:boolean = true;
-    @State() private isGameOver:boolean = false;
+    @State() private isGameOver:boolean = true;
     private model:any;
     private faceDetectLimiterActive:boolean = false;
     @Element() private akElt:HTMLElement;
     private akCanvasCtx:CanvasRenderingContext2D;
-    static config:any = {
-        bricks: {  
-            brickPerRowCount: 10, 
-            rowCount: 6, 
-            sideSpace: 20, 
-            brickHeight: 10, 
-            brickGutter: 2,
-            brickColor: '#0093e0'
-        },
-        paddle: {
-            paddleWidth: 100,
-            paddleHeight: 10,
-            paddleColor: '#0093e0',
-            bottomMargin: 20,
-            maxTweenDelay: 1000,
-            spinImpact: 0.2
-        },
-        ball: {
-            initialSpeed: 0.1,
-            acceleration: 0.0000015,
-            ballRadius: 10,
-            ballColor: '#0093e0'
-        },
-        game: {
-            lastFrame: null
-        },
-        faceDetect: {
-            detectSideMargins: 200,
-            jitterThreshold: 0.04
-        }
-    }
+    private collisionDetectionLoopCount:number = 0;
+    private configURL:string = `${location.origin}/assets/arkanoid-config.json`;
+    private config:any;
+    private player:PlayerGame;
 
     render() {
         const menuRenderer = () => {
@@ -56,7 +30,7 @@ export class WafArkanoid {
                 // need game menu
                 result = (
                     <div class="waf-arkanoid-menu waf-arkanoid-menu--initial">
-                        <header>{this.isGameOver ? 'You failed!' : 'Start game!'}</header>
+                        <header>{this.isGameOver ? 'You failed!' : 'Start game!'}<br/>Level {this.player ? this.player.status.level : '1'}<br/>Score {this.player ? this.player.status.score : '0'}, Lives {this.player ? this.player.status.lives : '3'}</header>
                         <button type="button" onClick={() => this.start()} class="button-stylish">{this.isGameOver ? 'restart game' : 'start game!'}</button>
                     </div>
                 )
@@ -66,7 +40,6 @@ export class WafArkanoid {
         }
 
         return [
-            <slot/>,
             <canvas class="arkanoid" width={this.width} height={this.height} />,
             menuRenderer()
         ]
@@ -84,26 +57,38 @@ export class WafArkanoid {
         // time for tween
         const from = this.model.paddle.x;
         const to = this.paddlePositionConverter(newPositionRatio);
-        let transitionTime = Math.abs(from - to)/this.width * WafArkanoid.config.paddle.maxTweenDelay;
+        let transitionTime = Math.abs(from - to)/this.width * this.config.paddle.maxTweenDelay;
 
         // convert to position & apply to model
         this.model.paddle.tween = { from: from, to: to, elapsedTime: 0, totalTime: transitionTime };
     }
 
-    componentDidLoad() {
-        // init
-        this.gameInitModel();
+    async componentDidLoad() {
+        // load game config json
+        const configResp:Response = await fetch(this.configURL);
+        const configJSON:Promise<any> = configResp.json();
+        configJSON.then(config => {
+            // successfully loaded game config
+            this.config = config;
+            this.player = new PlayerGame(this.config.game.levels, this.config.game.score, this.config.game.lives, this.gameover.bind(this));
 
-        // controls setup
-        if (this.activateKeyboardControls) this.setupControls('keyboard');
-        if (this.activateMouseControls) this.setupControls('mouse');
-        this.setupControls('face-detect');
+            // init
+            this.gameInitModel();
 
-        // get canvas element
-        this.akCanvasCtx = (this.akElt.querySelector('canvas.arkanoid') as HTMLCanvasElement).getContext('2d');
-        
-        // init game
-        this.drawLoop();
+            // controls setup
+            if (this.activateKeyboardControls) this.setupControls('keyboard');
+            if (this.activateMouseControls) this.setupControls('mouse');
+            if (this.activateFaceControls) this.setupControls('face-detect');
+
+            // get canvas element
+            this.akCanvasCtx = (this.akElt.querySelector('canvas.arkanoid') as HTMLCanvasElement).getContext('2d');
+            
+            // init game
+            this.drawLoop();
+        }).catch(() => {
+            // failed to load game config
+            console.warn('waf-arkanoid | config file couldn\'t be loaded or parsed');
+        });
     }
 
     @Watch('activateKeyboardControls')
@@ -122,6 +107,15 @@ export class WafArkanoid {
             this.setupControls('mouse');
         } else {
             this.setupControls('mouse', true);
+        }
+    }
+    @Watch('activateFaceControls')
+    updateFaceCtrlState(isActive:boolean) {
+        // mouse controls setup or destroy
+        if (isActive) {
+            this.setupControls('face-detect');
+        } else {
+            this.setupControls('face-detect', true);
         }
     }
 
@@ -195,11 +189,10 @@ export class WafArkanoid {
             // add paddle
             collisionObjects.push(Object.assign({ type: 'paddle' }, model.paddle));
             // add walls
-            const leftWallRect = { type: 'no-brick', x: -WafArkanoid.config.bricks.sideSpace, y: 0, width: WafArkanoid.config.bricks.sideSpace, height: this.height };
-            const rightWallRect = { type: 'no-brick', x: this.width, y: 0, width: WafArkanoid.config.bricks.sideSpace, height: this.height };
-            const topWallRect = { type: 'no-brick', x: 0, y: -WafArkanoid.config.bricks.sideSpace, width: this.width, height: WafArkanoid.config.bricks.sideSpace };
-            const bottomWallRect = { type: 'game-over', x: 0, y: this.height, width: this.width, height: WafArkanoid.config.bricks.sideSpace };
-            collisionObjects.push(leftWallRect, rightWallRect, topWallRect, bottomWallRect);
+            const leftWallRect = { type: 'no-brick', x: -this.config.bricks.sideSpace, y: 0, width: this.config.bricks.sideSpace, height: this.height };
+            const rightWallRect = { type: 'no-brick', x: this.width, y: 0, width: this.config.bricks.sideSpace, height: this.height };
+            const topWallRect = { type: 'no-brick', x: 0, y: -this.config.bricks.sideSpace, width: this.width, height: this.config.bricks.sideSpace };
+            collisionObjects.push(leftWallRect, rightWallRect, topWallRect);
 
             return collisionObjects;
         }
@@ -217,6 +210,16 @@ export class WafArkanoid {
                 }
             }
         });
+
+        // loop count check (avoid ball being stuck in an infinte loop of collision)
+        this.collisionDetectionLoopCount++;
+        if (this.collisionDetectionLoopCount > this.config.game.collisionDetectionLoopMaxCount) {
+            // too much loops - force end game
+            this.pause();
+            this.player.die();
+            // erase collision point to break free of loops
+            closest.point = null;
+        }
 
         if(closest.point) {
             // react to closest collision
@@ -239,17 +242,18 @@ export class WafArkanoid {
                 const paddleHitRatio = Math.max(Math.min((closest.point.x - closest.obstacle.x) / closest.obstacle.width, 1), 0) - 0.5;
                 
                 // impact ball spin
-                pos.dx += paddleHitRatio * WafArkanoid.config.paddle.spinImpact; 
+                pos.dx += paddleHitRatio * this.config.paddle.spinImpact;
+                
+                this.model.sounds.paddle.play();
             }
 
-            // GAME over (when ball hit the bottom wall)
-            if (closest.obstacle.type === 'game-over') {
-                this.isPaused = true;
-                this.isGameOver = true;
+            // update hit count, color and score when hitting a brick
+            if (closest.obstacle.hitCount) {
+                this.model.sounds.brick.play();
+                closest.obstacle.hitCount--;
+                this.player.scoreUpdate();
+                closest.obstacle.color = this.config.bricks.brickColor[closest.obstacle.hitCount - 1];
             }
-
-            // update hit count when hitting a brick
-            if (closest.obstacle.hitCount) closest.obstacle.hitCount--;
 
             // collision happened - how far along did we get before intercept ?
             let udt = dt * (closest.distance / magnitude(pos.nx, pos.ny)) / 1000;
@@ -259,11 +263,27 @@ export class WafArkanoid {
             // update bricks (remove 'no-brick' items: paddle & walls)
             updatedModel.bricks = collisionObjects.filter(obs => (!obs.type || obs.type !== 'no-brick' || obs.type !== 'paddle' || obs.type !== 'game-over'));
 
+            // next level if no more bricks in level
+            if (updatedModel.bricks.filter(obj => (obj.type === 'brick' && obj.hitCount > 0)).length === 0) {
+                this.pause();
+                this.player.levelUp();
+                return updatedModel;
+            }
+
             // loop on collision detection
             return this.collisionHandler(dt - udt, model);
         } else {
             // update ball properties
             updatedModel.ball = Object.assign(updatedModel.ball, pos);
+
+            // GAME over (when ball disappear at the bottom)
+            if (updatedModel.ball.y >= this.height) {
+                this.pause();
+                this.player.die();
+            }
+
+            // breaking out of collision detection loop --> reset loop counter
+            this.collisionDetectionLoopCount = 0;
 
             // no collision - ball moved normally
             return updatedModel;
@@ -307,8 +327,8 @@ export class WafArkanoid {
 
     private paddlePositionConverter(ratio) {
         // convert position ratio to x position on canvas
-        const maxLeftX = WafArkanoid.config.bricks.sideSpace;
-        const maxRightX = this.width - WafArkanoid.config.bricks.sideSpace - WafArkanoid.config.paddle.paddleWidth;
+        const maxLeftX = this.config.bricks.sideSpace;
+        const maxRightX = this.width - this.config.bricks.sideSpace - this.config.paddle.paddleWidth;
         return maxLeftX + ratio * (maxRightX - maxLeftX);
     }
 
@@ -324,23 +344,25 @@ export class WafArkanoid {
         return result;
     }
 
-    private generateBricksModel(configBrick, canvasWidth) {
+    private generateBricksModel(configBrick, levelBluePrint, canvasWidth) {
         const config = Object.assign({}, configBrick);
-        const brickWidth = (canvasWidth - config.sideSpace * 2 - config.brickGutter * (config.brickPerRowCount - 1)) / config.brickPerRowCount; 
-        const bricksBluePrint = Array(config.rowCount).fill('fake').map((_itemRow, i) => { 
-            return Array(config.brickPerRowCount).fill('fake').map((_itemColumn, j) => { 
-                return { 
+        const brickPerRowCount = levelBluePrint[0].length;
+        const brickWidth = (canvasWidth - config.sideSpace * 2 - config.brickGutter * (brickPerRowCount - 1)) / brickPerRowCount; 
+        const bricksBluePrint = levelBluePrint.map((_itemRow, i) => {
+            return _itemRow.map((_itemColumn, j) => {
+                return {
                     x: config.sideSpace + j * (brickWidth + config.brickGutter), 
                     y: config.sideSpace + i * (config.brickHeight + config.brickGutter), 
                     width: brickWidth, 
                     height: config.brickHeight, 
-                    color: config.brickColor, 
-                    hitCount: 1 
-                } 
-            }) 
-        }); 
+                    color: config.brickColor[_itemColumn - 1], 
+                    hitCount: _itemColumn,
+                    type: 'brick'
+                }
+            });
+        });
 
-        return [].concat.apply([], bricksBluePrint);
+        return [].concat.apply([], bricksBluePrint).filter(brick => (brick.hitCount > 0));
     }
 
     private generatePaddleModel(configPaddle, canvasHeight) {
@@ -373,15 +395,20 @@ export class WafArkanoid {
             bricks: null,
             paddle: null,
             ball: null,
-            game: Object.assign({}, WafArkanoid.config.game)
+            sounds: {
+                brick: (this.model) ? this.model.sounds.brick : new Audio(`${location.origin}${this.config.sounds.brick}`),
+                paddle: (this.model) ? this.model.sounds.paddle : new Audio(`${location.origin}${this.config.sounds.paddle}`),
+                gameover: (this.model) ? this.model.sounds.gameover : new Audio(`${location.origin}${this.config.sounds.gameover}`)
+            },
+            game: Object.assign({}, this.config.game)
         };
 
         // generate model - bricks
-        model.bricks = this.generateBricksModel(WafArkanoid.config.bricks, this.width);
+        model.bricks = this.generateBricksModel(this.config.bricks, this.config.levels[this.player.status.level - 1], this.width);
         // generate model - paddle
-        model.paddle = this.generatePaddleModel(WafArkanoid.config.paddle, this.height);
+        model.paddle = this.generatePaddleModel(this.config.paddle, this.height);
         // generate model - ball
-        model.ball = this.generateBallModel(WafArkanoid.config.ball, model.paddle);
+        model.ball = this.generateBallModel(this.config.ball, model.paddle);
         
         this.model = model;
     }
@@ -405,8 +432,8 @@ export class WafArkanoid {
         }
         const faceDetectHandler = (evt:CustomEvent) => {
             if (!this.faceDetectLimiterActive && evt.detail.length > 0) {
-                const sideMargins = WafArkanoid.config.faceDetect.detectSideMargins; // allow to go all the way left or right
-                const jitterThreshold = WafArkanoid.config.faceDetect.jitterThreshold; // smooth jitter from detection jumps
+                const sideMargins = this.config.faceDetect.detectSideMargins; // allow to go all the way left or right
+                const jitterThreshold = this.config.faceDetect.jitterThreshold; // smooth jitter from detection jumps
                 const detection = Object.assign({}, evt.detail[0]); // ignoring other detected faces
                 const offsettedX = Math.max(detection.x - sideMargins, 0);
                 const posRatio = 1 - Math.min(offsettedX / (this.width - 2 * sideMargins), 1);
@@ -429,7 +456,7 @@ export class WafArkanoid {
         // destroy mouse controls
         if (controlType === 'mouse' && destroy) document.body.removeEventListener('mousemove', mouseHandler);
         // face detect controls
-        if (controlType === 'face-detect' && destroy) document.body.removeEventListener('waf.face-detector.detected', faceDetectHandler);
+        if (controlType === 'face-detect' && destroy) this.akElt.parentElement.removeEventListener('waf.face-detector.detected', faceDetectHandler);
     }
 
     private accelerate(x, y, dx, dy, accel, dt) {
@@ -499,9 +526,66 @@ export class WafArkanoid {
         return pt;
     }
 
+    private pause() {
+        this.isPaused = true;
+    }
+
+    private gameover() {
+        this.isGameOver = true;
+        this.model.sounds.gameover.play();
+    }
+
     public start() {
+        // reset if game was previously game over
+        if(this.isGameOver) {
+            this.player.reset();
+        }
+
+        this.gameInitModel();
         this.isPaused = false;
         this.isGameOver = false;
-        this.gameInitModel();
+    }
+}
+
+class PlayerGame {
+    private level:number;
+    private score:number;
+    private lives:number;
+    private initialConfig;
+    private cb:Function;
+
+    constructor(level:number = 1, score:number = 0, lives:number = 3, gameoverCallback:Function) {
+        this.initialConfig = {};
+        this.level = this.initialConfig.level = level;
+        this.score = this.initialConfig.score = score;
+        this.lives = this.initialConfig.lives = lives;
+        this.cb = gameoverCallback;
+    }
+
+    public levelUp() {
+        this.level++;
+        return this.status;
+    }
+    public die() {
+        this.lives--;
+        if (this.lives <= 0) this.cb(this.status);
+        return this.status;
+    }
+    public scoreUpdate(amount:number = 1) {
+        this.score += amount;
+        return this.status;
+    }
+    public reset() {
+        this.level = this.initialConfig.level;
+        this.score = this.initialConfig.score;
+        this.lives = this.initialConfig.lives;
+        return this.status;
+    }
+    public get status() {
+        return {
+            level: this.level,
+            score: this.score,
+            lives: this.lives
+        }
     }
 }
