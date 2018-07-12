@@ -167,12 +167,12 @@ collisionHandler = function({ dt, model, config, width, height, resetCollisionCo
             // impact ball spin
             pos.dx += paddleHitRatio * config.paddle.spinImpact;
 
-            afterResultCmds.push({ func: 'model.sounds.paddle.play', args: [] });
+            afterResultCmds.push({ func: 'playSound', args: ['paddle'] });
         }
 
         // update hit count, color and score when hitting a brick
         if (closest.obstacle.hitCount) {
-            afterResultCmds.push({ func: 'model.sounds.brick.play', args: [] });
+            afterResultCmds.push({ func: 'playSound', args: ['brick'] });
             closest.obstacle.hitCount--;
             afterResultCmds.push({ func: 'player.scoreUpdate', args: [] });
             closest.obstacle.color = config.bricks.brickColor[closest.obstacle.hitCount - 1];
