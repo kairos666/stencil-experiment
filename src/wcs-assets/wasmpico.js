@@ -367,9 +367,9 @@ export function moduleInit() {
     }
 
     function integrateWasmJS() {
-        var wasmTextFile = "assets/wasmpico.wast";
-        var wasmBinaryFile = "assets/wasmpico.wasm";
-        var asmjsCodeFile = "assets/wasmpico.temp.asm.js";
+        var wasmTextFile = "wcs-assets/wasmpico.wast";
+        var wasmBinaryFile = "wcs-assets/wasmpico.wasm";
+        var asmjsCodeFile = "wcs-assets/wasmpico.temp.asm.js";
         if (typeof Module["locateFile"] === "function") {
             if (!isDataURI(wasmTextFile)) {
                 wasmTextFile = Module["locateFile"](wasmTextFile)

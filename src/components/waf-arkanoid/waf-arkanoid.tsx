@@ -17,10 +17,10 @@ export class WafArkanoid {
     private faceDetectLimiterActive:boolean = false;
     @Element() private akElt:HTMLElement;
     private akCanvasCtx:CanvasRenderingContext2D;
-    private collisionDetectionLoopCount:number = 0;
-    private configURL:string = `${location.origin}/assets/arkanoid-config.json`;
+    private configURL:string = `${location.origin}/wcs-assets/arkanoid-config.json`;
     private config:any;
     private player:PlayerGame;
+    private worker:Worker;
 
     render() {
         const menuRenderer = () => {
@@ -68,6 +68,26 @@ export class WafArkanoid {
         const configResp:Response = await fetch(this.configURL);
         const configJSON:Promise<any> = configResp.json();
         configJSON.then(config => {
+            // load worker file
+            this.worker = new Worker(`${location.origin}${config.externals.collision_ww}`);
+            this.worker.addEventListener('message', msg => {
+                const response = msg.data.return;
+
+                // update model
+                const paddleTween = this.model.paddle.tween;
+                this.model = Object.assign(this.model, response.updatedModel);
+                this.model.paddle.tween = paddleTween; // reinject paddle tween after merge
+
+                // execute post calculations commands
+                commandsExecutor.bind(this)(response.cmds);
+                
+                // draw game state
+                this.drawModel(this.model);
+            });
+            this.worker.addEventListener('error', err => {
+                console.warn(err);
+            });
+
             // successfully loaded game config
             this.config = config;
             this.player = new PlayerGame(this.config.game.levels, this.config.game.score, this.config.game.lives, this.gameover.bind(this));
@@ -124,6 +144,9 @@ export class WafArkanoid {
         this.setupControls('keyboard', true);
         this.setupControls('mouse', true);
         this.setupControls('face-detect', true);
+
+        // worker termination
+        this.worker.terminate();
     }
 
     private drawLoop(DHRTimeStamp?:number) {
@@ -131,11 +154,8 @@ export class WafArkanoid {
             // calculate elapsed time
             const dt:number = this.elapsedTime(DHRTimeStamp);
             
-            // collision detection & applied acceleration
-            this.model = this.update(dt);
-
-            // draw game state
-            this.drawModel(this.model);
+            // collision detection & applied acceleration (async response through worker response)
+            this.update(dt);
         }
 
         // allow face detection input to pass 
@@ -155,7 +175,23 @@ export class WafArkanoid {
             newModel.paddle = this.paddleTweener(dt, Object.assign({}, newModel.paddle));
         }
 
-        return this.collisionHandler(dt, newModel);
+        // send to worker (do not send sounds because it invalidates object cloning)
+        const workerMsg = {
+            func: 'collisionHandler',
+            args: {
+                dt: dt,
+                model: {
+                    ball: newModel.ball,
+                    bricks: newModel.bricks,
+                    game: newModel.game,
+                    paddle: newModel.paddle
+                },
+                config: this.config,
+                width: this.width,
+                height: this.height
+            }
+        };
+        this.worker.postMessage(workerMsg);
     }
 
     private paddleTweener(dt, paddle) {
@@ -174,121 +210,6 @@ export class WafArkanoid {
         paddle.x = pTween.from + positionRatio * (pTween.to - pTween.from);
 
         return paddle;
-    }
-
-    private collisionHandler(dt, model) {
-        let updatedModel = Object.assign({}, model);
-        let ball = Object.assign({}, updatedModel.ball);
-        let pos = this.accelerate(ball.x, ball.y, ball.dx, ball.dy, ball.accel ,dt);
-        let magnitude = function(x, y) {
-            return Math.sqrt(x*x + y*y);
-        }
-        let collisionObjectsBuilder = model => {
-            // get all valid bricks
-            let collisionObjects = model.bricks.filter(brick => (brick.hitCount > 0));
-            // add paddle
-            collisionObjects.push(Object.assign({ type: 'paddle' }, model.paddle));
-            // add walls
-            const leftWallRect = { type: 'no-brick', x: -this.config.bricks.sideSpace, y: 0, width: this.config.bricks.sideSpace, height: this.height };
-            const rightWallRect = { type: 'no-brick', x: this.width, y: 0, width: this.config.bricks.sideSpace, height: this.height };
-            const topWallRect = { type: 'no-brick', x: 0, y: -this.config.bricks.sideSpace, width: this.width, height: this.config.bricks.sideSpace };
-            collisionObjects.push(leftWallRect, rightWallRect, topWallRect);
-
-            return collisionObjects;
-        }
-        const collisionObjects = collisionObjectsBuilder(updatedModel);
-        let closest = { obstacle: null, point: null, distance: Infinity };
-        let distance;
-
-        // look for closest collision
-        collisionObjects.forEach(obstacle => {
-            let px = this.ballIntercept(ball, obstacle, pos.nx, pos.ny);
-            if (px) {
-                distance = magnitude(px.x - obstacle.x, px.y - obstacle.y);
-                if (distance < closest.distance) {
-                    closest = { obstacle: obstacle, point: px, distance: distance};
-                }
-            }
-        });
-
-        // loop count check (avoid ball being stuck in an infinte loop of collision)
-        this.collisionDetectionLoopCount++;
-        if (this.collisionDetectionLoopCount > this.config.game.collisionDetectionLoopMaxCount) {
-            // too much loops - force end game
-            this.pause();
-            this.player.die();
-            // erase collision point to break free of loops
-            closest.point = null;
-        }
-
-        if(closest.point) {
-            // react to closest collision
-            pos.x = closest.point.x;
-            pos.y = closest.point.y;
-            switch(closest.point.d) {
-                case 'left':
-                case 'right':
-                    pos.dx = -pos.dx;
-                    break;
-                
-                case 'top':
-                case 'bottom':
-                    pos.dy = -pos.dy;
-                    break;
-            }
-
-            // change slightly ball spin if hitting paddle
-            if (closest.obstacle.type === 'paddle' && closest.point.d === 'top') {
-                const paddleHitRatio = Math.max(Math.min((closest.point.x - closest.obstacle.x) / closest.obstacle.width, 1), 0) - 0.5;
-                
-                // impact ball spin
-                pos.dx += paddleHitRatio * this.config.paddle.spinImpact;
-                
-                this.model.sounds.paddle.play();
-            }
-
-            // update hit count, color and score when hitting a brick
-            if (closest.obstacle.hitCount) {
-                this.model.sounds.brick.play();
-                closest.obstacle.hitCount--;
-                this.player.scoreUpdate();
-                closest.obstacle.color = this.config.bricks.brickColor[closest.obstacle.hitCount - 1];
-            }
-
-            // collision happened - how far along did we get before intercept ?
-            let udt = dt * (closest.distance / magnitude(pos.nx, pos.ny)) / 1000;
-
-            // update ball properties
-            updatedModel.ball = Object.assign(updatedModel.ball, pos);
-            // update bricks (remove 'no-brick' items: paddle & walls)
-            updatedModel.bricks = collisionObjects.filter(obs => (!obs.type || obs.type !== 'no-brick' || obs.type !== 'paddle' || obs.type !== 'game-over'));
-
-            // next level if no more bricks in level
-            if (updatedModel.bricks.filter(obj => (obj.type === 'brick' && obj.hitCount > 0)).length === 0) {
-                this.pause();
-                this.player.levelUp();
-                return updatedModel;
-            }
-
-            // loop on collision detection
-            return this.collisionHandler(dt - udt, model);
-        } else {
-            // update ball properties
-            updatedModel.ball = Object.assign(updatedModel.ball, pos);
-
-            // GAME over (when ball disappear at the bottom)
-            if (updatedModel.ball.y >= this.height) {
-                this.pause();
-                this.player.die();
-            }
-
-            // breaking out of collision detection loop --> reset loop counter
-            this.collisionDetectionLoopCount = 0;
-
-            // no collision - ball moved normally
-            return updatedModel;
-        }
-        
     }
 
     private drawModel(model) {
@@ -396,9 +317,9 @@ export class WafArkanoid {
             paddle: null,
             ball: null,
             sounds: {
-                brick: (this.model) ? this.model.sounds.brick : new Audio(`${location.origin}${this.config.sounds.brick}`),
-                paddle: (this.model) ? this.model.sounds.paddle : new Audio(`${location.origin}${this.config.sounds.paddle}`),
-                gameover: (this.model) ? this.model.sounds.gameover : new Audio(`${location.origin}${this.config.sounds.gameover}`)
+                brick: (this.model) ? this.model.sounds.brick : new Audio(`${location.origin}${this.config.externals.brick_snd}`),
+                paddle: (this.model) ? this.model.sounds.paddle : new Audio(`${location.origin}${this.config.externals.paddle_snd}`),
+                gameover: (this.model) ? this.model.sounds.gameover : new Audio(`${location.origin}${this.config.externals.gameover_snd}`)
             },
             game: Object.assign({}, this.config.game)
         };
@@ -459,74 +380,7 @@ export class WafArkanoid {
         if (controlType === 'face-detect' && destroy) this.akElt.parentElement.removeEventListener('waf.face-detector.detected', faceDetectHandler);
     }
 
-    private accelerate(x, y, dx, dy, accel, dt) {
-        let x2  = x + (dt * dx) + (accel * dt * dt * 0.5);
-        let y2  = y + (dt * dy) + (accel * dt * dt * 0.5);
-        let dx2 = dx + (accel * dt) * (dx > 0 ? 1 : -1);
-        let dy2 = dy + (accel * dt) * (dy > 0 ? 1 : -1);
-        return { nx: (x2-x), ny: (y2-y), x: x2, y: y2, dx: dx2, dy: dy2 };
-    }
-
-    private intercept(x1, y1, x2, y2, x3, y3, x4, y4, d) {
-        let denom = ((y4-y3) * (x2-x1)) - ((x4-x3) * (y2-y1));
-        if (denom != 0) {
-            let ua = (((x4-x3) * (y1-y3)) - ((y4-y3) * (x1-x3))) / denom;
-            if ((ua >= 0) && (ua <= 1)) {
-                let ub = (((x2-x1) * (y1-y3)) - ((y2-y1) * (x1-x3))) / denom;
-                if ((ub >= 0) && (ub <= 1)) {
-                    let x = x1 + (ua * (x2-x1));
-                    let y = y1 + (ua * (y2-y1));
-                    return { x: x, y: y, d: d};
-                }
-            }
-        }
-        return null;
-    }
-
-    private ballIntercept(ball, rect, nx, ny) {
-        const top = rect.y - ball.radius;
-        const bottom = rect.y + rect.height + ball.radius;
-        const left = rect.x - ball.radius;
-        const right = rect.x + rect.width + ball.radius;
-        let pt;
-        if (nx < 0) {
-          pt = this.intercept(ball.x, ball.y, ball.x + nx, ball.y + ny, 
-            right,
-            top,
-            right,
-            bottom,
-            "right");
-        }
-        else if (nx > 0) {
-          pt = this.intercept(ball.x, ball.y, ball.x + nx, ball.y + ny,
-            left,
-            top,
-            left,
-            bottom,
-            "left");
-        }
-        if (!pt) {
-          if (ny < 0) {
-            pt = this.intercept(ball.x, ball.y, ball.x + nx, ball.y + ny,
-            left,
-            bottom,
-            right,
-            bottom,
-            "bottom");
-          }
-          else if (ny > 0) {
-            pt = this.intercept(ball.x, ball.y, ball.x + nx, ball.y + ny,
-            left,
-            top,
-            right,
-            top,
-            "top");
-          }
-        }
-        return pt;
-    }
-
-    private pause() {
+    public pause() {
         this.isPaused = true;
     }
 
@@ -544,6 +398,14 @@ export class WafArkanoid {
         this.gameInitModel();
         this.isPaused = false;
         this.isGameOver = false;
+    }
+
+    public playSound(soundKey:String):void {
+        switch (soundKey) {
+            case "brick": this.model.sounds.brick.play(); break;
+            case "paddle": this.model.sounds.paddle.play(); break;
+            case "gameover": this.model.sounds.gameover.play(); break;
+        }
     }
 }
 
@@ -588,4 +450,31 @@ class PlayerGame {
             lives: this.lives
         }
     }
+}
+
+function commandsExecutor(commands:any[]) {
+    // traverse from a root object to desired function
+    let funcFetcher = function(path:string, root:any) {
+        const depthArray = path.split('.').reverse();
+        let result = {
+            func: root,
+            scope: root
+        }
+
+        while (depthArray.length !== 0) {
+            // go to function
+            result.func = result.func[depthArray.pop()];
+
+            // scope is parent of function
+            if(depthArray.length === 1) result.scope = result.func;
+        }
+
+        return result;
+    }
+    commands.forEach(cmd => {
+        let { func, scope } = funcFetcher(cmd.func, this);
+
+        // execute function with provided arguments
+        func.apply(scope, cmd.args);
+    });
 }
