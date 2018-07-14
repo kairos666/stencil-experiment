@@ -34,10 +34,10 @@
         "jitterThreshold": 0.04
     },
     "externals": {
-        "brick_snd": "/assets/sounds/brick.mp3",
-        "paddle_snd": "/assets/sounds/paddle.mp3",
-        "gameover_snd": "/assets/sounds/gameover.mp3",
-        "collision_ww": "/assets/arkanoid-collision-detection-worker.js"
+        "brick_snd": "/wcs-assets/sounds/brick.mp3",
+        "paddle_snd": "/wcs-assets/sounds/paddle.mp3",
+        "gameover_snd": "/wcs-assets/sounds/gameover.mp3",
+        "collision_ww": "/wcs-assets/arkanoid-collision-detection-worker.js"
     },
     "levels": [
         [

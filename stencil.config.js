@@ -14,7 +14,7 @@ exports.config = {
         }
     ],
     copy: [
-        { src: './assets/**/*' }
+        { src: './wcs-assets/**/*' }
     ]
 };
 

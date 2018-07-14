@@ -1,5 +1,5 @@
 import { Component, Prop, Element, Event, EventEmitter } from '@stencil/core';
-import { moduleInit } from '../../assets/wasmpico';
+import { moduleInit } from '../../wcs-assets/wasmpico';
 
 declare const WebAssembly:any;
 
@@ -50,7 +50,7 @@ export class WafFaceDetect {
     /** config variable to tune face detect algorithm results */
     private detectionThreshold = 3;
     /** path to async loaded dependencies */
-    private assetsPath:string = `${location.origin}/assets/`;
+    private assetsPath:string = `${location.origin}/wcs-assets/`;
     /** file name for async loaded dependencies ([name].wasm & [name].js) */
     private wasmFaceDetectorFile:string = 'wasmpico';
     /** once async loaded and instanciated, this variable holds the WebAssembly module for face detection */
@@ -81,6 +81,15 @@ export class WafFaceDetect {
 
         // initiate everything (video & wasm in parralel then canvas)
         this.init();
+    }
+
+    /**
+     * on component destroy clean up camera stream
+     */
+    componentDidUnload() {
+        // kill media stream track
+        const videoTrack = (this.fdVideo.srcObject as MediaStream).getVideoTracks();
+        videoTrack.forEach(track => track.stop());
     }
 
     /**

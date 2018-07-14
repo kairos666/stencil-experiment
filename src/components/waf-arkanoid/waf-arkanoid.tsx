@@ -17,7 +17,7 @@ export class WafArkanoid {
     private faceDetectLimiterActive:boolean = false;
     @Element() private akElt:HTMLElement;
     private akCanvasCtx:CanvasRenderingContext2D;
-    private configURL:string = `${location.origin}/assets/arkanoid-config.json`;
+    private configURL:string = `${location.origin}/wcs-assets/arkanoid-config.json`;
     private config:any;
     private player:PlayerGame;
     private worker:Worker;
