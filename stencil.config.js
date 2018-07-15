@@ -17,8 +17,3 @@ exports.config = {
         { src: './wcs-assets/**/*' }
     ]
 };
-
-exports.devServer = {
-    root: 'www',
-    watchGlob: '**/**'
-}
