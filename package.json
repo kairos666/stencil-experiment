@@ -1,47 +1,63 @@
 {
-  "name": "my-component",
-  "version": "0.0.1",
-  "description": "Stencil Component Starter",
-  "module": "dist/esm/index.js",
-  "main": "dist/index.js",
-  "types": "dist/types/components.d.ts",
-  "collection": "dist/collection/collection-manifest.json",
-  "files": [
-    "dist/"
-  ],
-  "scripts": {
-    "build": "stencil build",
-    "start": "stencil build --dev --watch --serve",
-    "test": "jest",
-    "test.watch": "jest --watch"
-  },
-  "dependencies": {},
-  "devDependencies": {
-    "@stencil/core": "^0.10.6",
-    "@types/jest": "^21.1.1",
-    "jest": "^21.2.1"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/ionic-team/stencil-component-starter.git"
-  },
-  "author": "Ionic Team",
-  "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/ionic-team/stencil"
-  },
-  "homepage": "https://github.com/ionic-team/stencil",
-  "jest": {
-    "transform": {
-      "^.+\\.(ts|tsx)$": "<rootDir>/node_modules/@stencil/core/testing/jest.preprocessor.js"
+    "name": "waf",
+    "version": "0.0.1",
+    "description": "WAF - Stencil Component Starter",
+    "module": "dist/esm/index.js",
+    "main": "dist/index.js",
+    "types": "dist/types/components.d.ts",
+    "collection": "dist/collection/collection-manifest.json",
+    "files": [
+        "dist/"
+    ],
+    "scripts": {
+        "build": "stencil build",
+        "dev": "sd concurrent \"stencil build --dev --watch\" \"stencil-dev-server\" ",
+        "serve": "stencil-dev-server",
+        "start": "npm run dev",
+        "unit:test": "jest --no-cache",
+        "unit:test.watch": "jest --watch --no-cache",
+        "e2e:test:chrome": "testcafe chrome:userProfile e2e-tests/ -e --debug-on-fail",
+        "e2e:test:firefox": "testcafe firefox e2e-tests/ --debug-on-fail",
+        "e2e:test:ie": "testcafe ie e2e-tests/ --debug-on-fail",
+        "e2e:test:remote": "testcafe remote e2e-tests/",
+        "docs": "typedoc --options typedoc.json"
     },
-    "testRegex": "(/__tests__/.*|\\.(test|spec))\\.(tsx?|jsx?)$",
-    "moduleFileExtensions": [
-      "ts",
-      "tsx",
-      "js",
-      "json",
-      "jsx"
-    ]
-  }
+    "dependencies": {
+        "@stencil/sass": "0.0.3",
+        "focus-trap": "^2.4.4",
+        "material-design-lite": "^1.3.0",
+        "vuid": "^1.0.0"
+    },
+    "devDependencies": {
+        "@stencil/core": "^0.9.1",
+        "@stencil/dev-server": "latest",
+        "@stencil/utils": "latest",
+        "@types/jest": "^21.1.1",
+        "jest": "^21.2.1",
+        "testcafe": "^0.19.2",
+        "typedoc": "^0.11.1"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com:kairos666/stencil-experiment.git"
+    },
+    "author": "Ionic Team - David Maggi",
+    "license": "MIT",
+    "bugs": {
+        "url": "https://github.com/kairos666/stencil-experiment/issues"
+    },
+    "homepage": "https://github.com/kairos666/stencil-experiment/",
+    "jest": {
+        "transform": {
+            "^.+\\.(ts|tsx)$": "<rootDir>/node_modules/@stencil/core/testing/jest.preprocessor.js"
+        },
+        "testRegex": "(/__tests__/.*|\\.(test|spec))\\.(tsx?|jsx?)$",
+        "moduleFileExtensions": [
+            "ts",
+            "tsx",
+            "js",
+            "json",
+            "jsx"
+        ]
+    }
 }
